@@ -4,4 +4,4 @@ async function  start () {
   await startService();
 }
 
-start().then(() => {});
+start().then(() => {}).catch(e => console.log(e));
