@@ -2,8 +2,8 @@ KuGouMusic API
 
 酷狗音乐 NodeJS 版 API
 
-## 说明
-该项目结构为模仿 [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) 
+## 灵感来自
+[Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
 ## 工作原理
 跨站请求伪造 (CSRF), 伪造请求头 , 调用官方 API
@@ -57,3 +57,7 @@ $ set HOST=127.0.0.1 && npm run dev
 1. 登录
 2. 发送验证码
 3. dfid 获取
+4. 每日推荐歌曲
+5. 新碟上架
+6. 专辑音乐列表
+7. 专辑详情
