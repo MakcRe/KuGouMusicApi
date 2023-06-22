@@ -1,3 +1,4 @@
+// 二维码 key 生成接口
 export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   return useAxios({
     baseURL: 'https://login-user.kugou.com',

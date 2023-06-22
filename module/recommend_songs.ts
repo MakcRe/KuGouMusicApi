@@ -1,21 +1,20 @@
-// 手机验证码发送
+// 每日推荐歌曲
 import { mapToObject } from '../util/util';
 
 export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   const dataMap = new Map();
+  dataMap.set('platform', params?.platform || 'android');
+  dataMap.set('userid', params?.userid || params?.cookie?.userid || '0');
 
-  dataMap.set('businessid', 5);
-  dataMap.set('mobile', params?.mobile);
-  dataMap.set('plat', 3);
-
+  console.log(dataMap);
 
   return useAxios({
-    url: '/v7/send_mobile_code',
+    url: '/everyday_song_recommend',
     method: 'POST',
     data: mapToObject(dataMap),
     encryptType: 'android',
     cookie: params?.cookie || {},
-    headers: { 'x-router': 'loginservice.kugou.com' },
+    headers: {'x-router': 'everydayrec.service.kugou.com'}
   });
 }
 

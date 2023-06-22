@@ -1,3 +1,4 @@
+// 酷狗二维码生成
 import { toDataURL } from 'qrcode';
 export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   return new Promise(async (resolve) => {

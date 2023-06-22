@@ -1,3 +1,4 @@
+// 开放平台登录
 import axios from 'axios';
 import { wx_appid, wx_secret } from '../util/config.json';
 import { cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncrypt } from '../util/crypto';

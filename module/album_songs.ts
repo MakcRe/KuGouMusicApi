@@ -1,21 +1,20 @@
-// 手机验证码发送
+// 专辑音乐列表
 import { mapToObject } from '../util/util';
 
 export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   const dataMap = new Map();
-
-  dataMap.set('businessid', 5);
-  dataMap.set('mobile', params?.mobile);
-  dataMap.set('plat', 3);
-
+  dataMap.set('album_id', params.id);
+  dataMap.set('is_buy', params?.is_buy || '');
+  dataMap.set('page', params?.page || 1);
+  dataMap.set('pagesize', params?.pagesize || 30);
 
   return useAxios({
-    url: '/v7/send_mobile_code',
+    url: '/v1/album_audio/lite',
     method: 'POST',
     data: mapToObject(dataMap),
     encryptType: 'android',
     cookie: params?.cookie || {},
-    headers: { 'x-router': 'loginservice.kugou.com' },
+    headers: { 'x-router': 'openapi.kugou.com', 'kg-tid': '255' },
   });
 }
 
