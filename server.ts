@@ -16,10 +16,10 @@ import { createRequest } from './util/request';
  */
 const getModulesDefinitions = async (modulesPath: string, specificRoute: Record<string, string>, doRequire: boolean = true): Promise<ModuleDefinition[]> => {
   const files = await fs.promises.readdir(modulesPath);
-  const parseRoute = (fileName: string) => specificRoute && fileName in specificRoute ? specificRoute[fileName] : `/${fileName.replace(/\.ts$/i, '').replace(/_/g, '/')}`;
+  const parseRoute = (fileName: string) => specificRoute && fileName in specificRoute ? specificRoute[fileName] : `/${fileName.replace(/\.(ts|js)$/i, '').replace(/_/g, '/')}`;
 
   return files.reverse()
-    .filter((fileName: string) => fileName.endsWith('.ts') && !fileName.startsWith('_'))
+    .filter((fileName: string) => (fileName.endsWith('.ts') || fileName.endsWith('.js')) && !fileName.startsWith('_'))
     .map((fileName: string) => {
       const identifier = fileName.split('.').shift();
       const route = parseRoute(fileName);
