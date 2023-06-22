@@ -64,6 +64,11 @@ const consturctServer = async (moduleDefs?: ModuleDefinition[]): Promise<Express
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
+  /**
+   * Serving static files
+   */
+  app.use(express.static(path.join(__dirname, 'public')))
+
   const moduleDefinitions = moduleDefs || (await getModulesDefinitions(path.join(__dirname, 'module'), {}));
 
   for (const moduleDef of moduleDefinitions) {
