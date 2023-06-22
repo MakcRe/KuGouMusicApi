@@ -141,7 +141,7 @@ const consturctServer = async (moduleDefs?: ModuleDefinition[]): Promise<Express
 type UseExpress = Express & { service: Server };
 
 export const startService = async () => {
-  const port = Number(process.env.PORT || '3000');
+  const port = Number(process.env.PORT || '3001');
   const host = process.env.HOST || '';
 
   const app: Express = await consturctServer();

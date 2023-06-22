@@ -1,9 +1,15 @@
 import * as crypto from 'node:crypto';
 import { randomString } from './util';
+import { createHash } from 'node:crypto';
 const publicRasKey = `-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDIAG7QOELSYoIJvTFJhMpe1s/gbjDJX51HBNnEl5HXqTW6lQ7LC8jr9fWZTwusknp+sVGzwd40MwP6U5yDE27M/X1+UR4tvOGOqp94TJtQ1EPnWGWXngpeIW5GxoQGao1rmYWAu6oi1z9XkChrsUdC6DJE5E221wf/4WLFxwAtRQIDAQAB\n-----END PUBLIC KEY-----`;
 export function cryptoMd5 (data: BufferLike){
   const  buffer = typeof data === 'object' ? JSON.stringify(data) : data;
   return crypto.createHash('md5').update(buffer).digest('hex');
+}
+
+export function cryptoSha1(data: BufferLike) {
+  const  buffer = typeof data === 'object' ? JSON.stringify(data) : data;
+  return createHash('sha1').update(buffer).digest('hex');
 }
 
 export function cryptoAesEncrypt(data: BufferLike): AesEncrypt;
