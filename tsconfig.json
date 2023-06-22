@@ -14,5 +14,6 @@
     "baseUrl": "./"
   },
 
-  "include": ["module/**/*.ts", "plugins/**/*.ts", "types/**/*.d.ts", "util/**/*.ts","server.ts","index.ts", "main.ts"]
+  "include": ["module/**/*.ts", "plugins/**/*.ts", "types/**/*.d.ts", "util/**/*.ts","server.ts",
+    "app.ts", "main.ts"]
 }

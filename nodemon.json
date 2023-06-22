@@ -16,7 +16,7 @@
     "./main.ts"
   ],
   "execMap": {
-    "ts": "ts-node --files  index.ts"
+    "ts": "ts-node --files "
   },
   "env": {
     "NODE_ENV": "development"
