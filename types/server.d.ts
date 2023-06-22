@@ -17,7 +17,10 @@ declare interface UseAxiosRequestConfig<T = any>{
   encryptType: EncryptType,
   encryptKey?: boolean,
   clearDefaultParams?: boolean,
-  notSign?: boolean
+  notSign?: boolean,
+
+  ip?: string,
+  realIP?: string
 
 }
 

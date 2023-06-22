@@ -12,6 +12,14 @@ export const createRequest = (options: UseAxiosRequestConfig): Promise<UseAxiosR
     const token = options?.cookie?.token || '';
     const userid = options?.cookie?.userid || 0;
     const appid = 1005; // 该为设备id, 安卓、ios、桌面都不相同。
+    const clienttime = Date.now();
+    const ip = options?.realIP || options?.ip || '';
+    const headers = { dfid, clienttime, mid };
+
+    if (ip) {
+      headers['X-Real-IP'] = ip
+      headers['X-Forwarded-For'] = ip
+    }
 
     const defaultParams = {
       dfid,
@@ -21,15 +29,19 @@ export const createRequest = (options: UseAxiosRequestConfig): Promise<UseAxiosR
       apiver: 20,
       clientver: 11309,
       userid,
-      clienttime: Date.now(),
+      clienttime,
     };
 
     if (token) defaultParams['token'] = token;
     const params = options?.clearDefaultParams ? (options?.params || {}) : Object.assign({}, defaultParams, options?.params || {});
+
+    headers['clienttime'] = params.clienttime;
+
     if (options?.encryptKey) {
       params['key'] = signKey(params['hash'], params['mid'], params['userid'], params['appid']);
     }
     const data = typeof options?.data === 'object' ? JSON.stringify(options.data) : options?.data || '';
+
 
     // if (!options.notSign) {
     //   params['sign'] = signParams(params, data);
@@ -57,7 +69,7 @@ export const createRequest = (options: UseAxiosRequestConfig): Promise<UseAxiosR
       method: options.method,
       baseURL: options?.baseURL || 'https://gateway.kugou.com',
       url: options.url,
-      headers: Object.assign({}, options?.headers || {}, { dfid, clienttime: params.clienttime, mid }),
+      headers: Object.assign({}, options?.headers || {}, headers),
     }
 
     const answer: UseAxiosResponse = { status: 500, body: {}, cookie: [] };

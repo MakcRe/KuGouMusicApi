@@ -83,7 +83,14 @@ const consturctServer = async (moduleDefs?: ModuleDefinition[]): Promise<Express
 
 
       try {
-        const moduleResponse = await moduleDef.module(query, createRequest);
+        const moduleResponse = await moduleDef.module(query, (config) => {
+          let ip = req.ip;
+          if (ip.substring(0, 7) == '::ffff:') {
+            ip = ip.substring(7)
+          }
+          config.ip = ip;
+          return createRequest(config);
+        });
 
         console.log('[OK]', decode(req.originalUrl))
 
