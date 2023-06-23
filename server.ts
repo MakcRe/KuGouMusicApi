@@ -106,7 +106,9 @@ const consturctServer = async (moduleDefs?: ModuleDefinition[]): Promise<Express
                 }),
               )
             } else {
-              res.append('Set-Cookie', cookies)
+              res.append('Set-Cookie', cookies.map((cookie) => {
+                return cookie + '; PATH=/'
+              }),)
             }
           }
         }

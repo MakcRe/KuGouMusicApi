@@ -11,8 +11,8 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
       cookie: params?.cookie || {},
     }).then(resp => {
       if (resp.body?.data?.status == 4) {
-        resp.cookie.push(`token=${resp.body?.data?.token}; PATH=/`);
-        resp.cookie.push(`userid=${resp.body?.data?.userid}; PATH=/`);
+        resp.cookie.push(`token=${resp.body?.data?.token}`);
+        resp.cookie.push(`userid=${resp.body?.data?.userid}`);
       }
       resolve(resp);
     }).catch(e => reject(e));

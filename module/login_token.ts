@@ -47,6 +47,8 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
             res.cookie.push(`token=${getToken}`);
           }
           res.cookie.push(`userid=${res.body.data?.userid || 0}`)
+          res.cookie.push(`vip_type=${res.body.data?.vip_type || 0}`);
+          res.cookie.push(`vip_token=${res.body.data?.vip_token || ''}`);
 
           resolve(res);
           return;
