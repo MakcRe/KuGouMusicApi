@@ -19,7 +19,6 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
       cookie: params?.cookie || {},
       encryptType: 'android',
     }).then(res => {
-      console.log(params?.decode);
       if (params?.decode) {
         if (res.body?.content) {
           res.body['decodeContent'] = params?.fmt == 'lrc' ? Buffer.from(res.body?.content, 'base64').toString() :decodeLyrics(res.body.content);
