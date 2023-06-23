@@ -8,7 +8,7 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   dataMap.set('clientver', 11309);
   dataMap.set('duration', 0);
   dataMap.set('hash', params?.hash || '');
-  dataMap.set('keyword', params?.keyword || '');
+  dataMap.set('keyword', params?.keywords || '');
   dataMap.set('lrctxt', 1);
   dataMap.set('man', 'no');
 

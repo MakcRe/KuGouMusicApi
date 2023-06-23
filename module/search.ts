@@ -4,7 +4,7 @@ import { mapToObject } from '../util/util';
 export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   const dataMap = new Map();
   dataMap.set('platform', 'AndroidFilter');
-  dataMap.set('keyword', params?.keyword || '');
+  dataMap.set('keyword', params?.keywords || '');
   dataMap.set('page', params?.page || 1);
   dataMap.set('pagesize', params?.pagesize || 30);
   dataMap.set('category', 1);
