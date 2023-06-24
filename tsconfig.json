@@ -1,18 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "module": "commonjs",
+    "target": "es5",
+    "module": "ESNext",
     "experimentalDecorators": true,
     "moduleResolution": "node",
-    "lib": ["esnext", "esnext.asynciterable", "dom"],
+    "lib": ["esnext", "dom"],
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "sourceMap": true,
     "strict": true,
     "noImplicitAny": false,
     "noEmit": true,
     "baseUrl": "./",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "rootDir": "./",
+    "outDir": "./dist",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
 
   "include": ["module/**/*.ts", "plugins/**/*.ts", "types/**/*.d.ts", "util/**/*.ts","server.ts",
