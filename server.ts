@@ -102,7 +102,7 @@ const consturctServer = async (moduleDefs?: ModuleDefinition[]): Promise<Express
               res.append(
                 'Set-Cookie',
                 cookies.map((cookie) => {
-                  return cookie + '; SameSite=None; Secure'
+                  return cookie + '; PATH=/; SameSite=None; Secure'
                 }),
               )
             } else {
