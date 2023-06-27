@@ -14,7 +14,7 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   const pk = cryptoRSAEncrypt({ clienttime_ms: dateNow, key: encryptParams.key });
 
   const dataMap = new Map();
-  dataMap.set('dfid', params?.cookie.dfid || '-');
+  dataMap.set('dfid', params?.cookie?.dfid || '-');
   dataMap.set('p3', encrypt);
   dataMap.set('plat', '1');
   dataMap.set('t1', 0);

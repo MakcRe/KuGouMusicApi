@@ -32,6 +32,5 @@ declare interface UseAxiosResponse<T = any> {
 
 declare type UseAxios = (config: UseAxiosRequestConfig) => Promise<UseAxiosResponse>;
 
-declare type UseModule = (req: Record<string, any>, useAxios: UseAxios) => Promise<UseAxiosResponse>;
-
-declare type UseModuleParams<T = any> =  { [key: string] : T };
+declare type UseModuleParams<T = any> =  Record<string, T> & { cookie?: Record<string, string> };
+declare type UseModule = (req: UseModuleParams, useAxios: UseAxios) => Promise<UseAxiosResponse>;

@@ -17,7 +17,7 @@ export const signatureAndroidParams = (params: HelperParams, data?: string) => {
   const str = `OIlwieks28dk2k092lksi2UIkp`;
   const paramsString = Object.keys(obj)
     .sort()
-    .map((key) => `${key}=${obj[key]}`)
+    .map((key) => `${key}=${typeof obj[key] === 'object' ? JSON.stringify(obj[key]) : obj[key]}`)
     .join('');
   return cryptoMd5(`${str}${paramsString}${data || ''}${str}`);
 };
@@ -40,6 +40,7 @@ export const signParams = (params: HelperParams, data?: string) => {
     .join('');
   return cryptoMd5(`${paramsString}${data || ''}${str}`);
 };
+
 
 export const signKey = (hash: string, mid: string, userid: string | number, appid: number | string) => {
   return cryptoMd5(`${hash}57ae12eb6890223e355ccfcb74edf70d${appid}${mid}${userid}`);

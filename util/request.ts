@@ -17,8 +17,8 @@ export const createRequest = (options: UseAxiosRequestConfig): Promise<UseAxiosR
     const headers = { dfid, clienttime, mid };
 
     if (ip) {
-      headers['X-Real-IP'] = ip
-      headers['X-Forwarded-For'] = ip
+      headers['X-Real-IP'] = ip;
+      headers['X-Forwarded-For'] = ip;
     }
 
     const defaultParams = {
@@ -46,17 +46,19 @@ export const createRequest = (options: UseAxiosRequestConfig): Promise<UseAxiosR
     // if (!options.notSign) {
     //   params['sign'] = signParams(params, data);
     // }
-    switch (options?.encryptType) {
-      case 'register':
-        params['signature'] = signatureRegisterParams(params);
-        break;
-      case 'web':
-        params['signature'] = signatureWebParams(params);
-        break;
-      case 'android':
-      default:
-        params['signature'] = signatureAndroidParams(params, data);
-        break;
+    if (!params['signature']) {
+      switch (options?.encryptType) {
+        case 'register':
+          params['signature'] = signatureRegisterParams(params);
+          break;
+        case 'web':
+          params['signature'] = signatureWebParams(params);
+          break;
+        case 'android':
+        default:
+          params['signature'] = signatureAndroidParams(params, data);
+          break;
+      }
     }
 
     options.params = params;
@@ -67,10 +69,11 @@ export const createRequest = (options: UseAxiosRequestConfig): Promise<UseAxiosR
       params,
       data: options?.data,
       method: options.method,
-      baseURL: options?.baseURL || 'https://gateway.kugou.com',
+      baseURL: options.baseURL,
       url: options.url,
       headers: Object.assign({}, options?.headers || {}, headers),
-    }
+    };
+
 
     const answer: UseAxiosResponse = { status: 500, body: {}, cookie: [] };
     try {
