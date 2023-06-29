@@ -3,13 +3,27 @@ import { signatureAndroidParams } from '../util/helper';
 
 export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   const paramsMap = new Map();
-  // [{ 'audio_id': params?.audio_id || 0, hash: params?.hash, filename: params?.filename || '', album_audio_id: params?.album_audio_id || 0 }]
-  // [{"album_audio_id":89488966,"audio_id":0,"hash":"d06f97d2b923f89c755e2cfceccaa69c","filename":""}]
+  const data = (params?.hash || '').split(',').map( s => ({ audio_id: 0, hash: s, album_audio_id: 0, filename: '' }));
+  (params?.audio_id || '').split(',').forEach((s, index) => {
+    if (index <= data.length - 1) {
+      data[index]['audio_id'] = s || 0;
+    }
+  });
+  (params?.album_audio_id || '').split(',').forEach((s, index) => {
+    if (index <= data.length - 1) {
+      data[index]['album_audio_id'] = s || 0;
+    }
+  });
+  (params?.filename || '').split(',').forEach((s, index) => {
+    if (index <= data.length - 1) {
+      data[index]['filename'] = s;
+    }
+  });
 
   paramsMap.set('appid', 1005);
   paramsMap.set('clientver', 11669);
   paramsMap.set('count', params?.count || 5);
-  paramsMap.set('data', [{ 'audio_id': params?.audio_id || 0, hash: params?.hash, filename: params?.filename || '', album_audio_id: params?.album_audio_id || 0 }]);
+  paramsMap.set('data', data);
   paramsMap.set('isCdn', 1);
   paramsMap.set('publish_time', 1);
   paramsMap.set('show_authors', 1);

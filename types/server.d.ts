@@ -1,3 +1,8 @@
+declare type UseAxios = (config: UseAxiosRequestConfig) => Promise<UseAxiosResponse>;
+
+declare type UseModuleParams<T = any> =  Record<string, T> & { cookie?: Record<string, string> };
+declare type UseModule = (req: UseModuleParams, useAxios: UseAxios) => Promise<UseAxiosResponse>;
+
 declare type ModuleDefinition = {
   identifier?: string,
   route: string,
@@ -12,7 +17,7 @@ declare interface UseAxiosRequestConfig<T = any>{
   baseURL?: string,
   params?: T,
   data?: T,
-  headers?: Record<string, any>,
+  headers?: Record<string, string | number>,
   cookie?: { [key: string]: string | number  },
   encryptType: EncryptType,
   encryptKey?: boolean,
@@ -30,7 +35,4 @@ declare interface UseAxiosResponse<T = any> {
   cookie: string[]
 }
 
-declare type UseAxios = (config: UseAxiosRequestConfig) => Promise<UseAxiosResponse>;
 
-declare type UseModuleParams<T = any> =  Record<string, T> & { cookie?: Record<string, string> };
-declare type UseModule = (req: UseModuleParams, useAxios: UseAxios) => Promise<UseAxiosResponse>;
