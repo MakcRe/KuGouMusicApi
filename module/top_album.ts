@@ -5,17 +5,15 @@ import { mapToObject } from '../util/util';
 export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   const dataMap = new Map();
   dataMap.set('apiver', 1);
-  dataMap.set('type', params?.type || '');
+  dataMap.set('token', params?.token || params?.cookie?.token || '');
   dataMap.set('page', params?.page || 1);
   dataMap.set('pagesize', params?.pagesize || 30);
-  dataMap.set('area_code', 1);
-  dataMap.set('sorttype', 1);
   dataMap.set('withpriv', 1);
 
   return useAxios({
-    url: '/ocean/v6/album/list',
-    method: 'GET',
-    params: mapToObject(dataMap),
+    url: '/musicadservice/v1/mobile_newalbum_sp',
+    method: 'POST',
+    data: mapToObject(dataMap),
     encryptType: 'android',
     cookie: params?.cookie || {},
   });
