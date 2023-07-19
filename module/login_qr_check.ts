@@ -4,9 +4,9 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   return new Promise((resolve, reject) => {
     useAxios({
       baseURL: 'https://login-user.kugou.com',
-      url: '/v1/get_userinfo_qrcode',
+      url: '/v2/get_userinfo_qrcode',
       method: 'GET',
-      params: { appid: 1005, type: 1, qrcode: params?.key },
+      params: { plat: 4, appid: 1005, srcappid, qrcode: params?.key },
       encryptType: 'web',
       cookie: params?.cookie || {},
     }).then(resp => {

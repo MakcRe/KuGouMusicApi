@@ -5,7 +5,7 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
     try {
       const resp = await axios({ url: `https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=${params?.uuid || ''}` });
 
-      answer.body = 200;
+      answer.status = 200;
       answer.body = resp.data;
 
       resolve(answer);

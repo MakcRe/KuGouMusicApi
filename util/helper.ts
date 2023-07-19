@@ -4,11 +4,12 @@ import { mapToObject } from './util';
 export const signatureWebParams = (params: HelperParams) => {
   const isMap = params instanceof Map;
   const obj = isMap ? mapToObject(params) : params;
-  const paramsString = Object.keys(obj)
-    .map((key) => params[key])
+  const str = 'NVPh5oo715z5DIWAeQlhMDsWXXQV4hwt';
+  const paramsString: string = Object.keys(obj)
+    .map((key) => `${key}=${obj[key]}`)
     .sort()
     .join('');
-  return cryptoMd5(paramsString);
+  return cryptoMd5(`${str}${paramsString}${str}`);
 };
 
 export const signatureAndroidParams = (params: HelperParams, data?: string) => {
