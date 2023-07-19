@@ -1,3 +1,4 @@
+import { srcappid } from '../util/config.json';
 // 酷狗二维码状态检测
 // 0 为二维码过期，1 为等待扫码，2 为待确认，4 为授权登录成功（4 状态码下会返回 token）
 export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
