@@ -30,7 +30,7 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
 
           if (connect.data?.errcode === 0) {
             answer.status = 200;
-            connect.data.qrcode['qrcodeurl '] = `https://open.weixin.qq.com/connect/confirm?uuid=${connect.data.uuid}`;
+            connect.data.qrcode['qrcodeurl'] = `https://open.weixin.qq.com/connect/confirm?uuid=${connect.data.uuid}`;
             answer.body = connect.data;
             resolve(answer);
           } else {

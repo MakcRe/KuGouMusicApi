@@ -112,8 +112,9 @@ const consturctServer = async (moduleDefs?: ModuleDefinition[]): Promise<Express
             }
           }
         }
+        
 
-        res.status(moduleResponse.status).send(moduleResponse.body)
+        res.header(moduleResponse.headers).status(moduleResponse.status).send(moduleResponse.body)
       } catch (e) {
         const moduleResponse = e as any;
         console.log('[ERR]', decode(req.originalUrl), {
@@ -130,7 +131,7 @@ const consturctServer = async (moduleDefs?: ModuleDefinition[]): Promise<Express
           return
         }
 
-        res.status(moduleResponse.status).send(moduleResponse.body)
+        res.header(moduleResponse.headers).status(moduleResponse.status).send(moduleResponse.body)
 
       }
     });

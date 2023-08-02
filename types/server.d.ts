@@ -32,7 +32,8 @@ declare interface UseAxiosRequestConfig<T = any>{
 declare interface UseAxiosResponse<T = any> {
   status: number;
   body: T,
-  cookie: string[]
+  cookie: string[],
+  headers?: Record<string, string>
 }
 
 

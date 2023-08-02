@@ -40,6 +40,9 @@ export const createRequest = (options: UseAxiosRequestConfig): Promise<UseAxiosR
     if (options?.encryptKey) {
       params['key'] = signKey(params['hash'], params['mid'], params['userid'], params['appid']);
     }
+
+    
+
     const data = typeof options?.data === 'object' ? JSON.stringify(options.data) : options?.data || '';
 
 
@@ -72,14 +75,20 @@ export const createRequest = (options: UseAxiosRequestConfig): Promise<UseAxiosR
       baseURL: options.baseURL,
       url: options.url,
       headers: Object.assign({}, options?.headers || {}, headers),
+      withCredentials: true
     };
 
 
-    const answer: UseAxiosResponse = { status: 500, body: {}, cookie: [] };
+    const answer: UseAxiosResponse = { status: 500, body: {}, cookie: [], headers: {} };
     try {
       const response = await axios(requestOptions);
       const body = response.data;
+      
       answer.cookie = (response.headers['set-cookie'] || []).map((x) => parseCookieString(x));
+
+      if (response.headers['ssa-code']) {
+        answer.headers!['ssa-code'] = response.headers['ssa-code'];
+      }
 
       try {
         answer.body = JSON.parse(body.toString());

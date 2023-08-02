@@ -6,8 +6,6 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   dataMap.set('platform', params?.platform || 'android');
   dataMap.set('userid', params?.userid || params?.cookie?.userid || '0');
 
-  console.log(dataMap);
-
   return useAxios({
     url: '/everyday_song_recommend',
     method: 'POST',

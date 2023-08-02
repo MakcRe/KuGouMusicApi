@@ -1,7 +1,3 @@
-import { mapToObject } from '../util/util';
-import { signParamsKey } from '../util/helper';
-import { cryptoMd5 } from '../util/crypto';
-
 /**
  * 获取乐库下的频道
  * @param {UseModuleParams} params

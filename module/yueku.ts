@@ -1,6 +1,3 @@
-import { mapToObject } from '../util/util';
-import { signParamsKey } from '../util/helper';
-import { cryptoMd5 } from '../util/crypto';
 
 /**
  * 获取安卓乐库相关内容

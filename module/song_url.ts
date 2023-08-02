@@ -12,7 +12,7 @@ export const useModule = (params: UseModuleParams, useAxios: UseAxios) => {
   dataMap.set('cmd', 26);
   dataMap.set('version', 9541);
   dataMap.set('pidversion', 3001);
-  dataMap.set('IsFreePart', params?.multitrack === '1' ? 3 : 1);
+  dataMap.set('IsFreePart', params?.free_part ? 1 : 0);
 
   return useAxios({
     url: '/v3/url',
