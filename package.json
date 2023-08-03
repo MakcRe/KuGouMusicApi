@@ -19,7 +19,7 @@
   },
   "scripts": {
     "dev": "nodemon --config nodemon.json index.js",
-    "start": "node app.js"
+    "start": "node app.js",
     "pkgwin": "pkg . -t node14-win-x64 -C GZip -o bin/app --no-bytecode",
     "pkglinux": "pkg . -t node14-linux-x64 -C GZip -o bin/app --no-bytecode",
     "pkgmacos": "pkg . -t node14-macos-x64 -C GZip -o bin/app --no-bytecode"
