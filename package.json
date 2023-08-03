@@ -3,11 +3,32 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "dev": "nodemon --config nodemon.json index.ts"
+  "bin": "./app.js",
+  "types": "./interface.d.ts",
+  "pkg": {
+    "scripts": "module/*.js",
+    "assets": [
+      "node_modules/axios",
+      "node_modules/express",
+      "node_modules/pako",
+      "node_modules/qrcode",
+      "node_modules/safe-decode-uri-component",
+      "module",
+      "public"
+    ]
   },
-  "keywords": [],
-  "author": "",
+  "scripts": {
+    "dev": "nodemon --config nodemon.json index.js",
+    "start": "node app.js"
+    "pkgwin": "pkg . -t node14-win-x64 -C GZip -o bin/app --no-bytecode",
+    "pkglinux": "pkg . -t node14-linux-x64 -C GZip -o bin/app --no-bytecode",
+    "pkgmacos": "pkg . -t node14-macos-x64 -C GZip -o bin/app --no-bytecode"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "keywords": ["酷狗音乐", "酷狗", "音乐", "酷狗音乐nodejs"],
+  "author": "Lines",
   "license": "MIT",
   "devDependencies": {
     "@types/express": "^4.17.17",
@@ -15,6 +36,7 @@
     "@types/pako": "^2.0.0",
     "@types/qrcode": "^1.5.0",
     "nodemon": "^2.0.20",
+    "pkg": "^5.8.1",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.3"

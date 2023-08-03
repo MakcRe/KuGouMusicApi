@@ -11,12 +11,12 @@
     "plugins/**",
     "util/**",
     "types/**",
-    "./server.ts",
-    "./index.ts",
-    "./main.ts"
+    "./server.js",
+    "./index.js",
+    "./main.js"
   ],
   "execMap": {
-    "ts": "ts-node --files "
+    "js": "node "
   },
   "env": {
     "NODE_ENV": "development"

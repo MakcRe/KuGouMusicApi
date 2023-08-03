@@ -20,6 +20,5 @@
     "skipLibCheck": true
   },
 
-  "include": ["module/**/*.ts", "plugins/**/*.ts", "types/**/*.d.ts", "util/**/*.ts","server.ts",
-    "app.ts", "main.ts"]
+  "include": ["interface.d.ts"]
 }
