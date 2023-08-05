@@ -1,4 +1,3 @@
-
 const axios = require('axios');
 const { cryptoMd5 } = require('./crypto');
 const { signKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
@@ -81,6 +80,7 @@ const createRequest = (options) => {
     const answer = { status: 500, body: {}, cookie: [], headers: {} };
     try {
       const response = await axios(requestOptions);
+
       const body = response.data;
 
       answer.cookie = (response.headers['set-cookie'] || []).map((x) => parseCookieString(x));

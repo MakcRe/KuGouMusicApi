@@ -1,4 +1,4 @@
-// dfid 获取
+// 获取音乐详情
 module.exports = (params, useAxios) => {
   const dataMap = {
     mid: params?.mid || '',

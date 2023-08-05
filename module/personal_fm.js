@@ -15,7 +15,7 @@ module.exports = (params, useAxios) => {
     clientver,
     action: params?.action || 'play',
     key: signParamsKey(dateTime),
-    song_pool_id: params.song_pool_id || 0,
+    song_pool_id: Number(params?.song_pool_id || 0),
     vip_type,
     mid: '',
     m_type: 1,

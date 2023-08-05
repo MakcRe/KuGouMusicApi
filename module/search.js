@@ -1,5 +1,4 @@
 // 搜索
-
 module.exports = (params, useAxios) => {
   const dataMap = {
     platform: 'AndroidFilter',
