@@ -13,8 +13,8 @@ module.exports = (params, useAxios) => {
 
   return new Promise((resolve, reject) => {
     useAxios({
-      baseURL: 'https://lyrics.kugou.com',
-      url: '/download',
+		  baseURL: 'https://lyrics.kugou.com',
+		  url: '/download',
       method: 'GET',
       params: dataMap,
       cookie: params?.cookie || {},
