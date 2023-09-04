@@ -20,5 +20,5 @@
     "skipLibCheck": true
   },
 
-  "include": ["interface.d.ts"]
+  "include": ["./interface.d.ts"]
 }
