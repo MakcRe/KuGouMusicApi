@@ -12,5 +12,6 @@ module.exports = (params, useAxios) => {
     data: dataMap,
     method: 'post',
     encryptType: 'android',
+    cookie: params?.cookie || {},
   });
 };

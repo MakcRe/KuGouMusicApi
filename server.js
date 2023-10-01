@@ -93,7 +93,11 @@ const consturctServer = async (moduleDefs) => {
         }
       });
 
-      let query = Object.assign({}, { cookie: req.cookies }, req.query, req.body);
+      // console.log(typeof req.body);
+
+      // const body = typeof req.body === 'string' ?  : req.body;
+
+      let query = Object.assign({}, { cookie: req.cookies }, req.query, { body: req.body });
 
       try {
         const moduleResponse = await moduleDef.module(query, (config) => {
