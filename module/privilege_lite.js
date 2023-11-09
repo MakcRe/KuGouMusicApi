@@ -16,6 +16,7 @@ module.exports = (params, useAxios) => {
     relate: 1,
     support_verify: 1,
     resource,
+    qualities: ['128', '320', 'flac', 'high', 'viper_atmos', 'viper_tape'],
   };
 
   return useAxios({

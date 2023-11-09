@@ -40,9 +40,11 @@ const consturctServer = async (moduleDefs) => {
   const { CORS_ALLOW_ORIGIN } = process.env;
   app.set('trust proxy', true);
 
-  // CORS & Preflight request
+  /**
+   * CORS & Preflight request
+   */
   app.use((req, res, next) => {
-    if (req.path !== '/' && req.path.includes('.')) {
+    if (req.path !== '/' && !req.path.includes('.')) {
       res.set({
         'Access-Control-Allow-Credentials': true,
         'Access-Control-Allow-Origin': CORS_ALLOW_ORIGIN || req.headers.origin || '*',
@@ -78,7 +80,7 @@ const consturctServer = async (moduleDefs) => {
    * docs
    */
 
-  app.use('/docs', express.static(path.join(__dirname, 'docs')));
+  // app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
   // Cache
   app.use(cache('2 minutes', (_, res) => res.statusCode === 200));
@@ -92,10 +94,6 @@ const consturctServer = async (moduleDefs) => {
           item.cookie = cookieToJson(decode(item.cookie));
         }
       });
-
-      // console.log(typeof req.body);
-
-      // const body = typeof req.body === 'string' ?  : req.body;
 
       let query = Object.assign({}, { cookie: req.cookies }, req.query, { body: req.body });
 

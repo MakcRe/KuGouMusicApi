@@ -1,9 +1,8 @@
-const {cryptoMd5, signParamsKey, appid, clientver} = require('../util');
+const { cryptoMd5, signParamsKey, appid, clientver } = require('../util');
 
-// 专辑详情
 module.exports = (params, useAxios) => {
   const dateTime = Date.now();
-  const data = (params?.hash || '').split(',').map(s => ({ hash: s, audio_id: 0 }));
+  const data = (params?.hash || '').split(',').map((s) => ({ hash: s, audio_id: 0 }));
   const dfid = params?.cookie?.dfid || params?.dfid || '-';
   const userid = params?.cookie?.userid || params?.userid || 0;
   const token = params?.cookie?.token || params?.token || 0;
@@ -15,7 +14,7 @@ module.exports = (params, useAxios) => {
     data,
     dfid,
     key: signParamsKey(dateTime),
-    mid: cryptoMd5(dfid)
+    mid: cryptoMd5(dfid),
   };
 
   if (token) dataMap['token'] = token;
@@ -23,11 +22,11 @@ module.exports = (params, useAxios) => {
 
   return useAxios({
     baseURL: 'http://kmr.service.kugou.com',
-      url: '/v1/audio/audio',
+    url: '/v1/audio/audio',
     method: 'POST',
     data: dataMap,
     encryptType: 'android',
     cookie: params?.cookie || {},
     headers: { 'x-router': 'kmr.service.kugou.com', 'Content-Type': 'application/json' },
   });
-}
+};
