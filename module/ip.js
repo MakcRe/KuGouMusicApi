@@ -1,4 +1,4 @@
-// 获取 今日推荐相关信息
+// 根据 ip id 获取相对应的 歌曲/专辑/视频/歌手
 module.exports = (params, useAxios) => {
   const dataMap = {
     is_publish: 1,
@@ -6,7 +6,7 @@ module.exports = (params, useAxios) => {
     sort: 3,
     page: params?.page || 1,
     pagesize: params?.pagesize || 30,
-    query: 1
+    query: 1,
   };
 
   const type = ['audios', 'albums', 'videos', 'author_list'].includes(params?.type) ? params.type : 'audios';
@@ -18,5 +18,4 @@ module.exports = (params, useAxios) => {
     data: dataMap,
     cookie: params?.cookie || {},
   });
-
 };

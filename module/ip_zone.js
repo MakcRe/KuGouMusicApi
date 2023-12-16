@@ -14,9 +14,10 @@ module.exports = (params, useAxios) => {
             const list = Array.isArray(resp.body.data.list) ? resp.body.data?.list : [];
             for (let index = 0; index < list.length; index += 1) {
               if (list[index].special_link) {
-                const url = new URL(list[index].special_link);
-                if (url.searchParams.has('ip_id')) {
-                  list[index].ip_id = Number(url.searchParams.get('ip_id'));
+                const urls = new URLSearchParams(list[index].special_link);
+                if (urls.has('path')) {
+                  const pathUrls = new URLSearchParams(urls.get('path') || '');
+                  list[index]['ip_id'] = Number(pathUrls.get('ip_id') || '');
                 }
               }
             }

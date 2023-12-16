@@ -1,10 +1,10 @@
-// 获取今日推荐详细信息
+// 获取ip详情
 module.exports = (params, useAxios) => {
-  const data = (params?.id || '').split(',').map(s => ({ ip_id: s }));
-  
+  const data = (params?.id || '').split(',').map((s) => ({ ip_id: s }));
+
   const dataMap = {
     data,
-    is_publish: 1
+    is_publish: 1,
   };
 
   return useAxios({
@@ -14,5 +14,4 @@ module.exports = (params, useAxios) => {
     data: dataMap,
     cookie: params?.cookie || {},
   });
-
 };

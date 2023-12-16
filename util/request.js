@@ -77,6 +77,18 @@ const createRequest = (options) => {
       withCredentials: true,
     };
 
+    if (options.data) requestOptions.data = options.data;
+    if (params) requestOptions.params = params;
+
+    if (options.baseURL?.includes('openapicdn')) {
+      const url = requestOptions.url;
+      const _params = Object.keys(params)
+        .map((key) => `${key}=${params[key]}`)
+        .join('&');
+      requestOptions.url = `${url}?${_params}`;
+      requestOptions.params = {};
+    }
+
     const answer = { status: 500, body: {}, cookie: [], headers: {} };
     try {
       const response = await axios(requestOptions);

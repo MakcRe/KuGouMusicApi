@@ -2,7 +2,7 @@
   "name": "KuGouMusicApi",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "bin": "./app.js",
   "types": "./interface.d.ts",
   "pkg": {
