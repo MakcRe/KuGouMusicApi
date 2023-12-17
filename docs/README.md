@@ -297,6 +297,65 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 **调用例子：** `/user/listen`
 
+### 收藏歌单
+
+说明 : 调用此接口, 可收藏歌单( 需要登录 ), 收藏成功后建议使用 [`/playlist/tracks/add`](#对歌单添加歌曲) 把原歌单下的歌曲添加到新的歌单
+
+**必选参数：**
+
+name: 歌单名称
+
+list_create_userid: 歌单 list_create_userid
+
+list_create_listid: 歌单 list_create_listid
+
+**接口地址：** `/playlist/add`
+
+**调用例子：** `/playlist/add?source=1&name=音乐一响%20纯爱登场.&list_create_userid=1782943844&list_create_listid=87`
+
+### 取消收藏歌单
+
+说明 : 调用此接口 , 取消收藏歌单( 需要登录 )
+
+**必选参数：**
+
+listid: 用户歌单 listid
+
+**接口地址：** `/playlist/del`
+
+**接口地址：** `/playlist/del?listid=xxx`
+
+### 对歌单添加歌曲
+
+说明 : 调用此接口 , 可以添加歌曲到歌单 ( 需要登录 )
+
+**必选参数：**
+
+listid: 用户歌单 listid
+
+data: 歌曲数据, 格式为 歌曲名称|歌曲 hash|专辑 id|(mixsongid/album_audio_id)，最少需要 歌曲名称以及歌曲 hash(若返回错误则需要全部参数)， 支持多个，每
+个以逗号分隔
+
+**接口地址：** `/playlist/tracks/add`
+
+**调用例子：** `/playlist/tracks/add?listid=1&data=我们应该算爱过吧|8E10D8825DDE03BCABBDE13E5A4150D2`
+`/playlist/tracks/add?listid=1&data=我们应该算爱过吧|8E10D8825DDE03BCABBDE13E5A4150D2|67026620|477417208`
+`/playlist/tracks/add?listid=1&data=我们应该算爱过吧|8E10D8825DDE03BCABBDE13E5A4150D2,我们应该算爱过吧|5015FC3FAB5B0C245556A1CC3C4DE355`
+
+### 对歌单删除歌曲
+
+说明 : 调用此接口 , 可以删除歌单某首歌曲 ( 需要登录 )
+
+**必选参数：**
+
+listid: 用户歌单 listid
+
+fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
+
+**接口地址：** `/playlist/tracks/del`
+
+**调用例子：** `/playlist/tracks/del?listid=1&fileids=xx` `/playlist/tracks/del?listid=1&fileids=xx,xx`
+
 ### 新碟上架
 
 说明: 调用此接口 , 可获取新碟上架列表, 如需要专辑详细信息需要调用[`album/detail`](#专辑详情), 如需要获取专辑音乐列表需调

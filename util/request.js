@@ -75,6 +75,7 @@ const createRequest = (options) => {
       url: options.url,
       headers: Object.assign({}, options?.headers || {}, headers),
       withCredentials: true,
+      responseType: options.responseType,
     };
 
     if (options.data) requestOptions.data = options.data;

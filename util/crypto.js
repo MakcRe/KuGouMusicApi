@@ -81,5 +81,38 @@ function cryptoRSAEncrypt(data, publicKey) {
   publicKey = publicKey || publicRasKey;
   return crypto.publicEncrypt({ key: publicKey, padding: crypto.constants.RSA_NO_PADDING }, _buffer).toString('hex');
 }
+function rsaEncrypt2(data) {
+  const useData = typeof data === 'object' ? Buffer.from(JSON.stringify(data)) : Buffer.from(data);
 
-module.exports = { cryptoAesDecrypt, cryptoAesEncrypt, cryptoMd5, cryptoRSAEncrypt, cryptoSha1 };
+  const buffer = Buffer.concat([useData]);
+
+  return crypto.publicEncrypt({ key: publicRasKey, padding: crypto.constants.RSA_PKCS1_PADDING }, buffer).toString('hex');
+}
+
+function playlistAesEncrypt(data) {
+  const useData = typeof data === 'object' ? JSON.stringify(data) : data;
+  const key = randomString(6);
+  const encryptKey = cryptoMd5(key).substring(0, 16);
+  const iv = cryptoMd5(key).substring(16, 32);
+
+  const cipher = crypto.createCipheriv('aes-128-cbc', encryptKey, iv);
+  const dest = Buffer.concat([cipher.update(useData), cipher.final()]);
+  return { key, str: dest.toString('base64') };
+}
+
+function playlistAesDecrypt(data) {
+  const encryptKey = cryptoMd5(data.key).substring(0, 16);
+  const iv = cryptoMd5(data.key).substring(16, 32);
+
+  const cipher = crypto.createDecipheriv('aes-128-cbc', encryptKey, iv);
+  const dest = Buffer.concat([cipher.update(data.str, 'base64'), cipher.final()]);
+
+  const t = dest.toString();
+  try {
+    return JSON.parse(t);
+  } catch (e) {
+    return t;
+  }
+}
+
+module.exports = { cryptoAesDecrypt, cryptoAesEncrypt, cryptoMd5, cryptoRSAEncrypt, rsaEncrypt2, cryptoSha1, playlistAesEncrypt, playlistAesDecrypt };

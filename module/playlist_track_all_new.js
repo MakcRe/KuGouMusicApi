@@ -7,7 +7,7 @@ module.exports = (params, useAxios) => {
     userid,
     area_code: 1,
     show_relate_goods: 0,
-    pagesize: params.pageSize || 30,
+    pagesize: params.pagesize || 30,
     allplatform: 1,
     show_cover: 1,
     type: 0,
