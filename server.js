@@ -83,7 +83,7 @@ const consturctServer = async (moduleDefs) => {
   // app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
   // Cache
-  app.use(cache('2 minutes', (_, res) => res.statusCode === 200));
+  // app.use(cache('2 minutes', (_, res) => res.statusCode === 200));
 
   const moduleDefinitions = moduleDefs || (await getModulesDefinitions(path.join(__dirname, 'module'), {}));
 
