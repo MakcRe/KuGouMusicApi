@@ -1206,9 +1206,9 @@ vip 专属推荐
 
 `platform`：设备类型，默认为 ios,支持 android 和 ios
 
-**接口地址：** `/everyday/history`
+**接口地址：** `/everyday/recommend`
 
-**调用例子：** `/everyday/history`
+**调用例子：** `/everyday/recommend`
 
 ### 历史推荐
 
