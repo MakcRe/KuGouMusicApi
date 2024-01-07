@@ -74,6 +74,9 @@
 64. [`获取场景音乐歌单列表`](#获取场景音乐歌单列表)
 65. [`获取场景音乐视频列表`](#获取场景音乐视频列表)
 66. [`获取场景音乐音乐列表`](#获取场景音乐音乐列表)
+67. [`每日推荐`](#每日推荐)
+68. [`历史推荐`](#历史推荐)
+69. [`风格推荐`](#风格推荐)
 
 ### 安装
 
@@ -1194,3 +1197,47 @@ vip 专属推荐
 **接口地址：** `/scene/audio/list`
 
 **调用例子：** `/scene/audio/list?id=9&module_id=173&tag=42391`
+
+### 每日推荐
+
+说明：调用此接口，可以获取每日推荐列表
+
+**可选参数：**
+
+`platform`：设备类型，默认为 ios,支持 android 和 ios
+
+**接口地址：** `/everyday/history`
+
+**调用例子：** `/everyday/history`
+
+### 历史推荐
+
+说明：调用此接口，可以获取每日推荐列表
+
+**可选参数：**
+
+`mode`：当 mode 为 list 时，则返回历史推荐列表，当 mode 为 song 时则返回当前歌曲列表，支持参数为：list 和 song,
+
+`history_name`: 当 mode 为 song 该参数为必选参数。
+
+`date`: 当 mode 为 song 该参数为必选参数。
+
+`platform`：设备类型，默认为 ios,支持 android 和 ios
+
+**接口地址：** `/everyday/history`
+
+**调用例子：** `/everyday/history` `/everyday/history?mode=song&history_name=RT_336d5ebc5436534e61d16e63ddfca327_20240106&date=20240106`
+
+### 风格推荐
+
+说明：调用此接口，可以获取每日推荐列表
+
+**可选参数：**
+
+`platform`：设备类型，默认为 ios,支持 android 和 ios
+
+`tagids`：支持多个，每个以逗号分隔，该接口下可获取 tag 信息
+
+**接口地址：** `/everyday/style/recommend`
+
+**调用例子：** `/everyday/style/recommend` `/everyday/style/recommend?tagids=S14,S15,S16`
