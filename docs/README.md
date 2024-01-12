@@ -798,17 +798,21 @@ vip 专属推荐
 
 **可选参数：**
 
-`hash`: 音乐 hash
+`hash`: 音乐 hash, 建议
 
-`playtime`: 播放时间
+`songid`: 音乐 songid, 建议
+
+`playtime`: 已播放时间, 建议
 
 `mode`: 获取模式，默认为 normal, normal：发现，small： 小众，peak：30s
 
 `action`: 默认为 play, garbage: 为不喜欢
 
-`song_pool_id`： 手机版的 AI，0：Alpha 根据口味推荐相似歌曲, 1：Beta 根据风格推荐相似歌曲, 2：Gamma
+`song_pool_id`： 手机版的 AI，0：Alpha 根据口味推荐相似歌曲, 1：Beta 根据风格推荐相似歌曲, 2：Gamma 
 
 `is_overplay`: 是否已播放完成
+
+`remain_songcnt`: 剩余未播放歌曲数, 默认为 0，大于 4 不返回推荐歌曲，建议
 
 **接口地址：** `/personal/fm`
 
