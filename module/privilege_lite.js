@@ -5,8 +5,6 @@ module.exports = (params, useAxios) => {
   const resource = (params?.hash || '').split(',').map((s) => ({ type: 'audio', page_id: 0, hash: s, album_id: 0 }));
   (params?.album_id || '').split(',').forEach((s, l) => (resource[l]['album_id'] = s));
 
-  console.log(resource);
-
   const dataMap = {
     appid,
     area_code: 1,

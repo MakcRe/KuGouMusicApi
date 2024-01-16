@@ -66,9 +66,9 @@ $ $Env:HOST=127.0.0.1; npm run dev
 
 1. fork 此项目
 2. 在 Vercel 官网点击 `New Project`
-3. 点击 `Import Git Repository` 并选择你 fork 的此项目并点击`import`
+3. 点击 `Import Git Repository` 并选择你 fork 的此项目并点击 `import`
 4. 点击 `PERSONAL ACCOUNT` 的 `select`
-5. 直接点`Continue`
+5. 直接点 `Continue`
 6. `PROJECT NAME`自己填,`FRAMEWORK PRESET` 选 `Other` 然后直接点 `Deploy` 接着等部署完成即可
 
 ## 功能特性
@@ -142,3 +142,8 @@ $ $Env:HOST=127.0.0.1; npm run dev
 67. 每日推荐
 68. 历史推荐
 69. 风格推荐
+70. 排行列表
+71. 排行榜推荐列表
+72. 排行榜往期列表
+73. 排行榜信息
+74. 排行榜歌曲列表
