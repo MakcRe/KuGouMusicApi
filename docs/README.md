@@ -77,6 +77,11 @@
 67. [`每日推荐`](#每日推荐)
 68. [`历史推荐`](#历史推荐)
 69. [`风格推荐`](#风格推荐)
+70. [`排行列表`](#排行列表)
+71. [`排行榜推荐列表`](#排行榜推荐列表)
+72. [`排行榜往期列表`](#排行榜往期列表)
+73. [`排行榜信息`](#排行榜信息)
+74. [`排行榜歌曲列表`](#排行榜歌曲列表)
 
 ### 安装
 
@@ -128,9 +133,9 @@ $ set HOST=127.0.0.1 && npm run dev
 
 1. fork 此项目
 2. 在 Vercel 官网点击 `New Project`
-3. 点击 `Import Git Repository` 并选择你 fork 的此项目并点击`import`
+3. 点击 `Import Git Repository` 并选择你 fork 的此项目并点击 `import`
 4. 点击 `PERSONAL ACCOUNT` 的 `select`
-5. 直接点`Continue`
+5. 直接点 `Continue`
 6. `PROJECT NAME`自己填,`FRAMEWORK PRESET` 选 `Other` 然后直接点 `Deploy` 接着等部署完成即可
 
 ## 接口文档
@@ -157,7 +162,7 @@ $ set HOST=127.0.0.1 && npm run dev
 
 ### 登录
 
-说明：登录有五个接口使用`encodeURIComponent`对密码编码或者使用`POST`请求，避免某些特殊字符无法解析,如#(#在 url 中会被识别为 hash,而不是 query)
+说明：登录有五个接口使用 `encodeURIComponent`对密码编码或者使用 `POST`请求，避免某些特殊字符无法解析,如#(#在 url 中会被识别为 hash,而不是 query)
 
 不要频繁调登录接口,不然可能会被风控,登录状态还存在就不要重复调登录接口
 
@@ -798,9 +803,11 @@ vip 专属推荐
 
 **可选参数：**
 
-`hash`: 音乐 hash
+`hash`: 音乐 hash, 建议
 
-`playtime`: 播放时间
+`songid`: 音乐 songid, 建议
+
+`playtime`: 已播放时间, 建议
 
 `mode`: 获取模式，默认为 normal, normal：发现，small： 小众，peak：30s
 
@@ -809,6 +816,8 @@ vip 专属推荐
 `song_pool_id`： 手机版的 AI，0：Alpha 根据口味推荐相似歌曲, 1：Beta 根据风格推荐相似歌曲, 2：Gamma
 
 `is_overplay`: 是否已播放完成
+
+`remain_songcnt`: 剩余未播放歌曲数, 默认为 0，大于 4 不返回推荐歌曲，建议
 
 **接口地址：** `/personal/fm`
 
@@ -1212,7 +1221,7 @@ vip 专属推荐
 
 ### 历史推荐
 
-说明：调用此接口，可以获取每日推荐列表
+说明：调用此接口，可以获取历史推荐
 
 **可选参数：**
 
@@ -1230,7 +1239,7 @@ vip 专属推荐
 
 ### 风格推荐
 
-说明：调用此接口，可以获取每日推荐列表
+说明：调用此接口，可以获取风格推荐
 
 **可选参数：**
 
@@ -1241,3 +1250,79 @@ vip 专属推荐
 **接口地址：** `/everyday/style/recommend`
 
 **调用例子：** `/everyday/style/recommend` `/everyday/style/recommend?tagids=S14,S15,S16`
+
+### 排行列表
+
+说明：调用此接口，可以获取排行榜列表
+
+**可选参数：**
+
+`withsong`：是否返回歌曲（部分）
+
+**接口地址：** `/rank/list`
+
+**调用例子：** `/rank/list`
+
+### 排行榜推荐列表
+
+说明：调用此接口，可以获取排行榜推荐列表
+
+**接口地址：** `/rank/top`
+
+**调用例子：** `/rank/top`
+
+### 排行榜往期列表
+
+说明：调用此接口，可以获取排行榜往期列表
+
+**必选参数：**
+
+`rankid`：排行榜 id
+
+**可选参数：**
+
+`rank_cid`：排行榜 cid
+
+**接口地址：** `/rank/vol`
+
+**调用例子：** `/rank/vol?rankid=8888`
+
+### 排行榜信息
+
+说明：调用此接口，可以获取排行榜信息
+
+**必选参数：**
+
+`rankid`：排行榜 id
+
+**可选参数：**
+
+`rank_cid`：排行榜 cid
+
+`album_img`：是否返回专辑图片，1：返回，0：不返回，默认返回
+
+`zone`：排行榜 zone
+
+**接口地址：** `/rank/info`
+
+**调用例子：** `/rank/info?rankid=8888`
+
+### 排行榜歌曲列表
+
+说明：调用此接口，可以获排行榜歌曲列表
+
+**必选参数：**
+
+`rankid`：排行榜 id
+
+**可选参数：**
+
+`rank_cid`：若需要返回往期歌曲列表，则该参数为必填，否则默认返回最新一期，[`/rank/vol`](#排行榜往期列表) 返回值中，`volid` 则为该参数
+
+`page`： 页码
+
+`pagesize`: 每页页数, 默认为 30
+
+**接口地址：** `/rank/audio`
+
+**调用例子：** `/rank/audio?rankid=8888` `/rank/audio?rankid=8888&rank_cid=76442`
