@@ -31,10 +31,11 @@ module.exports = (params, useAxios) => {
   };
 
   return useAxios({
-    url: '/specialrec.service/special_recommend',
+    url: '/special_recommend',
     encryptType: 'android',
     method: 'POST',
     data: dataMap,
     cookie: params?.cookie || {},
+    headers: { 'x-router': 'specialrec.service.kugou.com' },
   });
 };
