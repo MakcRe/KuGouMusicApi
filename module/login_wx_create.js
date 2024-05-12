@@ -1,8 +1,14 @@
 const axios = require('axios');
-const { wx_appid, wx_secret, cryptoMd5, cryptoSha1, randomString } = require('../util');
+const { wx_appid, wx_secret, cryptoMd5, cryptoSha1, randomString, wx_lite_appid, wx_lite_secret } = require('../util');
+
+const isLite = Boolean(process.env.isLite);
+
+const appid = isLite ? wx_lite_appid : wx_appid;
+const secret = isLite ? wx_lite_secret : wx_secret;
+
 
 const accessToken = () => {
-  return axios({ url: 'https://api.weixin.qq.com/cgi-bin/token', params: { appid: wx_appid, secret: wx_secret, grant_type: 'client_credential' } });
+  return axios({ url: 'https://api.weixin.qq.com/cgi-bin/token', params: { appid, secret, grant_type: 'client_credential' } });
 };
 
 /**
@@ -24,9 +30,9 @@ module.exports = (params, useAxios) => {
           const ticket = ticketResp.data.ticket;
           const timestamp = Date.now();
           const noncestr = cryptoMd5(randomString());
-          const signaturePrams = `appid=${wx_appid}&noncestr=${noncestr}&sdk_ticket=${ticket}&timestamp=${timestamp}`;
+          const signaturePrams = `appid=${appid}&noncestr=${noncestr}&sdk_ticket=${ticket}&timestamp=${timestamp}`;
           const signature = cryptoSha1(signaturePrams);
-          const params = { appid: wx_appid, noncestr, timestamp, scope: 'snsapi_userinfo', signature };
+          const params = { appid: appid, noncestr, timestamp, scope: 'snsapi_userinfo', signature };
           const connect = await axios({ url: 'https://open.weixin.qq.com/connect/sdk/qrconnect', params });
 
           if (connect.data?.errcode === 0) {

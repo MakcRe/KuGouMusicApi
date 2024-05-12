@@ -2,7 +2,8 @@ const axios = require('axios');
 const { cryptoMd5 } = require('./crypto');
 const { signKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
 const { parseCookieString } = require('./util');
-const { appid, clientver, apiver } = require('./config.json');
+const { appid, clientver, apiver, liteAppid, liteClientver } = require('./config.json');
+
 
 /**
  * 请求创建
@@ -11,14 +12,17 @@ const { appid, clientver, apiver } = require('./config.json');
  */
 const createRequest = (options) => {
   return new Promise(async (resolve, reject) => {
+    const isLite = Boolean(process.env.isLite);
     const dfid = options?.cookie?.dfid || '-'; // 自定义
     const mid = cryptoMd5(dfid); // 可以自定义
     const uuid = cryptoMd5(`${dfid}${mid}`); // 可以自定义
     const token = options?.cookie?.token || '';
     const userid = options?.cookie?.userid || 0;
-    const clienttime = Date.now();
+    const clienttime = Math.floor(Date.now() / 1000);
     const ip = options?.realIP || options?.ip || '';
     const headers = { dfid, clienttime, mid };
+
+    console.log(isLite);
 
     if (ip) {
       headers['X-Real-IP'] = ip;
@@ -29,9 +33,9 @@ const createRequest = (options) => {
       dfid,
       mid,
       uuid,
-      appid: appid,
-      apiver: apiver,
-      clientver: clientver,
+      appid: isLite ? liteAppid : appid,
+      // apiver: apiver,
+      clientver: isLite ? liteClientver : clientver,
       userid,
       clienttime,
     };
@@ -77,6 +81,8 @@ const createRequest = (options) => {
       withCredentials: true,
       responseType: options.responseType,
     };
+
+    console.log(requestOptions);
 
     if (options.data) requestOptions.data = options.data;
     if (params) requestOptions.params = params;

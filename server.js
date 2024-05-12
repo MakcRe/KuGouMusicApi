@@ -3,24 +3,33 @@ const path = require('node:path');
 const express = require('express');
 const decode = require('safe-decode-uri-component');
 const { cookieToJson, createRequest } = require('./util');
+const dotenv = require('dotenv');
 const cache = require('./util/apicache').middleware;
+
+const envPath = path.join(process.cwd(), '.env');
+
+if (fs.existsSync(envPath)) {
+  dotenv.config(envPath);
+}
+
+process.env.isLite = `${process.env.platform === 'lite'}`;
 
 /**
  *  描述：动态获取模块定义
  * @param {string}  modulesPath  模块路径(TS)
  * @param {Record<string, string>} specificRoute  特定模块定义
  * @param {boolean} doRequire  如果为 true，则使用 require 加载模块, 否则打印模块路径， 默认为true
- * @returns { Promise<ModuleDefinition[]> }
+ * @return { Promise<ModuleDefinition[]> }
  * @example getModuleDefinitions("./module", {"album_new.js": "/album/create"})
  */
-const getModulesDefinitions = async (modulesPath, specificRoute, doRequire = true) => {
+async function getModulesDefinitions(modulesPath, specificRoute, doRequire = true) {
   const files = await fs.promises.readdir(modulesPath);
-  const parseRoute = (fileName) =>
+  const parseRoute = fileName =>
     specificRoute && fileName in specificRoute ? specificRoute[fileName] : `/${fileName.replace(/\.(js)$/i, '').replace(/_/g, '/')}`;
 
   return files
     .reverse()
-    .filter((fileName) => fileName.endsWith('.js') && !fileName.startsWith('_'))
+    .filter(fileName => fileName.endsWith('.js') && !fileName.startsWith('_'))
     .map((fileName) => {
       const identifier = fileName.split('.').shift();
       const route = parseRoute(fileName);
@@ -28,14 +37,14 @@ const getModulesDefinitions = async (modulesPath, specificRoute, doRequire = tru
       const module = doRequire ? require(modulePath) : modulePath;
       return { identifier, route, module };
     });
-};
+}
 
 /**
  * 创建服务
  * @param {ModuleDefinition[]} moduleDefs
- * @returns {Promise<Express>}
+ * @return {Promise<express.Express>}
  */
-const consturctServer = async (moduleDefs) => {
+async function consturctServer(moduleDefs) {
   const app = express();
   const { CORS_ALLOW_ORIGIN } = process.env;
   app.set('trust proxy', true);
@@ -61,11 +70,27 @@ const consturctServer = async (moduleDefs) => {
     req.cookies = {};
     (req.headers.cookie || '').split(/;\s+|(?<!\s)\s+$/g).forEach((pair) => {
       const crack = pair.indexOf('=');
-      if (crack < 1 || crack == pair.length - 1) return;
+      if (crack < 1 || crack === pair.length - 1) {
+        return;
+      }
       req.cookies[decode(pair.slice(0, crack)).trim()] = decode(pair.slice(crack + 1)).trim();
     });
     next();
   });
+
+  // 将当前平台写入Cookie 以方便查看
+  app.use((req, res, next) => {
+    const cookies = (req.headers.cookie || '').split(/;\s+|(?<!\s)\s+$/g);
+    if (!cookies.includes('KUGOU_API_PLATFORM')) {
+      if (req.protocol === 'https') {
+        res.append('Set-Cookie', `KUGOU_API_PLATFORM=${process.env.platform}; PATH=/; SameSite=None; Secure`);
+      } else {
+        res.append('Set-Cookie', `KUGOU_API_PLATFORM=${process.env.platform}; PATH=/`);
+      }
+    }
+
+    next();
+  })
 
   // Body Parser
   app.use(express.json());
@@ -95,12 +120,12 @@ const consturctServer = async (moduleDefs) => {
         }
       });
 
-      let query = Object.assign({}, { cookie: req.cookies }, req.query, { body: req.body });
+      const query = Object.assign({}, { cookie: req.cookies }, req.query, { body: req.body });
 
       try {
         const moduleResponse = await moduleDef.module(query, (config) => {
           let ip = req.ip;
-          if (ip.substring(0, 7) == '::ffff:') {
+          if (ip.substring(0, 7) === '::ffff:') {
             ip = ip.substring(7);
           }
           config.ip = ip;
@@ -117,15 +142,15 @@ const consturctServer = async (moduleDefs) => {
               res.append(
                 'Set-Cookie',
                 cookies.map((cookie) => {
-                  return cookie + '; PATH=/; SameSite=None; Secure';
-                })
+                  return `${cookie}; PATH=/; SameSite=None; Secure`;
+                }),
               );
             } else {
               res.append(
                 'Set-Cookie',
                 cookies.map((cookie) => {
-                  return cookie + '; PATH=/';
-                })
+                  return `${cookie}; PATH=/`;
+                }),
               );
             }
           }
@@ -154,9 +179,9 @@ const consturctServer = async (moduleDefs) => {
   }
 
   return app;
-};
+}
 
-const startService = async () => {
+async function startService() {
   const port = Number(process.env.PORT || '3000');
   const host = process.env.HOST || '';
 
@@ -165,10 +190,10 @@ const startService = async () => {
   const appExt = app;
 
   appExt.service = app.listen(port, host, () => {
-    console.log(`server running @ http://${host ? host : 'localhost'}:${port}`);
+    console.log(`server running @ http://${host || 'localhost'}:${port}`);
   });
 
   return appExt;
-};
+}
 
 module.exports = { startService };

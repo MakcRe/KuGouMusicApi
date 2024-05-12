@@ -24,3 +24,4 @@ bin/*
 *.njsproj
 *.sln
 *.sw?
+.env

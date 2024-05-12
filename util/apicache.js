@@ -2,10 +2,10 @@
  * 该缓存中间件文件来源与 [Binaryify/NeteaseCloudMusicApi](ttps://github.com/Binaryify/NeteaseCloudMusicApi)
  */
 
-var url = require('url');
-var MemoryCache = require('./memory-cache');
+const url = require('node:url');
+const MemoryCache = require('./memory-cache');
 
-var t = {
+const t = {
   ms: 1,
   second: 1000,
   minute: 60000,
@@ -15,23 +15,23 @@ var t = {
   month: 3600000 * 24 * 30,
 };
 
-var instances = [];
+const instances = [];
 
-var matches = function (a) {
+const matches = function (a) {
   return function (b) {
     return a === b;
   };
 };
 
-var doesntMatch = function (a) {
+const doesntMatch = function (a) {
   return function (b) {
     return !matches(a)(b);
   };
 };
 
-var logDuration = function (d, prefix) {
-  var str = d > 1000 ? (d / 1000).toFixed(2) + 'sec' : d + 'ms';
-  return '\x1b[33m- ' + (prefix ? prefix + ' ' : '') + str + '\x1b[0m';
+const logDuration = function (d, prefix) {
+  const str = d > 1000 ? `${(d / 1000).toFixed(2)}sec` : `${d}ms`;
+  return `\x1B[33m- ${prefix ? `${prefix} ` : ''}${str}\x1B[0m`;
 };
 
 function getSafeHeaders(res) {
@@ -39,9 +39,9 @@ function getSafeHeaders(res) {
 }
 
 function ApiCache() {
-  var memCache = new MemoryCache();
+  const memCache = new MemoryCache();
 
-  var globalOptions = {
+  const globalOptions = {
     debug: false,
     defaultDuration: 3600000,
     enabled: true,
@@ -62,46 +62,52 @@ function ApiCache() {
     trackPerformance: false,
   };
 
-  var middlewareOptions = [];
-  var instance = this;
-  var index = null;
-  var timers = {};
-  var performanceArray = []; // for tracking cache hit rate
+  const middlewareOptions = [];
+  const instance = this;
+  let index = null;
+  const timers = {};
+  const performanceArray = []; // for tracking cache hit rate
 
   instances.push(this);
   this.id = instances.length;
 
   function debug(a, b, c, d) {
-    var arr = ['\x1b[36m[apicache]\x1b[0m', a, b, c, d].filter(function (arg) {
+    const arr = ['\x1B[36m[apicache]\x1B[0m', a, b, c, d].filter((arg) => {
       return arg !== undefined;
     });
-    var debugEnv = process.env.DEBUG && process.env.DEBUG.split(',').indexOf('apicache') !== -1;
+    const debugEnv = process.env.DEBUG && process.env.DEBUG.split(',').includes('apicache');
 
     return (globalOptions.debug || debugEnv) && console.log.apply(null, arr);
   }
 
   function shouldCacheResponse(request, response, toggle) {
-    var opt = globalOptions;
-    var codes = opt.statusCodes;
+    const opt = globalOptions;
+    const codes = opt.statusCodes;
 
-    if (!response) return false;
+    if (!response) {
+      return false;
+    }
 
     if (toggle && !toggle(request, response)) {
       return false;
     }
 
-    if (codes.exclude && codes.exclude.length && codes.exclude.indexOf(response.statusCode) !== -1) return false;
-    if (codes.include && codes.include.length && codes.include.indexOf(response.statusCode) === -1) return false;
+    if (codes.exclude && codes.exclude.length && codes.exclude.includes(response.statusCode)) {
+      return false;
+    }
+    if (codes.include && codes.include.length && !codes.include.includes(response.statusCode)) {
+      return false;
+    }
 
     return true;
   }
 
   function addIndexEntries(key, req) {
-    var groupName = req.apicacheGroup;
+    const groupName = req.apicacheGroup;
 
     if (groupName) {
-      debug('group detected "' + groupName + '"');
-      var group = (index.groups[groupName] = index.groups[groupName] || []);
+      debug(`group detected "${groupName}"`);
+      const group = (index.groups[groupName] = index.groups[groupName] || []);
       group.unshift(key);
     }
 
@@ -110,10 +116,10 @@ function ApiCache() {
 
   function filterBlacklistedHeaders(headers) {
     return Object.keys(headers)
-      .filter(function (key) {
-        return globalOptions.headerBlacklist.indexOf(key) === -1;
+      .filter((key) => {
+        return !globalOptions.headerBlacklist.includes(key);
       })
-      .reduce(function (acc, header) {
+      .reduce((acc, header) => {
         acc[header] = headers[header];
         return acc;
       }, {});
@@ -121,23 +127,23 @@ function ApiCache() {
 
   function createCacheObject(status, headers, data, encoding) {
     return {
-      status: status,
+      status,
       headers: filterBlacklistedHeaders(headers),
-      data: data,
-      encoding: encoding,
+      data,
+      encoding,
       timestamp: new Date().getTime() / 1000, // seconds since epoch.  This is used to properly decrement max-age headers in cached responses.
     };
   }
 
   function cacheResponse(key, value, duration) {
-    var redis = globalOptions.redisClient;
-    var expireCallback = globalOptions.events.expire;
+    const redis = globalOptions.redisClient;
+    const expireCallback = globalOptions.events.expire;
 
     if (redis && redis.connected) {
       try {
         redis.hset(key, 'response', JSON.stringify(value));
         redis.hset(key, 'duration', duration);
-        redis.expire(key, duration / 1000, expireCallback || function () {});
+        redis.expire(key, duration / 1000, expireCallback || (() => {}));
       } catch (err) {
         debug('[apicache] error in redis.hset()');
       }
@@ -146,7 +152,7 @@ function ApiCache() {
     }
 
     // add automatic cache clearing from duration, includes max limit on setTimeout
-    timers[key] = setTimeout(function () {
+    timers[key] = setTimeout(() => {
       instance.clear(key, true);
     }, Math.min(duration, 2147483647));
   }
@@ -156,14 +162,14 @@ function ApiCache() {
       if (typeof content == 'string') {
         res._apicache.content = (res._apicache.content || '') + content;
       } else if (Buffer.isBuffer(content)) {
-        var oldContent = res._apicache.content;
+        let oldContent = res._apicache.content;
 
         if (typeof oldContent === 'string') {
           oldContent = !Buffer.from ? new Buffer(oldContent) : Buffer.from(oldContent);
         }
 
         if (!oldContent) {
-          oldContent = !Buffer.alloc ? new Buffer(0) : Buffer.alloc(0);
+          oldContent = !Buffer.alloc ? Buffer.alloc(0) : Buffer.alloc(0);
         }
 
         res._apicache.content = Buffer.concat([oldContent, content], oldContent.length + content.length);
@@ -184,7 +190,7 @@ function ApiCache() {
     };
 
     // append header overwrites if applicable
-    Object.keys(globalOptions.headers).forEach(function (name) {
+    Object.keys(globalOptions.headers).forEach((name) => {
       res.setHeader(name, globalOptions.headers[name]);
     });
 
@@ -192,7 +198,7 @@ function ApiCache() {
       // add cache control headers
       if (!globalOptions.headers['cache-control']) {
         if (shouldCacheResponse(req, res, toggle)) {
-          res.setHeader('cache-control', 'max-age=' + (duration / 1000).toFixed(0));
+          res.setHeader('cache-control', `max-age=${(duration / 1000).toFixed(0)}`);
         } else {
           res.setHeader('cache-control', 'no-cache, no-store, must-revalidate');
         }
@@ -215,13 +221,13 @@ function ApiCache() {
 
         if (res._apicache.cacheable && res._apicache.content) {
           addIndexEntries(key, req);
-          var headers = res._apicache.headers || getSafeHeaders(res);
-          var cacheObject = createCacheObject(res.statusCode, headers, res._apicache.content, encoding);
+          const headers = res._apicache.headers || getSafeHeaders(res);
+          const cacheObject = createCacheObject(res.statusCode, headers, res._apicache.content, encoding);
           cacheResponse(key, cacheObject, duration);
 
           // display log entry
-          var elapsed = new Date() - req.apicacheTimer;
-          debug('adding cache entry for "' + key + '" @ ' + strDuration, logDuration(elapsed));
+          const elapsed = new Date() - req.apicacheTimer;
+          debug(`adding cache entry for "${key}" @ ${strDuration}`, logDuration(elapsed));
           debug('_apicache.headers: ', res._apicache.headers);
           debug('res.getHeaders(): ', getSafeHeaders(res));
           debug('cacheObject: ', cacheObject);
@@ -239,24 +245,24 @@ function ApiCache() {
       return next();
     }
 
-    var headers = getSafeHeaders(response);
+    const headers = getSafeHeaders(response);
 
     Object.assign(headers, filterBlacklistedHeaders(cacheObject.headers || {}), {
       // set properly-decremented max-age header.  This ensures that max-age is in sync with the cache expiration.
-      'cache-control': 'max-age=' + Math.max(0, (duration / 1000 - (new Date().getTime() / 1000 - cacheObject.timestamp)).toFixed(0)),
+      'cache-control': `max-age=${Math.max(0, (duration / 1000 - (new Date().getTime() / 1000 - cacheObject.timestamp)).toFixed(0))}`,
     });
 
     // only embed apicache headers when not in production environment
 
     // unstringify buffers
-    var data = cacheObject.data;
+    let data = cacheObject.data;
     if (data && data.type === 'Buffer') {
       data = typeof data.data === 'number' ? new Buffer.alloc(data.data) : new Buffer.from(data.data);
     }
 
     // test Etag against If-None-Match for 304
-    var cachedEtag = cacheObject.headers.etag;
-    var requestEtag = request.headers['if-none-match'];
+    const cachedEtag = cacheObject.headers.etag;
+    const requestEtag = request.headers['if-none-match'];
 
     if (requestEtag && cachedEtag === requestEtag) {
       response.writeHead(304, headers);
@@ -269,20 +275,20 @@ function ApiCache() {
   }
 
   function syncOptions() {
-    for (var i in middlewareOptions) {
+    for (const i in middlewareOptions) {
       Object.assign(middlewareOptions[i].options, globalOptions, middlewareOptions[i].localOptions);
     }
   }
 
   this.clear = function (target, isAutomatic) {
-    var group = index.groups[target];
-    var redis = globalOptions.redisClient;
+    const group = index.groups[target];
+    const redis = globalOptions.redisClient;
 
     if (group) {
-      debug('clearing group "' + target + '"');
+      debug(`clearing group "${target}"`);
 
-      group.forEach(function (key) {
-        debug('clearing cached entry for "' + key + '"');
+      group.forEach((key) => {
+        debug(`clearing cached entry for "${key}"`);
         clearTimeout(timers[key]);
         delete timers[key];
         if (!globalOptions.redisClient) {
@@ -291,7 +297,7 @@ function ApiCache() {
           try {
             redis.del(key);
           } catch (err) {
-            console.log('[apicache] error in redis.del("' + key + '")');
+            console.log(`[apicache] error in redis.del("${key}")`);
           }
         }
         index.all = index.all.filter(doesntMatch(key));
@@ -299,7 +305,7 @@ function ApiCache() {
 
       delete index.groups[target];
     } else if (target) {
-      debug('clearing ' + (isAutomatic ? 'expired' : 'cached') + ' entry for "' + target + '"');
+      debug(`clearing ${isAutomatic ? 'expired' : 'cached'} entry for "${target}"`);
       clearTimeout(timers[target]);
       delete timers[target];
       // clear actual cached entry
@@ -309,7 +315,7 @@ function ApiCache() {
         try {
           redis.del(target);
         } catch (err) {
-          console.log('[apicache] error in redis.del("' + target + '")');
+          console.log(`[apicache] error in redis.del("${target}")`);
         }
       }
 
@@ -317,7 +323,7 @@ function ApiCache() {
       index.all = index.all.filter(doesntMatch(target));
 
       // remove target from each group that it may exist in
-      Object.keys(index.groups).forEach(function (groupName) {
+      Object.keys(index.groups).forEach((groupName) => {
         index.groups[groupName] = index.groups[groupName].filter(doesntMatch(target));
 
         // delete group if now empty
@@ -332,13 +338,13 @@ function ApiCache() {
         memCache.clear();
       } else {
         // clear redis keys one by one from internal index to prevent clearing non-apicache entries
-        index.all.forEach(function (key) {
+        index.all.forEach((key) => {
           clearTimeout(timers[key]);
           delete timers[key];
           try {
             redis.del(key);
           } catch (err) {
-            console.log('[apicache] error in redis.del("' + key + '")');
+            console.log(`[apicache] error in redis.del("${key}")`);
           }
         });
       }
@@ -349,14 +355,16 @@ function ApiCache() {
   };
 
   function parseDuration(duration, defaultDuration) {
-    if (typeof duration === 'number') return duration;
+    if (typeof duration === 'number') {
+      return duration;
+    }
 
     if (typeof duration === 'string') {
-      var split = duration.match(/^([\d\.,]+)\s?(\w+)$/);
+      const split = duration.match(/^([\d\.,]+)\s?(\w+)$/);
 
       if (split.length === 3) {
-        var len = parseFloat(split[1]);
-        var unit = split[2].replace(/s$/i, '').toLowerCase();
+        const len = Number.parseFloat(split[1]);
+        let unit = split[2].replace(/s$/i, '').toLowerCase();
         if (unit === 'm') {
           unit = 'ms';
         }
@@ -381,7 +389,7 @@ function ApiCache() {
    * </code>
    */
   this.getPerformance = function () {
-    return performanceArray.map(function (p) {
+    return performanceArray.map((p) => {
       return p.report();
     });
   };
@@ -395,16 +403,16 @@ function ApiCache() {
   };
 
   this.middleware = function cache(strDuration, middlewareToggle, localOptions) {
-    var duration = instance.getDuration(strDuration);
-    var opt = {};
+    const duration = instance.getDuration(strDuration);
+    const opt = {};
 
     middlewareOptions.push({
       options: opt,
     });
 
-    var options = function (localOptions) {
+    const options = function (localOptions) {
       if (localOptions) {
-        middlewareOptions.find(function (middleware) {
+        middlewareOptions.find((middleware) => {
           return middleware.options === opt;
         }).localOptions = localOptions;
       }
@@ -495,10 +503,10 @@ function ApiCache() {
        * @returns a number between 0 and 1, or null if the array has no hits or misses
        */
       this.hitRate = function (array) {
-        var hits = 0;
-        var misses = 0;
-        for (var i = 0; i < array.length; i++) {
-          var n8 = array[i];
+        let hits = 0;
+        let misses = 0;
+        for (let i = 0; i < array.length; i++) {
+          let n8 = array[i];
           for (j = 0; j < 4; j++) {
             switch (n8 & 3) {
               case 1:
@@ -511,8 +519,10 @@ function ApiCache() {
             n8 >>= 2;
           }
         }
-        var total = hits + misses;
-        if (total == 0) return null;
+        const total = hits + misses;
+        if (total == 0) {
+          return null;
+        }
         return hits / total;
       };
 
@@ -528,10 +538,10 @@ function ApiCache() {
        * 10 encodes a miss
        */
       this.recordHitInArray = function (array, hit) {
-        var arrayIndex = ~~(this.callCount / 4) % array.length;
-        var bitOffset = (this.callCount % 4) * 2; // 2 bits per record, 4 records per uint8 array element
-        var clearMask = ~(3 << bitOffset);
-        var record = (hit ? 1 : 2) << bitOffset;
+        const arrayIndex = ~~(this.callCount / 4) % array.length;
+        const bitOffset = (this.callCount % 4) * 2; // 2 bits per record, 4 records per uint8 array element
+        const clearMask = ~(3 << bitOffset);
+        const record = (hit ? 1 : 2) << bitOffset;
         array[arrayIndex] = (array[arrayIndex] & clearMask) | record;
       };
 
@@ -544,7 +554,9 @@ function ApiCache() {
         this.recordHitInArray(this.hitsLast1000, hit);
         this.recordHitInArray(this.hitsLast10000, hit);
         this.recordHitInArray(this.hitsLast100000, hit);
-        if (hit) this.hitCount++;
+        if (hit) {
+          this.hitCount++;
+        }
         this.callCount++;
       };
 
@@ -567,19 +579,23 @@ function ApiCache() {
       };
     }
 
-    var perf = globalOptions.trackPerformance ? new CachePerformance() : new NOOPCachePerformance();
+    const perf = globalOptions.trackPerformance ? new CachePerformance() : new NOOPCachePerformance();
 
     performanceArray.push(perf);
 
-    var cache = function (req, res, next) {
+    const cache = function (req, res, next) {
       function bypass() {
         debug('bypass detected, skipping cache.');
         return next();
       }
 
       // initial bypass chances
-      if (!opt.enabled) return bypass();
-      if (req.headers['x-apicache-bypass'] || req.headers['x-apicache-force-fetch']) return bypass();
+      if (!opt.enabled) {
+        return bypass();
+      }
+      if (req.headers['x-apicache-bypass'] || req.headers['x-apicache-force-fetch']) {
+        return bypass();
+      }
 
       // REMOVED IN 0.11.1 TO CORRECT MIDDLEWARE TOGGLE EXECUTE ORDER
       // if (typeof middlewareToggle === 'function') {
@@ -592,7 +608,7 @@ function ApiCache() {
       req.apicacheTimer = new Date();
 
       // In Express 4.x the url is ambigious based on where a router is mounted.  originalUrl will give the full Url
-      var key = req.hostname + (req.originalUrl || req.url);
+      let key = req.hostname + (req.originalUrl || req.url);
       // Remove querystring from key if jsonp option is enabled
       if (opt.jsonp) {
         key = url.parse(key).pathname;
@@ -600,23 +616,23 @@ function ApiCache() {
 
       // add appendKey (either custom function or response path)
       if (typeof opt.appendKey === 'function') {
-        key += '$$appendKey=' + opt.appendKey(req, res);
+        key += `$$appendKey=${opt.appendKey(req, res)}`;
       } else if (opt.appendKey.length > 0) {
-        var appendKey = req;
+        let appendKey = req;
 
-        for (var i = 0; i < opt.appendKey.length; i++) {
+        for (let i = 0; i < opt.appendKey.length; i++) {
           appendKey = appendKey[opt.appendKey[i]];
         }
-        key += '$$appendKey=' + appendKey;
+        key += `$$appendKey=${appendKey}`;
       }
 
       // attempt cache hit
-      var redis = opt.redisClient;
-      var cached = !redis ? memCache.getValue(key) : null;
+      const redis = opt.redisClient;
+      const cached = !redis ? memCache.getValue(key) : null;
 
       // send if cache hit from memory-cache
       if (cached) {
-        var elapsed = new Date() - req.apicacheTimer;
+        const elapsed = new Date() - req.apicacheTimer;
         debug('sending cached (memory-cache) version of', key, logDuration(elapsed));
 
         perf.hit(key);
@@ -626,9 +642,9 @@ function ApiCache() {
       // send if cache hit from redis
       if (redis && redis.connected) {
         try {
-          redis.hgetall(key, function (err, obj) {
+          redis.hgetall(key, (err, obj) => {
             if (!err && obj && obj.response) {
-              var elapsed = new Date() - req.apicacheTimer;
+              const elapsed = new Date() - req.apicacheTimer;
               debug('sending cached (redis) version of', key, logDuration(elapsed));
 
               perf.hit(key);
@@ -682,7 +698,7 @@ function ApiCache() {
   };
 
   this.newInstance = function (config) {
-    var instance = new ApiCache();
+    const instance = new ApiCache();
 
     if (config) {
       instance.options(config);

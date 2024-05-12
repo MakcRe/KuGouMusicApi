@@ -1,5 +1,7 @@
 const { cryptoMd5 } = require('./crypto');
-const { appid: useAppid, clientver: useClientver } = require('./config.json');
+const { appid: useAppid, liteAppid, clientver: useClientver, liteClientver } = require('./config.json');
+
+
 
 /**
  * web版本 signature 加密
@@ -22,7 +24,8 @@ const signatureWebParams = (params) => {
  * @returns {string} 加密后的signature
  */
 const signatureAndroidParams = (params, data) => {
-  const str = `OIlwieks28dk2k092lksi2UIkp`;
+  const isLite = Boolean(process.env.isLite);
+  const str = isLite ? 'LnT6xpN3khm36zse0QzvmgTZ3waWdRSA' : `OIlwieks28dk2k092lksi2UIkp`;
   const paramsString = Object.keys(params)
     .sort()
     .map((key) => `${key}=${typeof params[key] === 'object' ? JSON.stringify(params[key]) : params[key]}`)
@@ -79,7 +82,14 @@ const signKey = (hash, mid, userid, appid) => {
  */
 
 const signParamsKey = (data, appid, clientver) => {
-  return cryptoMd5(`${appid || useAppid}OIlwieks28dk2k092lksi2UIkp${clientver || useClientver}${data}`);
+  const isLite = Boolean(process.env.isLite);
+  const str = isLite ? 'LnT6xpN3khm36zse0QzvmgTZ3waWdRSA' : 'OIlwieks28dk2k092lksi2UIkp';
+
+  appid = appid || (isLite ? liteAppid : useAppid);
+
+  clientver = clientver || (isLite ? liteClientver : useClientver);
+
+  return cryptoMd5(`${appid}${str}${clientver}${data}`);
 };
 
 module.exports = {

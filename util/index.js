@@ -1,4 +1,4 @@
-const { apiver, appid, wx_appid, wx_secret, srcappid, clientver } = require('./config.json');
+const { apiver, appid, wx_appid, wx_lite_appid, wx_secret, wx_lite_secret, srcappid, clientver, liteAppid ,liteClientver } = require('./config.json');
 const {
   cryptoAesDecrypt,
   cryptoAesEncrypt,
@@ -8,6 +8,8 @@ const {
   rsaEncrypt2,
   playlistAesEncrypt,
   playlistAesDecrypt,
+  publicLiteRasKey,
+  publicRasKey
 } = require('./crypto');
 const { createRequest } = require('./request');
 const { signKey, signParams, signParamsKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
@@ -16,8 +18,12 @@ const { randomString, decodeLyrics, parseCookieString, cookieToJson } = require(
 module.exports = {
   apiver,
   appid,
+  liteAppid,
+  liteClientver,
   wx_appid,
+  wx_lite_appid,
   wx_secret,
+  wx_lite_secret,
   srcappid,
   clientver,
   cryptoAesDecrypt,
@@ -39,4 +45,6 @@ module.exports = {
   decodeLyrics,
   parseCookieString,
   cookieToJson,
+  publicLiteRasKey,
+  publicRasKey,
 };
