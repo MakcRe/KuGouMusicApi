@@ -22,7 +22,6 @@ const createRequest = (options) => {
     const ip = options?.realIP || options?.ip || '';
     const headers = { dfid, clienttime, mid };
 
-    console.log(isLite);
 
     if (ip) {
       headers['X-Real-IP'] = ip;
