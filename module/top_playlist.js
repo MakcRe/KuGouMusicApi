@@ -1,9 +1,10 @@
 // 歌单
 // categoryid 0：推荐，11292：HI-RES
 
-const { appid, clientver, signParamsKey, cryptoMd5 } = require('../util');
+const { appid, clientver, signParamsKey, cryptoMd5, liteAppid, liteClientver } = require('../util');
 
 module.exports = (params, useAxios) => {
+  const isLite = process.env.isLite;
   const dateTime = (Date.now() / 1000).toFixed(0);
   const specialRecommend = {
     withtag: params?.withtag || 1,
@@ -17,21 +18,24 @@ module.exports = (params, useAxios) => {
   };
 
   const dataMap = {
-    appid,
+    appid: isLite ? liteAppid : appid,
     mid: cryptoMd5(params?.dfid || params?.cookie?.dfid || '-'),
-    clientver,
+    clientver: isLite ? liteClientver : clientver,
     platform: 'android',
     clienttime: dateTime,
     userid: params?.userid || params?.cookie?.userid || 0,
-    module_id: params?.module_id || 4,
+    module_id: params?.module_id || 1,
     page: params?.page || 1,
     pagesize: params?.pagesize || 30,
     key: signParamsKey(dateTime.toString()),
     special_recommend: specialRecommend,
+    req_multi: 1,
+    retrun_min: 5,
+    return_special_falg: 1
   };
 
   return useAxios({
-    url: '/special_recommend',
+    url: '/v2/special_recommend',
     encryptType: 'android',
     method: 'POST',
     data: dataMap,
