@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { wx_appid, wx_secret, cryptoMd5, cryptoSha1, randomString, wx_lite_appid, wx_lite_secret } = require('../util');
 
-const isLite = Boolean(process.env.isLite);
+const isLite = process.env.platform === 'lite';
 
 const appid = isLite ? wx_lite_appid : wx_appid;
 const secret = isLite ? wx_lite_secret : wx_secret;

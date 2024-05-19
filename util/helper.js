@@ -24,7 +24,7 @@ const signatureWebParams = (params) => {
  * @returns {string} 加密后的signature
  */
 const signatureAndroidParams = (params, data) => {
-  const isLite = Boolean(process.env.isLite);
+  const isLite = process.env.platform === 'lite';
   const str = isLite ? 'LnT6xpN3khm36zse0QzvmgTZ3waWdRSA' : `OIlwieks28dk2k092lksi2UIkp`;
   const paramsString = Object.keys(params)
     .sort()
@@ -82,7 +82,7 @@ const signKey = (hash, mid, userid, appid) => {
  */
 
 const signParamsKey = (data, appid, clientver) => {
-  const isLite = Boolean(process.env.isLite);
+  const isLite = process.env.platform === 'lite';
   const str = isLite ? 'LnT6xpN3khm36zse0QzvmgTZ3waWdRSA' : 'OIlwieks28dk2k092lksi2UIkp';
 
   appid = appid || (isLite ? liteAppid : useAppid);

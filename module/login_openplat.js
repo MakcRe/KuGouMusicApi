@@ -9,7 +9,7 @@ const {
   wx_lite_appid,
   wx_lite_secret,
 } = require('../util');
-const isLite = Boolean(process.env.isLite);
+const isLite = process.env.platform === 'lite';
 const appid = isLite ? wx_lite_appid : wx_appid;
 const secret = isLite ? wx_lite_secret : wx_secret;
 

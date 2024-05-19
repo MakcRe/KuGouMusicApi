@@ -12,7 +12,6 @@ if (fs.existsSync(envPath)) {
   dotenv.config(envPath);
 }
 
-process.env.isLite = `${process.env.platform === 'lite'}`;
 
 /**
  *  描述：动态获取模块定义

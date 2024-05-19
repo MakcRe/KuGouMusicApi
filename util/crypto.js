@@ -76,7 +76,7 @@ function cryptoAesDecrypt(data, key, iv) {
  * @returns {string} hex
  */
 function cryptoRSAEncrypt(data, publicKey) {
-  const isLite = Boolean(process.env.isLite);
+  const isLite = process.env.platform === 'lite';
   if (typeof data === 'object') data = JSON.stringify(data);
   const buffer = Buffer.isBuffer(data) ? data : Buffer.from(data);
   const _buffer = Buffer.concat([buffer, Buffer.alloc(128 - buffer.length)]);

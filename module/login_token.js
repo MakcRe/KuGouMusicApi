@@ -1,7 +1,7 @@
 // 刷新登录
 const { cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncrypt } = require('../util');
 
-const isLite = Boolean(process.env.isLite);
+const isLite = process.env.platform === 'lite';
 
 const key = '90b8382a1bb4ccdcf063102053fd75b8';
 const iv = 'f063102053fd75b8';
@@ -16,6 +16,7 @@ module.exports = (params, useAxios) => {
   const encrypt = cryptoAesEncrypt({ clienttime: Math.floor(dateNow / 1000), token }, { key: isLite ? liteKey : key, iv: isLite ? liteIv : iv });
   const encryptParams = cryptoAesEncrypt({});
   const pk = cryptoRSAEncrypt({ clienttime_ms: dateNow, key: encryptParams.key });
+
 
 
   const dataMap = {

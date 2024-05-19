@@ -4,7 +4,6 @@ const { signKey, signatureAndroidParams, signatureRegisterParams, signatureWebPa
 const { parseCookieString } = require('./util');
 const { appid, clientver, apiver, liteAppid, liteClientver } = require('./config.json');
 
-
 /**
  * 请求创建
  * @param {UseAxiosRequestConfig} options
@@ -12,7 +11,7 @@ const { appid, clientver, apiver, liteAppid, liteClientver } = require('./config
  */
 const createRequest = (options) => {
   return new Promise(async (resolve, reject) => {
-    const isLite = Boolean(process.env.isLite);
+    const isLite = process.env.platform === 'lite';
     const dfid = options?.cookie?.dfid || '-'; // 自定义
     const mid = cryptoMd5(dfid); // 可以自定义
     const uuid = cryptoMd5(`${dfid}${mid}`); // 可以自定义
@@ -21,7 +20,6 @@ const createRequest = (options) => {
     const clienttime = Math.floor(Date.now() / 1000);
     const ip = options?.realIP || options?.ip || '';
     const headers = { dfid, clienttime, mid };
-
 
     if (ip) {
       headers['X-Real-IP'] = ip;
@@ -80,8 +78,6 @@ const createRequest = (options) => {
       withCredentials: true,
       responseType: options.responseType,
     };
-
-    console.log(requestOptions);
 
     if (options.data) requestOptions.data = options.data;
     if (params) requestOptions.params = params;

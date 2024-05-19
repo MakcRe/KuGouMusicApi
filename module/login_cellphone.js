@@ -4,7 +4,7 @@ const { cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncrypt, signParamsKey } = 
 
 
 module.exports = (params, useAxios) => {
-  const isLite = Boolean(process.env.isLite);
+  const isLite = process.env.platform === 'lite';
   const dateTime = Date.now();
   const encrypt = cryptoAesEncrypt({ mobile: params?.mobile || '', code: params?.code || '' });
   let dataMap = {
