@@ -82,7 +82,7 @@ const createRequest = (options) => {
     if (options.data) requestOptions.data = options.data;
     if (params) requestOptions.params = params;
 
-    if (options.baseURL?.includes('openapicdn') || options.url.includes('opern_square')) {
+    if (options.baseURL?.includes('openapicdn')) {
       const url = requestOptions.url;
       const _params = Object.keys(params)
         .map((key) => `${key}=${params[key]}`)

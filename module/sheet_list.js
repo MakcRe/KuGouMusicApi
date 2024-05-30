@@ -1,5 +1,4 @@
-// 乐谱列表
-
+// 乐谱列表 // 0全部，1、钢琴，2、吉他，3、鼓谱，98：简谱，99:其他
 module.exports = (params, useAxios) => {
   const paramsMap = {
     album_audio_id: params.album_audio_id,
