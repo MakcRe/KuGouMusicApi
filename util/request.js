@@ -82,7 +82,7 @@ const createRequest = (options) => {
     if (options.data) requestOptions.data = options.data;
     if (params) requestOptions.params = params;
 
-    if (options.baseURL?.includes('openapicdn')) {
+    if (options.baseURL?.includes('openapicdn') || options.url.includes('opern_square')) {
       const url = requestOptions.url;
       const _params = Object.keys(params)
         .map((key) => `${key}=${params[key]}`)
@@ -90,6 +90,9 @@ const createRequest = (options) => {
       requestOptions.url = `${url}?${_params}`;
       requestOptions.params = {};
     }
+
+    console.log(requestOptions.params);
+
 
     const answer = { status: 500, body: {}, cookie: [], headers: {} };
     try {
