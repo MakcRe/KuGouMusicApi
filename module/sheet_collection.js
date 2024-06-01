@@ -1,7 +1,8 @@
+const { srcappid} = require('../util');
 // 乐谱详情
 module.exports = (params, useAxios) => {
   const paramsMap = {
-    srcappid: 2919,
+    srcappid,
     position: params.position ?? 2
   }
   return useAxios({

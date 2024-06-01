@@ -1,7 +1,8 @@
-// 乐谱详情
+const { srcappid } = require('../util');
+// 乐谱合集详情
 module.exports = (params, useAxios) => {
   const paramsMap = {
-    srcappid: 2919,
+    srcappid,
     page: params.page ?? 1,
     collection_id: params.collection_id
   }

@@ -322,7 +322,7 @@ $ set HOST=127.0.0.1 && npm run dev
 
 **可选参数：**
 
-`base64`: 传入后会额外返回二维码图片 base64 编码
+`qrimg`: 传入后会额外返回二维码图片 base64 编码
 
 **接口地址：** `/login/qr/create`
 
