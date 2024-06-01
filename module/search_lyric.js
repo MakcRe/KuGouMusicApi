@@ -1,11 +1,12 @@
 // 歌词搜索
-const { appid, clientver } = require('../util');
+const {appid, clientver, liteAppid, liteClientver } = require('../util');
+const isLite = process.env.platform === 'lite';
 
 module.exports = (params, useAxios) => {
   const dataMap = {
     album_audio_id: params?.album_audio_id || 0,
-    appid,
-    clientver,
+    appid: isLite ? liteAppid : appid,
+    clientver: isLite ? liteClientver : clientver,
     duration: 0,
     hash: params?.hash || '',
     keyword: params?.keywords || '',
