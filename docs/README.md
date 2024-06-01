@@ -358,9 +358,17 @@ $ set HOST=127.0.0.1 && npm run dev
 用于开放登陆 [`/login/openplat`](#_3-开放接口登录目前仅支持微信登录)), 注：该接口有一定延时，不可访问是可以直接到
 https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直接请求
 
+**必选参数：**
+
+`uuid`: 由第一个接口生成
+
+**可选参数：**
+
+`timestamp`: 建议传递，否则由于缓存会导致延迟
+
 **接口地址：** `/login/wx/check`
 
-**调用例子：** `/login/wx/check`
+**调用例子：** `/login/wx/check?timestamp=1691256061923&uuid=xxxxxxxxx`
 
 ### 刷新登录
 
