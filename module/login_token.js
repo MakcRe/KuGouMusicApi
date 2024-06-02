@@ -1,7 +1,5 @@
 // 刷新登录
-const { cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncrypt } = require('../util');
-
-const isLite = process.env.platform === 'lite';
+const { cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncrypt, isLite } = require('../util');
 
 const key = '90b8382a1bb4ccdcf063102053fd75b8';
 const iv = 'f063102053fd75b8';
@@ -16,7 +14,6 @@ module.exports = (params, useAxios) => {
   const encrypt = cryptoAesEncrypt({ clienttime: Math.floor(dateNow / 1000), token }, { key: isLite ? liteKey : key, iv: isLite ? liteIv : iv });
   const encryptParams = cryptoAesEncrypt({});
   const pk = cryptoRSAEncrypt({ clienttime_ms: dateNow, key: encryptParams.key });
-
 
 
   const dataMap = {
@@ -52,9 +49,7 @@ module.exports = (params, useAxios) => {
               Object.keys(getToken).forEach((key) => res.cookie.push(`${key}=${getToken[key]}`));
             } else {
               res.body.data['token'] = getToken;
-
             }
-
           }
           res.cookie.push(`token=${res.body.data['token']}`);
           res.cookie.push(`userid=${res.body.data?.userid || 0}`);

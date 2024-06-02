@@ -1,5 +1,4 @@
-const { srcappid, appid, liteAppid } = require('../util');
-const isLite = process.env.platform === 'lite';
+const { srcappid, appid } = require('../util');
 
 // 二维码 key 生成接口
 module.exports = (params, useAxios) => {
@@ -7,8 +6,14 @@ module.exports = (params, useAxios) => {
     baseURL: 'https://login-user.kugou.com',
     url: '/v2/qrcode',
     method: 'GET',
-    params: { appid: params?.type === 'web' ? 1014 : 1001, type: 1, plat: 4, qrcode_txt: `https://h5.kugou.com/apps/loginQRCode/html/index.html?appid=${isLite ? liteAppid : appid}&`, srcappid },
+    params: {
+      appid: params?.type === 'web' ? 1014 : 1001,
+      type: 1,
+      plat: 4,
+      qrcode_txt: `https://h5.kugou.com/apps/loginQRCode/html/index.html?appid=${appid}&`,
+      srcappid,
+    },
     encryptType: 'web',
     cookie: params?.cookie || {},
   });
-}
+};

@@ -8,10 +8,11 @@ const {
   cryptoRSAEncrypt,
   wx_lite_appid,
   wx_lite_secret,
+  isLite,
 } = require('../util');
-const isLite = process.env.platform === 'lite';
 const appid = isLite ? wx_lite_appid : wx_appid;
 const secret = isLite ? wx_lite_secret : wx_secret;
+
 
 const assetsToken = (code) => {
   return axios({

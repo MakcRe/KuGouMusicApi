@@ -1,20 +1,19 @@
-const { appid, clientver, liteAppid, liteClientver, signParamsKey } = require('../util');
+const { appid, clientver, signParamsKey } = require('../util');
 
 module.exports = (params, useAxios) => {
-  const isLite = process.env.platform === 'lite';
-  const data = (params?.ids || '').split(',').map(s => ({'global_collection_id': s }));
+  const data = (params?.ids || '').split(',').map((s) => ({ 'global_collection_id': s }));
   const clienttime = Date.now();
-  
+
   const dataMap = {
-    appid: isLite ? liteAppid : appid,
-    clientver: isLite ? liteClientver : clientver,
+    appid,
+    clientver,
     clienttime,
     key: signParamsKey(clienttime),
     userid: params?.userid || params?.cookie?.userid || 0,
     ugc: 1,
     show_list: 1,
     need_songs: 1,
-    data
+    data,
   };
 
   return useAxios({
@@ -23,7 +22,5 @@ module.exports = (params, useAxios) => {
     encryptType: 'android',
     data: dataMap,
     cookie: params?.cookie || {},
-  })
-
-
-}
+  });
+};

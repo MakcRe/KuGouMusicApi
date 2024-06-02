@@ -1,4 +1,4 @@
-const { apiver, appid, wx_appid, wx_lite_appid, wx_secret, wx_lite_secret, srcappid, clientver, liteAppid ,liteClientver } = require('./config.json');
+const { apiver, appid, wx_appid, wx_lite_appid, wx_secret, wx_lite_secret, srcappid, clientver, liteAppid, liteClientver } = require('./config.json');
 const {
   cryptoAesDecrypt,
   cryptoAesEncrypt,
@@ -9,23 +9,29 @@ const {
   playlistAesEncrypt,
   playlistAesDecrypt,
   publicLiteRasKey,
-  publicRasKey
+  publicRasKey,
 } = require('./crypto');
 const { createRequest } = require('./request');
 const { signKey, signParams, signParamsKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
 const { randomString, decodeLyrics, parseCookieString, cookieToJson } = require('./util');
 
+// 判断是否为概念版
+const isLite = process.env.platform === 'lite';
+const useAppid = isLite ? liteAppid : appid;
+const useClientver = isLite ? liteClientver : clientver;
+
 module.exports = {
   apiver,
-  appid,
-  liteAppid,
-  liteClientver,
+  appid: useAppid,
+  // liteAppid,
+  // liteClientver,
   wx_appid,
   wx_lite_appid,
   wx_secret,
   wx_lite_secret,
   srcappid,
-  clientver,
+  clientver: useClientver,
+  isLite,
   cryptoAesDecrypt,
   cryptoAesEncrypt,
   cryptoMd5,

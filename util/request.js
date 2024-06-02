@@ -2,7 +2,7 @@ const axios = require('axios');
 const { cryptoMd5 } = require('./crypto');
 const { signKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
 const { parseCookieString } = require('./util');
-const { appid, clientver, apiver, liteAppid, liteClientver } = require('./config.json');
+const { appid, clientver, liteAppid, liteClientver } = require('./config.json');
 
 /**
  * 请求创建
@@ -90,9 +90,6 @@ const createRequest = (options) => {
       requestOptions.url = `${url}?${_params}`;
       requestOptions.params = {};
     }
-
-    console.log(requestOptions.params);
-
 
     const answer = { status: 500, body: {}, cookie: [], headers: {} };
     try {

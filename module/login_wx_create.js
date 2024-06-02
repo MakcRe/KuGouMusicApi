@@ -1,11 +1,8 @@
 const axios = require('axios');
-const { wx_appid, wx_secret, cryptoMd5, cryptoSha1, randomString, wx_lite_appid, wx_lite_secret } = require('../util');
-
-const isLite = process.env.platform === 'lite';
+const { wx_appid, wx_secret, cryptoMd5, cryptoSha1, randomString, wx_lite_appid, wx_lite_secret, isLite } = require('../util');
 
 const appid = isLite ? wx_lite_appid : wx_appid;
 const secret = isLite ? wx_lite_secret : wx_secret;
-
 
 const accessToken = () => {
   return axios({ url: 'https://api.weixin.qq.com/cgi-bin/token', params: { appid, secret, grant_type: 'client_credential' } });

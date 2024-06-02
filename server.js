@@ -2,16 +2,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const express = require('express');
 const decode = require('safe-decode-uri-component');
-const { cookieToJson, createRequest } = require('./util');
+const { cookieToJson } = require('./util/util');
+const { createRequest } = require('./util/request');
 const dotenv = require('dotenv');
 const cache = require('./util/apicache').middleware;
 
 const envPath = path.join(process.cwd(), '.env');
-
 if (fs.existsSync(envPath)) {
   dotenv.config(envPath);
 }
-
 
 /**
  *  描述：动态获取模块定义
@@ -23,12 +22,12 @@ if (fs.existsSync(envPath)) {
  */
 async function getModulesDefinitions(modulesPath, specificRoute, doRequire = true) {
   const files = await fs.promises.readdir(modulesPath);
-  const parseRoute = fileName =>
+  const parseRoute = (fileName) =>
     specificRoute && fileName in specificRoute ? specificRoute[fileName] : `/${fileName.replace(/\.(js)$/i, '').replace(/_/g, '/')}`;
 
   return files
     .reverse()
-    .filter(fileName => fileName.endsWith('.js') && !fileName.startsWith('_'))
+    .filter((fileName) => fileName.endsWith('.js') && !fileName.startsWith('_'))
     .map((fileName) => {
       const identifier = fileName.split('.').shift();
       const route = parseRoute(fileName);
@@ -89,7 +88,7 @@ async function consturctServer(moduleDefs) {
     }
 
     next();
-  })
+  });
 
   // Body Parser
   app.use(express.json());
@@ -104,7 +103,7 @@ async function consturctServer(moduleDefs) {
    * docs
    */
 
-  // app.use('/docs', express.static(path.join(__dirname, 'docs')));
+  app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
   // Cache
   app.use(cache('2 minutes', (_, res) => res.statusCode === 200));
@@ -142,14 +141,14 @@ async function consturctServer(moduleDefs) {
                 'Set-Cookie',
                 cookies.map((cookie) => {
                   return `${cookie}; PATH=/; SameSite=None; Secure`;
-                }),
+                })
               );
             } else {
               res.append(
                 'Set-Cookie',
                 cookies.map((cookie) => {
                   return `${cookie}; PATH=/`;
-                }),
+                })
               );
             }
           }

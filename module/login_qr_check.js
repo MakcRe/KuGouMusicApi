@@ -1,5 +1,4 @@
-const { srcappid, appid, liteAppid } = require('../util');
-const isLite = process.env.platform === 'lite';
+const { srcappid, appid } = require('../util');
 
 // 酷狗二维码状态检测
 // 0 为二维码过期，1 为等待扫码，2 为待确认，4 为授权登录成功（4 状态码下会返回 token）
@@ -9,7 +8,7 @@ module.exports = (params, useAxios) => {
       baseURL: 'https://login-user.kugou.com',
       url: '/v2/get_userinfo_qrcode',
       method: 'GET',
-      params: { plat: 4, appid: isLite ? liteAppid : appid, srcappid, qrcode: params?.key },
+      params: { plat: 4, appid, srcappid, qrcode: params?.key },
       encryptType: 'web',
       cookie: params?.cookie || {},
     }).then(resp => {

@@ -1,10 +1,9 @@
 // 手机登录
-const { cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncrypt, signParamsKey } = require('../util');
+const { cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncrypt, signParamsKey, isLite } = require('../util');
 
 
 
 module.exports = (params, useAxios) => {
-  const isLite = process.env.platform === 'lite';
   const dateTime = Date.now();
   const encrypt = cryptoAesEncrypt({ mobile: params?.mobile || '', code: params?.code || '' });
   let dataMap = {
