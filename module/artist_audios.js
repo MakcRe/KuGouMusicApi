@@ -18,12 +18,12 @@ module.exports = (params, useAxios) => {
   };
 
   return useAxios({
-    baseURL: 'http://kmr.service.kugou.com',
-    url: '/container/v2/audio_group/author',
+    baseURL: 'https://openapi.kugou.com',
+    url: '/kmr/v1/audio_group/author',
     method: 'POST',
     data: dataMap,
     encryptType: 'android',
     cookie: params?.cookie || {},
-    headers: { 'x-router': 'kmr.service.kugou.com' },
+    headers: { 'x-router': 'openapi.kugou.com', 'kg-tid': 220 },
   });
 };
