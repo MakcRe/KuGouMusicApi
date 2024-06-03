@@ -34,8 +34,8 @@ $ npm install
 ### 使用接口为概念版
 
 ```
-$ 复制 .env.example 为 .env，并且把里面的 `platform` 改为 lite
-$ **注意不同版本的平台的 token 是不通用的。**
+$ 复制 .env.example 为 .env，并且把里面的 `platform=''` 改为 `platform=lite`
+$ 注意不同版本的平台的 token 是不通用的。
 ```
 
 ### 运行
@@ -89,7 +89,8 @@ $ $Env:HOST=127.0.0.1; npm run dev
 3. 点击 `Import Git Repository` 并选择你 fork 的此项目并点击 `import`
 4. 点击 `PERSONAL ACCOUNT` 的 `select`
 5. 直接点 `Continue`
-6. 若需要部署版本为概念版（不需要该步骤可以跳过），在 `Environment Variables` 添加 `key` 为 platform，`Value (Will Be Encrypted)` 为 然后点击 `Add`
+6. 若需要部署版本为概念版（不需要该步骤可以跳过），在 `Environment Variables` 添加 `key` 为 `platform`，`Value (Will Be Encrypted)` 为 `lite` 然后点击
+   `Add`
 7. `PROJECT NAME`自己填,`FRAMEWORK PRESET` 选 `Other` 然后直接点 `Deploy` 接着等部署完成即可
 
 ## 功能特性
