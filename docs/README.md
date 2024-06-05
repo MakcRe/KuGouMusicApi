@@ -517,7 +517,11 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 `album_id`: 专辑 id,可以传多个，以逗号分割
 
-`fields`: 需要返回的信息，可以传多个，以逗号分割
+**可选参数：**
+
+`fields`: 需要返回的信息，可以传多个，以逗号分割，支持的值有 `trans_param` `special_tag` `authors` `album_name` `publish_date` `cover` `intro`
+`publish_company` `type` `album_id` `language_id` `is_publish` `heat` `grade` `quality` `exclusive` `grade_count` `author_name` `sizable_cover`
+`language` `category`
 
 **接口地址：** `/album`
 
