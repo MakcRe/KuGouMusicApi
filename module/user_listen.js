@@ -9,7 +9,7 @@ module.exports = (params, useAxios) => {
   const dataMap = {
     t_userid: userid,
     userid,
-    list_type: 0,
+    list_type: params.type || 0,
     area_code: 1,
     cover: 2,
     p,

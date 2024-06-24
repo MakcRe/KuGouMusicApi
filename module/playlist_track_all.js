@@ -10,8 +10,7 @@ module.exports = (params, useAxios) => {
   };
 
   return useAxios({
-    baseURL: 'https://pubsongscdn.kugou.com',
-    url: '/v2/get_other_list_file',
+    url: '/v4/get_other_list_file',
     method: 'GET',
     encryptType: 'android',
     params: paramsMap,

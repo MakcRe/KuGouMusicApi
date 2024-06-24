@@ -6,9 +6,6 @@ module.exports = (params, useAxios) => {
   const uuid = cryptoMd5(`${dfid}${mid}`); // 可以自定义
   const token = params?.token || params?.cookie?.token || '';
   const clienttime = Math.floor(new Date().getTime() / 1000);
-  // const resource = (params.hash || '').split(',').map((s) => ({ hash: s, video_id: 0, filename: '' }));
-  // (params.video_id || '').split(',').forEach((s, l) => l <= resource.length && (resource[l] = { ...resource[l], video_id: s }));
-  // (params.filename || '').split(',').forEach((s, l) => l <= resource.length && (resource[l] = { ...resource[l], filename: s }));
 
   const resource = (params.id || '').split(',').map((s) => ({ video_id: s }));
 
