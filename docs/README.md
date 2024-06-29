@@ -644,7 +644,9 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 `viper_atmos`：蝰蛇全景声，仅部分音乐支持
 
-`viper_tape`：蝰蛇母带，仅部分音乐支持
+`viper_clear`：蝰蛇超清音质
+
+`viper_tape`：蝰蛇母带，仅部分音乐支持, 该音质需要转码，关于转码相关的技术还不会
 
 **接口地址：** `/song/url`
 
