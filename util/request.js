@@ -5,8 +5,24 @@ const { parseCookieString } = require('./util');
 const { appid, clientver, liteAppid, liteClientver } = require('./config.json');
 
 /**
+ * @typedef {{status: number;body: any, cookie: string[], headers?: Record<string, string>}} UseAxiosResponse
+ */
+
+/**
  * 请求创建
- * @param {UseAxiosRequestConfig} options
+ * @param {Object} options
+ * @param {'get' | 'GET' | 'post' | 'POST'} options.method 请求方法
+ * @param {string} options.url 请求 url
+ * @param {string?} options.baseURL
+ * @param {Record<string, any>?} options.params 请求参数
+ * @param {Record<string, any>?} options.data 请求Body
+ * @param {Record<string, string | number>?} options.headers 请求headers
+ * @param {'android' | 'web' | 'register'} options.encryptType signature加密方式
+ * @param {{ [key: string]: string | number }} options.cookie 请求cookie
+ * @param {boolean?} options.encryptKey
+ * @param {boolean?} options.clearDefaultParams 清除默认请求参数
+ * @param {string?} options.ip
+ * @param {string?} options.realIP
  * @returns {Promise<UseAxiosResponse>}
  */
 const createRequest = (options) => {

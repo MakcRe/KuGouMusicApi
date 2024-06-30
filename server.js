@@ -7,6 +7,20 @@ const { createRequest } = require('./util/request');
 const dotenv = require('dotenv');
 const cache = require('./util/apicache').middleware;
 
+/**
+ * @typedef {{
+ * identifier?: string,
+ * route: string,
+ * module: any,
+ * }}ModuleDefinition
+ */
+
+/**
+ * @typedef {{
+*  server?: import('http').Server,
+* }} ExpressExtension
+*/
+
 const envPath = path.join(process.cwd(), '.env');
 if (fs.existsSync(envPath)) {
   dotenv.config(envPath);
@@ -40,7 +54,7 @@ async function getModulesDefinitions(modulesPath, specificRoute, doRequire = tru
 /**
  * 创建服务
  * @param {ModuleDefinition[]} moduleDefs
- * @return {Promise<express.Express>}
+ * @return {Promise<import('express').Express>}
  */
 async function consturctServer(moduleDefs) {
   const app = express();
@@ -179,12 +193,17 @@ async function consturctServer(moduleDefs) {
   return app;
 }
 
+/**
+ * Serve the KG API
+ * @returns {Promise<import('express').Express & ExpressExtension>}
+ */
 async function startService() {
   const port = Number(process.env.PORT || '3000');
   const host = process.env.HOST || '';
 
   const app = await consturctServer();
 
+   /** @type {import('express').Express & ExpressExtension} */
   const appExt = app;
 
   appExt.service = app.listen(port, host, () => {
@@ -194,4 +213,4 @@ async function startService() {
   return appExt;
 }
 
-module.exports = { startService };
+module.exports = { startService, getModulesDefinitions };
