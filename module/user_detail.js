@@ -1,28 +1,24 @@
 const { cryptoAesEncrypt, cryptoRSAEncrypt } = require('../util');
 module.exports = (params, useAxios) => {
   const token = params?.token || params?.cookie?.token || '';
-  const userid = params?.userid || params?.cookie?.userid || '';
-  const clienttime_ms = Date.now();
-  const encrypt = cryptoAesEncrypt({ token, userid });
-  const pk = cryptoRSAEncrypt({ clienttime_ms, key: encrypt.key }).toUpperCase();
+  const userid = Number(params?.userid || params?.cookie?.userid || '0');
+  const clienttime_ms = Math.floor(Date.now() / 1000);
+  const pk = cryptoRSAEncrypt({ token, clienttime: clienttime_ms }).toUpperCase();
 
   const dataMap = {
-    ext: 0,
-    visit_time: 0,
-    plat: 1,
-    pk: pk,
-    params: encrypt.str,
+    visit_time: clienttime_ms,
+    usertype: 1,
+    p: pk,
     userid,
-    clienttime_ms: clienttime_ms,
   };
 
-
   return useAxios({
-    url: '/v2/get_login_extend_info',
+    url: '/v3/get_my_info',
     method: 'POST',
     data: dataMap,
+    params: { plat: 1 },
     encryptType: 'android',
     cookie: params?.cookie || {},
-    headers: {'x-router': 'userinfoservice.kugou.com'}
+    headers: { 'x-router': 'usercenter.kugou.com' },
   });
 };

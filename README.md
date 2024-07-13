@@ -2,9 +2,28 @@
 
 酷狗音乐 NodeJS 版 API
 
+[![](https://img.shields.io/badge/Author-MakcRe-blueviolet?style=for-the-badge '作者')](https://github.com/MakcRe)
+![](https://img.shields.io/badge/dynamic/json?label=GitHub%20Followers&style=for-the-badge&query=%24.data.totalSubs&url=https%3A%2F%2Fapi.spencerwoo.com%2Fsubstats%2F%3Fsource%3Dgithub%26queryKey%3DMakcRe&labelColor=282c34&color=181717&logo=github&longCache=true '关注数量')
+![](https://img.shields.io/github/stars/MakcRe/KuGouMusicApi.svg?style=for-the-badge&label=Star 'Star数量')
+![](https://img.shields.io/github/forks/MakcRe/KuGouMusicApi.svg?style=for-the-badge&label=Fork 'Fork数量')
+![](https://img.shields.io/github/issues/MakcRe/KuGouMusicApi.svg?style=for-the-badge&label=Issues 'Issues数量')
+![](https://img.shields.io/github/contributors/MakcRe/KuGouMusicApi?style=for-the-badge '贡献者')
+![](https://img.shields.io/github/repo-size/MakcRe/KuGouMusicApi?style=for-the-badge&label=files&color=cf8ef4&labelColor=373e4dl '文件大小')
+![](https://img.shields.io/github/languages/code-size/MakcRe/KuGouMusicApi?color=blueviolet&style=for-the-badge '代码大小')
+
+[//]: # '<br>'
+
+![](https://img.shields.io/github/package-json/v/MakcRe/KuGouMusicApi?longCache=true&style=for-the-badge)
+![](https://img.shields.io/badge/Node-12+-green.svg?longCache=true&style=for-the-badge)
+![](https://img.shields.io/badge/License-mit-blue.svg?longCache=true&style=for-the-badge)
+
 ## 灵感来自
 
 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+
+## 环境要求
+
+需要 NodeJS 12+ 环境
 
 ## 工作原理
 
@@ -191,6 +210,8 @@ $ $Env:HOST=127.0.0.1; npm run dev
 94. 曲谱合集详情
 95. 提交听歌历史
 96. 获取服务器时间
+97. 刷刷
+98. AI 推荐
 
 ## License
 

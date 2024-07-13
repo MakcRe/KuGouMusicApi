@@ -8,7 +8,6 @@ module.exports = (params, useAxios) => {
     hotsize:  Number(params.hotsize || 30)
   };
 
-  console.log(paramsMap);
   return useAxios({
     url: '/ocean/v6/singer/list',
     method: 'GET',

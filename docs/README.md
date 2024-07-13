@@ -2,6 +2,25 @@
 
 酷狗音乐 NodeJS 版 API
 
+[![](https://img.shields.io/badge/Author-MakcRe-blueviolet?style=for-the-badge '作者')](https://github.com/MakcRe)
+![](https://img.shields.io/badge/dynamic/json?label=GitHub%20Followers&style=for-the-badge&query=%24.data.totalSubs&url=https%3A%2F%2Fapi.spencerwoo.com%2Fsubstats%2F%3Fsource%3Dgithub%26queryKey%3DMakcRe&labelColor=282c34&color=181717&logo=github&longCache=true '关注数量')
+![](https://img.shields.io/github/stars/MakcRe/KuGouMusicApi.svg?style=for-the-badge&label=Star 'Star数量')
+![](https://img.shields.io/github/forks/MakcRe/KuGouMusicApi.svg?style=for-the-badge&label=Fork 'Fork数量')
+![](https://img.shields.io/github/issues/MakcRe/KuGouMusicApi.svg?style=for-the-badge&label=Issues 'Issues数量')
+![](https://img.shields.io/github/contributors/MakcRe/KuGouMusicApi?style=for-the-badge '贡献者')
+![](https://img.shields.io/github/repo-size/MakcRe/KuGouMusicApi?style=for-the-badge&label=files&color=cf8ef4&labelColor=373e4dl '文件大小')
+![](https://img.shields.io/github/languages/code-size/MakcRe/KuGouMusicApi?color=blueviolet&style=for-the-badge '代码大小')
+
+[//]: # '<br>'
+
+![](https://img.shields.io/github/package-json/v/MakcRe/KuGouMusicApi?longCache=true&style=for-the-badge)
+![](https://img.shields.io/badge/Node-12+-green.svg?longCache=true&style=for-the-badge)
+![](https://img.shields.io/badge/License-mit-blue.svg?longCache=true&style=for-the-badge)
+
+## 环境要求
+
+需要 NodeJS 12+ 环境
+
 ## 工作原理
 
 跨站请求伪造 (CSRF), 伪造请求头 , 调用官方 API
@@ -104,6 +123,8 @@
 94. [`曲谱合集详情`](#曲谱合集详情)
 95. [`提交听歌历史`](#提交听歌历史)
 96. [`获取服务器时间`](#获取服务器时间)
+97. [`刷刷`](#刷刷)
+98. [`AI 推荐`](#ai-推荐)
 
 ### 安装
 
@@ -211,6 +232,8 @@ $ set HOST=127.0.0.1 && npm run dev
 !> 文档可能会有缓存 , 如果文档版本和 github 上的版本不一致,请清除缓存再查看
 
 #### 更新记录
+
+24-07-14: 添加 刷刷、AI 推荐 接口，更新 提交听歌历史 接口。
 
 24-06-30: 添加 获取歌手列表 接口
 
@@ -1772,6 +1795,8 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 
 `ot`：当前时间戳, 秒级，不要传入毫秒级，否者会返回错误，或者从 [`获取服务器时间`](#获取服务器时间) 中获取
 
+`pc`: 当前播放次数，更新播放次数，当服务器的值大于传入值时，将维持服务最大值，否则更新
+
 **接口地址：** `/playhistory/upload`
 
 **调用例子：** `/playhistory/upload?mxid=32155307`
@@ -1783,6 +1808,26 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 **接口地址：** `/server/now`
 
 **调用例子：** `/server/now`
+
+### 刷刷
+
+说明：获取刷刷视频
+
+**接口地址：** `/brush`
+
+**调用例子：** `/brush`
+
+### AI 推荐
+
+说明：传入 album_audio_id/MixSongID 获取 AI 推荐歌曲
+
+**必选参数：**
+
+`album_audio_id`： 专辑音乐 id (album_audio_id/MixSongID 均可以), 可以传多个，每个以逗号分开,
+
+**接口地址：** `/ai/recommend`
+
+**调用例子：** `/ai/recommend?album_audio_id=274565080` `/ai/recommend?album_audio_id=274565080,68435124`
 
 ## License
 

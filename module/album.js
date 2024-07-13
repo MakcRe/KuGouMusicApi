@@ -7,8 +7,6 @@ module.exports = (params, useAxios) => {
   const userid = params?.cookie?.userid || params?.userid || 0;
   const token = params?.cookie?.token || params?.token || 0;
 
-  console.log(appid, clientver)
-
   const dataMap = {
     appid,
     clienttime: dateTime,

@@ -1,6 +1,6 @@
 {
   "name": "kugoumusicapi",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "",
   "main": "main.js",
   "bin": "./app.js",
@@ -20,9 +20,9 @@
   "scripts": {
     "dev": "nodemon --config nodemon.json index.js",
     "start": "node app.js",
-    "pkgwin": "pkg . -t node14-win-x64 -C GZip -o bin/app --no-bytecode",
-    "pkglinux": "pkg . -t node14-linux-x64 -C GZip -o bin/app --no-bytecode",
-    "pkgmacos": "pkg . -t node14-macos-x64 -C GZip -o bin/app --no-bytecode"
+    "pkgwin": "pkg . -t node14-win-x64 -C GZip -o bin/app_win --no-bytecode",
+    "pkglinux": "pkg . -t node14-linux-x64 -C GZip -o bin/app_linux --no-bytecode",
+    "pkgmacos": "pkg . -t node14-macos-x64 -C GZip -o bin/app _macos --no-bytecode"
   },
   "engines": {
     "node": ">=12"
