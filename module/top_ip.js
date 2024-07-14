@@ -14,7 +14,7 @@ module.exports = (params, useAxios) => {
       method: 'POST',
       data: dataMap,
       params: {
-        apiver: 3,
+        clientver: 12349,
         area_code: 1,
       },
       cookie: params?.cookie || {},

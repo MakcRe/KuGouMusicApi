@@ -75,10 +75,10 @@
 46. [`乐库 banner`](#乐库-banner)
 47. [`乐库电台`](#乐库电台)
 48. [`乐库`](#乐库)
-49. [`推荐频道`](#推荐频道)
-50. [`频道`](#频道)
-51. [`频道图片`](#频道图片)
-52. [`频道歌曲`](#频道歌曲)
+49. [`电台 - 推荐`](#电台---推荐)
+50. [`电台`](#电台)
+51. [`电台 - 图片`](#电台---图片)
+52. [`电台 - 音乐列表`](#电台---音乐列表)
 53. [`编辑精选`](#编辑精选)
 54. [`编辑精选数据`](#编辑精选数据)
 55. [`编辑精选歌单`](#编辑精选歌单)
@@ -125,6 +125,21 @@
 96. [`获取服务器时间`](#获取服务器时间)
 97. [`刷刷`](#刷刷)
 98. [`AI 推荐`](#ai-推荐)
+99. [`频道 - 获取用户所有频道`](#频道---获取用户所有频道)
+100. [`频道 - 详情`](#频道---详情)
+101. [`频道 - 频道安利`](#频道---频道安利)
+102. [`频道 - 相似频道`](#频道---相似频道)
+103. [`频道 - 订阅`](#频道---订阅)
+104. [`频道 - 音乐故事`](#频道---音乐故事)
+105. [`频道 - 音乐故事详情`](#频道---音乐故事详情)
+106. [`动态 - 最常访问`](#动态---最常访问)
+107. [`获取用户公开的音乐`](#获取用户公开的音乐)
+108. [`听书 - 每日推荐`](#听书---每日推荐)
+109. [`听书 - 排行榜推荐`](#听书---排行榜推荐)
+110. [`听书 - VIP 推荐`](#听书---vip-推荐)
+111. [`听书 - 每周推荐`](#听书---每周推荐)
+112. [`听书 - 专辑详情`](#听书---专辑详情)
+113. [`听书 - 专辑音乐列表`](#听书---专辑音乐列表)
 
 ### 安装
 
@@ -232,6 +247,8 @@ $ set HOST=127.0.0.1 && npm run dev
 !> 文档可能会有缓存 , 如果文档版本和 github 上的版本不一致,请清除缓存再查看
 
 #### 更新记录
+
+24-07-14: 添加 频道、听书等多个接口。
 
 24-07-14: 添加 刷刷、AI 推荐 接口，更新 提交听歌历史 接口。
 
@@ -1013,7 +1030,7 @@ vip 专属推荐
 
 **可选参数**
 
-`fields`: 可以传 `album_info` `authors.base` `base` `audio_info`, 每个 field 以逗号分开
+`fields`: 可以传 `album_info` `authors.base` `base` `audio_info`, `authors.ip`, `extra`, `tags`, `tagmap` 每个 field 以逗号分开
 
 **接口地址：** `/krm/audio`
 
@@ -1077,25 +1094,25 @@ vip 专属推荐
 
 **调用例子：** `/yueku`
 
-### 推荐频道
+### 电台
 
-说明 : 调用此接口 , 可获取推荐频道数据
-
-**接口地址：** `/fm/recommend`
-
-**调用例子：** `/fm/recommend`
-
-### 频道
-
-说明 : 调用此接口 , 可获取所有频道数据
+说明 : 调用此接口 , 可获取所有电台数据
 
 **接口地址：** `/fm/class`
 
 **调用例子：** `/fm/class`
 
-### 频道图片
+### 电台 - 推荐
 
-说明 : 调用此接口 , 可获取对应频道的图片
+说明 : 调用此接口 , 可获取推荐电台
+
+**接口地址：** `/fm/recommend`
+
+**调用例子：** `/fm/recommend`
+
+### 电台 - 图片
+
+说明 : 调用此接口 , 可获取对应电台的图片
 
 **必选参数：**
 
@@ -1105,9 +1122,9 @@ vip 专属推荐
 
 **调用例子：** `/fm/image?fmid=693` `/fm/image?fmid=693,37`
 
-### 获取频道音乐列表
+### 电台 - 音乐列表
 
-说明 : 调用此接口 , 可获取对应频道的音乐列表
+说明 : 调用此接口 , 可获取对应电台的音乐列表
 
 **必选参数：**
 
@@ -1828,6 +1845,180 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 **接口地址：** `/ai/recommend`
 
 **调用例子：** `/ai/recommend?album_audio_id=274565080` `/ai/recommend?album_audio_id=274565080,68435124`
+
+### 频道 - 获取用户所有频道
+
+说明：登录后调用此接口，可以获取用户所有订阅的频道
+
+**可选参数：**
+
+`page`：页数
+
+`pagesize `: 每页页数, 默认为 30
+
+**接口地址：** `/youth/channel/all`
+
+**调用例子：** `/youth/channel/all`
+
+### 频道 - 详情
+
+说明：调用此接口，传入 `global_collection_id / channel_id` 可以获取频道详情
+
+**必选参数：**
+
+`global_collection_id`：频道 id (global_collection_id / channel_id 均可以), 可以传多个，每个以逗号分开,
+
+**接口地址：** `/youth/channel/detail`
+
+**调用例子：** `/youth/channel/detail?global_collection_id=11576464149`
+
+### 频道 - 频道安利
+
+说明：调用此接口，传入 `global_collection_id / channel_id` 可以获取频道安利
+
+**必选参数：**
+
+`global_collection_id`：频道 id (global_collection_id / channel_id 均可以)
+
+**接口地址：** `/youth/channel/amway`
+
+**调用例子：** `/youth/channel/amway?global_collection_id=11576464149`
+
+### 频道 - 相似频道
+
+说明：调用此接口，传入 `global_collection_id / channel_id` 可以获取相似频道
+
+**必选参数：**
+
+`channel_id`：频道 id (global_collection_id / channel_id 均可以)
+
+**接口地址：** `/youth/channel/similar`
+
+**调用例子：** `/youth/channel/similar?channel_id=11576464149`
+
+### 频道 - 订阅
+
+说明：登录后调用此接口， 传入 `global_collection_id / channel_id` 可订阅频道
+
+**必选参数：**
+
+`global_collection_id`：频道 id (global_collection_id / channel_id 均可以)
+
+**可选参数：**
+
+`t`：1 为订阅，0 为取消订阅，不传默认为订阅
+
+**接口地址：** `/youth/channel/sub`
+
+**调用例子：** `/youth/channel/sub?global_collection_id=11576464149` `/youth/channel/sub?global_collection_id=11576464149&t=0`
+
+### 频道 - 音乐故事
+
+说明：调用此接口，传入 `global_collection_id / channel_id` 可以获取音乐故事
+
+**必选参数：**
+
+`global_collection_id`：频道 id (global_collection_id / channel_id 均可以)
+
+**可选参数：**
+
+`page`：页数
+
+`pagesize `: 每页页数, 默认为 30
+
+**接口地址：** `/youth/channel/song`
+
+**调用例子：** `/youth/channel/song?global_collection_id=11576464149`
+
+### 频道 - 音乐故事详情
+
+说明：调用此接口，传入 `global_collection_id / channel_id` 和 `fileid` 可以获取音乐故事详情
+
+**必选参数：**
+
+`global_collection_id`：频道 id (global_collection_id / channel_id 均可以)
+
+`fileid`: 音乐故事 fileid
+
+**接口地址：** `/youth/channel/song/detail`
+
+**调用例子：** `/youth/channel/song/detail?global_collection_id=11576464149&fileid=1720958083456581`
+
+### 动态 - 最常访问
+
+说明：登录后调用此接口，可以获取经常访问的频道和用户
+
+**接口地址：** `/youth/dynamic/recent`
+
+**调用例子：** `/youth/dynamic/recent`
+
+### 获取用户公开的音乐
+
+说明：调用此接口，可以获取用户公开的音乐
+
+**必选参数：**
+
+`userid`：用户 id
+
+**可选参数：**
+
+`page`：页数
+
+`pagesize `: 每页页数, 默认为 30
+
+**接口地址：** `/youth/user/song`
+
+**调用例子：** `/youth/user/song?userid=1354894105`
+
+### 听书 - 每日推荐
+
+**可选参数：**
+
+`page`：页数
+
+`pagesize `: 每页页数, 默认为 30
+
+**接口地址：** `/longaudio/daily/recommend`
+
+**调用例子：** `/longaudio/daily/recommend`
+
+### 听书 - 排行榜推荐
+
+**接口地址：** `/longaudio/rank/recommend`
+
+**调用例子：** `/longaudio/rank/recommend`
+
+### 听书 - VIP 推荐
+
+**接口地址：** `/longaudio/vip/recommend`
+
+**调用例子：** `/longaudio/vip/recommend`
+
+### 听书 - 每周推荐
+
+**接口地址：** `/longaudio/week/recommend`
+
+**调用例子：** `/longaudio/week/recommend`
+
+### 听书 - 专辑详情
+
+**必选参数：**
+
+`album_id`: 专辑 id 可以传多个，每个以逗号分开,
+
+**接口地址：** `/longaudio/album/detail`
+
+**调用例子：** `/longaudio/album/detail?album_id=56655759`
+
+### 听书 - 专辑音乐列表
+
+**必选参数：**
+
+`album_id`: 专辑 id 可以传多个
+
+**接口地址：** `/longaudio/album/audios`
+
+**调用例子：** `/longaudio/album/audios?album_id=56655759`
 
 ## License
 
