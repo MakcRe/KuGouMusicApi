@@ -112,6 +112,8 @@
 83. [`排行榜往期列表`](#排行榜往期列表)
 84. [`排行榜信息`](#排行榜信息)
 85. [`排行榜歌曲列表`](#排行榜歌曲列表)
+86. [`歌曲收藏数`](#歌曲收藏数)
+86. [`歌曲评论数`](#歌曲评论数)
 86. [`歌曲评论`](#歌曲评论)
 87. [`歌曲评论-根据分类返回`](#歌曲评论-根据分类返回)
 88. [`歌曲评论-根据热词返回`](#歌曲评论-根据热词返回)
@@ -1651,6 +1653,32 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 **接口地址：** `/rank/audio`
 
 **调用例子：** `/rank/audio?rankid=8888` `/rank/audio?rankid=8888&rank_cid=76442`
+
+### 歌曲收藏数
+
+说明 : 调用此接口 , 传入音乐 mixsongids 参数 , 可获得该音乐的收藏数( 不需要登录 )
+
+**必选参数：**
+
+`mixsongids`：音乐 mixsongid，多个以逗号分隔
+
+**接口地址：** `/favorite/count`
+
+**调用例子：** `/favorite/count?mixsongids=368015985,368015986` `/favorite/count?mixsongids=368015985`
+
+### 歌曲评论数
+
+说明 : 调用此接口 , 传入音乐 hash/special_id 参数 , 可获得该音乐的评论数( 不需要登录 )
+
+**必选参数：**
+
+`hash`：音乐 hash
+
+`special_id`：为 评论下的 special_child_id 字段
+
+**接口地址：** `/comment/count`
+
+**调用例子：** `/comment/count?hash=98eb07ad8eaf74bf56dece55518ad63e` `/comment/count?special_id=20505418`
 
 ### 歌曲评论
 
