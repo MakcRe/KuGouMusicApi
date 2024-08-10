@@ -1075,9 +1075,9 @@ vip 专属推荐
 
 `mixid`: 音乐的 mixsongid/album_audio_id
 
-**接口地址：** `/audio/optimal/matching`
+**接口地址：** `/audio/accompany/matching`
 
-**调用例子：** `/audio/optimal/matching?fileName=希林娜依高 - Shine Brighter (愈加璀璨)&mixId=637735200&hash=6D431B0507587447B3D7345434DC5825`
+**调用例子：** `/audio/accompany/matching?fileName=希林娜依高 - Shine Brighter (愈加璀璨)&mixId=637735200&hash=6D431B0507587447B3D7345434DC5825`
 
 ### 获取音乐 K 歌数量
 
