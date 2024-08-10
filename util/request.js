@@ -21,6 +21,7 @@ const { appid, clientver, liteAppid, liteClientver } = require('./config.json');
  * @param {{ [key: string]: string | number }} options.cookie 请求cookie
  * @param {boolean?} options.encryptKey
  * @param {boolean?} options.clearDefaultParams 清除默认请求参数
+ * @param {boolean?} options.notSignature
  * @param {string?} options.ip
  * @param {string?} options.realIP
  * @returns {Promise<UseAxiosResponse>}
@@ -64,7 +65,8 @@ const createRequest = (options) => {
 
     const data = typeof options?.data === 'object' ? JSON.stringify(options.data) : options?.data || '';
 
-    if (!params['signature']) {
+
+    if (!params['signature'] && !options.notSignature) {
       switch (options?.encryptType) {
         case 'register':
           params['signature'] = signatureRegisterParams(params);
@@ -83,6 +85,9 @@ const createRequest = (options) => {
     options['params'] = params;
     options['baseURL'] = options?.baseURL || 'https://gateway.kugou.com';
     options['headers'] = Object.assign({}, options?.headers || {}, { dfid, clienttime: params.clienttime, mid });
+
+    console.log(params);
+    
 
     const requestOptions = {
       params,
