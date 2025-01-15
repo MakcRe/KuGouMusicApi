@@ -203,7 +203,7 @@ async function startService() {
 
   const app = await consturctServer();
 
-   /** @type {import('express').Express & ExpressExtension} */
+  /** @type {import('express').Express & ExpressExtension} */
   const appExt = app;
 
   appExt.service = app.listen(port, host, () => {
