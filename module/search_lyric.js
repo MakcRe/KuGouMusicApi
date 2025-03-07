@@ -10,7 +10,7 @@ module.exports = (params, useAxios) => {
     hash: params?.hash || '',
     keyword: params?.keywords || '',
     lrctxt: 1,
-    man: 'no',
+    man: params.man ?? 'no',
   };
 
   return useAxios({
