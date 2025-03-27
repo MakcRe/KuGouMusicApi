@@ -11,6 +11,8 @@ module.exports = (params, useAxios) => {
   const dfid = params?.dfid || params?.cookie?.dfid || '-'; // 自定义
   const vip_type = params?.cookie?.vip_type || params?.vipType || 0;
 
+  console.log(appid);
+
   const dataMap = {
     area_code: '1',
     behavior: 'play',
@@ -30,7 +32,8 @@ module.exports = (params, useAxios) => {
       all_m: 1,
       auth: '',
       is_free_part: params?.free_part ? 1 : 0,
-      key: signKey(params.hash, cryptoMd5(dfid), userid, appid),
+      // key: signKey(params.hash, cryptoMd5(dfid), userid, appid),
+      key: cryptoMd5(`${params.hash}185672dd44712f60bb1736df5a377e82${appid}${cryptoMd5(dfid)}${userid}`),
       module_id: 0,
       need_climax: 1,
       need_xcdn: 1,
