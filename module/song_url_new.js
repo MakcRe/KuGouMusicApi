@@ -11,8 +11,6 @@ module.exports = (params, useAxios) => {
   const dfid = params?.dfid || params?.cookie?.dfid || '-'; // 自定义
   const vip_type = params?.cookie?.vip_type || params?.vipType || 0;
 
-  console.log(appid);
-
   const dataMap = {
     area_code: '1',
     behavior: 'play',
