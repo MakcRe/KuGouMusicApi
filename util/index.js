@@ -12,7 +12,7 @@ const {
   publicRasKey,
 } = require('./crypto');
 const { createRequest } = require('./request');
-const { signKey, signParams, signParamsKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
+const { signKey, signParams, signParamsKey, signCloudKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
 const { randomString, decodeLyrics, parseCookieString, cookieToJson } = require('./util');
 
 // 判断是否为概念版
@@ -44,6 +44,7 @@ module.exports = {
   signKey,
   signParams,
   signParamsKey,
+  signCloudKey,
   signatureAndroidParams,
   signatureRegisterParams,
   signatureWebParams,

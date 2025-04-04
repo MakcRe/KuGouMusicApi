@@ -4,6 +4,7 @@ module.exports = (params, useAxios) => {
     url: '/youth/v1/recharge/receive_vip_listen_song',
     encryptType: 'android',
     method: 'post',
+    params: { source_id: 90137 },
     cookie: params?.cookie,
   });
 };

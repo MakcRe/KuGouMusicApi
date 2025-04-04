@@ -98,7 +98,7 @@ function rsaEncrypt2(data) {
 
 function playlistAesEncrypt(data) {
   const useData = typeof data === 'object' ? JSON.stringify(data) : data;
-  const key = randomString(6);
+  const key = randomString(6).toLocaleLowerCase();
   const encryptKey = cryptoMd5(key).substring(0, 16);
   const iv = cryptoMd5(key).substring(16, 32);
 
