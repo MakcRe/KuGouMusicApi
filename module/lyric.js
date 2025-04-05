@@ -23,7 +23,7 @@ module.exports = (params, useAxios) => {
       .then((res) => {
         if (params?.decode) {
           if (res.body?.content) {
-            res.body['decodeContent'] = params?.fmt == 'lrc' ? Buffer.from(res.body?.content, 'base64').toString() : decodeLyrics(res.body.content);
+            res.body['decodeContent'] = params?.fmt == 'lrc' || Number(res.body?.contenttype) !== 0 ? Buffer.from(res.body?.content, 'base64').toString() : decodeLyrics(res.body.content);
             resolve(res);
             return;
           }
