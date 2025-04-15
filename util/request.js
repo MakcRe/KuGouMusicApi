@@ -84,11 +84,8 @@ const createRequest = (options) => {
     // options.params = params;
     options['params'] = params;
     options['baseURL'] = options?.baseURL || 'https://gateway.kugou.com';
-    options['headers'] = Object.assign({}, options?.headers || {}, { dfid, clienttime: params.clienttime, mid });
-
-    console.log(params);
+    options['headers'] = Object.assign({ 'User-Agent': 'Android15-1070-11083-46-0-DiscoveryDRADProtocol-wifi' }, options?.headers || {}, { dfid, clienttime: params.clienttime, mid });
     
-
     const requestOptions = {
       params,
       data: options?.data,

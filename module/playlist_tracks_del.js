@@ -3,7 +3,6 @@
 module.exports = (params, useAxios) => {
   const userid = params?.userid || params?.cookie?.userid || 0;
   const token = params?.token || params.cookie?.token || '';
-  const clienttime = Math.floor(Date.now() / 1000);
 
   const resource = (params.fileids || '').split(',').map((s) => ({ fileid: Number(s) }));
 
