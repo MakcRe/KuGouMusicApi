@@ -23,7 +23,7 @@ const cache = require('./util/apicache').middleware;
 
 const envPath = path.join(process.cwd(), '.env');
 if (fs.existsSync(envPath)) {
-  dotenv.config(envPath);
+  dotenv.config({path: envPath, quiet: true});
 }
 
 /**
