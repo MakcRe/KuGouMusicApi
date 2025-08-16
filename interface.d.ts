@@ -43,7 +43,7 @@ export function getModulesDefinitions(modulesPath: string, specificRoute: Record
 export function createRequest(params: UseAxiosRequestConfig): Promise<UseAxiosResponse>;
 
 // API
-export function login_cellphone(params: { mobile: number; code: number | string } & RequestBaseConfig): Promise<Response>;
+export function login_cellphone(params: { mobile: number; code: number | string; userid?: string | number } & RequestBaseConfig): Promise<Response>;
 
 export function login(params: { username: string; password: string } & RequestBaseConfig): Promise<UseAxiosResponse>;
 

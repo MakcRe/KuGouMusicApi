@@ -14,6 +14,7 @@ module.exports = (params, useAxios) => {
     clienttime_ms: dateTime,
     mobile: params.mobile,
     key: signParamsKey(dateTime),
+    userid:  params?.userid
   };
 
   if (isLite) {
