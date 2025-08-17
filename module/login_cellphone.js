@@ -13,9 +13,10 @@ module.exports = (params, useAxios) => {
     t2: 0,
     clienttime_ms: dateTime,
     mobile: params.mobile,
-    key: signParamsKey(dateTime),
-    userid:  params?.userid
+    key: signParamsKey(dateTime)
   };
+
+  if (params?.userid) dataMap['userid'] = params.userid;
 
   if (isLite) {
     dataMap['p2'] = cryptoRSAEncrypt({ 'clienttime_ms': dateTime, code: params.code, mobile: params.mobile }).toUpperCase();
