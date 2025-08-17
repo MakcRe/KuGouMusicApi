@@ -366,7 +366,8 @@ $ set HOST=127.0.0.1 && npm run dev
 
 **可选参数**
 
-`userid`: 用户 id,当用用户存在多个账户是，必须加上需要登录的用户 id
+`userid`: 用户 id,当用户存在多个账户是
+时，必须加上需要登录的用户 id
 
 **接口地址：** `/login/cellphone`
 
