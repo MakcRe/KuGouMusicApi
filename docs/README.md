@@ -849,7 +849,7 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 **必选参数：**
 
-`keyword`: 关键词
+`keywords`: 关键词
 
 **可选参数：**
 
@@ -875,7 +875,7 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 **必选参数：**
 
-`keyword`: 关键词
+`keywords`: 关键词
 
 **可选参数：**
 
@@ -919,7 +919,7 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 **必选参数：**
 
-`keyword`: 关键词，与 hash 二选一
+`keywords`: 关键词，与 hash 二选一
 
 `hash`: 歌曲 hash，与 keyword 二选一
 
