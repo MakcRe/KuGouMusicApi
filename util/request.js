@@ -3,6 +3,7 @@ const { cryptoMd5 } = require('./crypto');
 const { signKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
 const { parseCookieString } = require('./util');
 const { appid, clientver, liteAppid, liteClientver } = require('./config.json');
+const { resolveProxy } = require('./proxy');
 
 /**
  * @typedef {{status: number;body: any, cookie: string[], headers?: Record<string, string>}} UseAxiosResponse
@@ -96,6 +97,11 @@ const createRequest = (options) => {
       withCredentials: true,
       responseType: options.responseType,
     };
+
+    const proxyConfig = resolveProxy();
+    if (proxyConfig) {
+      requestOptions.proxy = proxyConfig;
+    }
 
     if (options.data) requestOptions.data = options.data;
     if (params) requestOptions.params = params;

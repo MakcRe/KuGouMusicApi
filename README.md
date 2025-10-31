@@ -99,6 +99,20 @@ windows 下使用 PowerShell 等终端执行以下命令 :
 $ $Env:HOST=127.0.0.1; npm run dev
 ```
 
+### 代理配置
+
+如需通过 HTTP 代理请求酷狗接口，可在启动前设置 `KUGOU_API_PROXY` 环境变量，例如:
+
+```shell
+$ $Env:KUGOU_API_PROXY='http://127.0.0.1:7890'; npm run dev
+```
+
+也可以在启动命令后追加代理参数:
+
+```shell
+$ node app.js --proxy=http://127.0.0.1:7890
+```
+
 ## Vercel 部署
 
 ### 操作方法

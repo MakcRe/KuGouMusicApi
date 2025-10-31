@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// import { startService } from './server';
+
 async function start() {
-  // await startService();
+  require('./util/proxy').applyProxyFromArgs();
   require('./server').startService();
 }
 
