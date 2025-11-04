@@ -43,6 +43,37 @@ function applyProxyFromArgs(args = process.argv.slice(2)) {
 }
 
 /**
+ * Parse platform argument from CLI and write to env.
+ * Supports:
+ *  - --platform=lite
+ *  - --platform lite
+ *
+ * @param {string[]} [args]
+ */
+function applyPlatformFromArgs(args = process.argv.slice(2)) {
+  let platformValue;
+
+  for (let i = 0; i < args.length; i += 1) {
+    const current = args[i];
+    if (!current) continue;
+
+    if (current.startsWith('--platform=')) {
+      platformValue = current.slice('--platform='.length).trim();
+      break;
+    }
+
+    if (current === '--platform' || current === '-t' || current === '-T') {
+      platformValue = (args[i + 1] || '').trim();
+      break;
+    }
+  }
+
+  if (platformValue) {
+    process.env.platform = platformValue;
+  }
+}
+
+/**
  * Resolve proxy configuration from environment variable.
  * Caches latest parsed result to avoid repeated parsing.
  * @returns {import('axios').AxiosProxyConfig | null}
@@ -93,4 +124,4 @@ function resolveProxy() {
   return cachedProxy;
 }
 
-module.exports = { applyProxyFromArgs, resolveProxy };
+module.exports = { applyProxyFromArgs, applyPlatformFromArgs, resolveProxy };

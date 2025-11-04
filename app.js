@@ -1,7 +1,9 @@
 #!/usr/bin/env node
+const { applyProxyFromArgs, applyPlatformFromArgs } = require('./util/proxy');
 
 async function start() {
-  require('./util/proxy').applyProxyFromArgs();
+  applyProxyFromArgs();
+  applyPlatformFromArgs();
   require('./server').startService();
 }
 
