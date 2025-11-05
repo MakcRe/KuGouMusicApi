@@ -3,7 +3,7 @@ const { cryptoMd5 } = require('./crypto');
 const { signKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
 const { parseCookieString } = require('./util');
 const { appid, clientver, liteAppid, liteClientver } = require('./config.json');
-const { resolveProxy } = require('./proxy');
+const { resolveProxy } = require('./runtime');
 
 /**
  * @typedef {{status: number;body: any, cookie: string[], headers?: Record<string, string>}} UseAxiosResponse
