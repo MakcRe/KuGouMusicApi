@@ -69,7 +69,7 @@ async function consturctServer(moduleDefs) {
       res.set({
         'Access-Control-Allow-Credentials': true,
         'Access-Control-Allow-Origin': CORS_ALLOW_ORIGIN || req.headers.origin || '*',
-        'Access-Control-Allow-Headers': 'X-Requested-With,Content-Type',
+        'Access-Control-Allow-Headers': 'Authorization,X-Requested-With,Content-Type,Cache-Control',
         'Access-Control-Allow-Methods': 'PUT,POST,GET,DELETE,OPTIONS',
         'Content-Type': 'application/json; charset=utf-8',
       });
@@ -133,7 +133,13 @@ async function consturctServer(moduleDefs) {
       });
 
       const query = Object.assign({}, { cookie: req.cookies }, req.query, { body: req.body });
-
+      const authHeader = req.headers['authorization'];
+      if (authHeader) {
+        query.cookie = {
+          ...query.cookie,
+          ...cookieToJson(authHeader)
+        };
+      }
       try {
         const moduleResponse = await moduleDef.module(query, (config) => {
           let ip = req.ip;
