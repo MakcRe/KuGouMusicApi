@@ -23,6 +23,7 @@ module.exports = (params, useAxios) => {
     page_id,
     quality: quality || 128,
     album_audio_id: Number(params.album_audio_id ?? 0),
+
     behavior: 'play',
     pid: isLite ? 411 : 2,
     cmd: 26,
@@ -33,13 +34,13 @@ module.exports = (params, useAxios) => {
     kcard: 0,
     module: '',
   };
-
+  
   return useAxios({
     url: '/v5/url',
     method: 'GET',
     params: dataMap,
     encryptType: 'android',
-    headers: { 'x-router': 'trackercdn.kugou.com' },
+    headers: { 'x-router': 'trackercdn.kugou.com'},
     encryptKey: true,
     notSign: true,
     cookie: params?.cookie || {},
