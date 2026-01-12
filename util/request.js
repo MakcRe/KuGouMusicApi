@@ -66,7 +66,6 @@ const createRequest = (options) => {
 
     const data = typeof options?.data === 'object' ? JSON.stringify(options.data) : options?.data || '';
 
-
     if (!params['signature'] && !options.notSignature) {
       switch (options?.encryptType) {
         case 'register':
@@ -85,8 +84,12 @@ const createRequest = (options) => {
     // options.params = params;
     options['params'] = params;
     options['baseURL'] = options?.baseURL || 'https://gateway.kugou.com';
-    options['headers'] = Object.assign({ 'User-Agent': 'Android15-1070-11083-46-0-DiscoveryDRADProtocol-wifi' }, options?.headers || {}, { dfid, clienttime: params.clienttime, mid });
-    
+    options['headers'] = Object.assign({ 'User-Agent': 'Android15-1070-11083-46-0-DiscoveryDRADProtocol-wifi' }, options?.headers || {}, {
+      dfid,
+      clienttime: params.clienttime,
+      mid,
+    });
+
     const requestOptions = {
       params,
       data: options?.data,

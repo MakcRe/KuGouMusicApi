@@ -17,13 +17,13 @@ const cache = require('./util/apicache').middleware;
 
 /**
  * @typedef {{
-*  server?: import('http').Server,
-* }} ExpressExtension
-*/
+ *  server?: import('http').Server,
+ * }} ExpressExtension
+ */
 
 const envPath = path.join(process.cwd(), '.env');
 if (fs.existsSync(envPath)) {
-  dotenv.config({path: envPath, quiet: true});
+  dotenv.config({ path: envPath, quiet: true });
 }
 
 /**
@@ -132,12 +132,15 @@ async function consturctServer(moduleDefs) {
         }
       });
 
-      const query = Object.assign({}, { cookie: req.cookies }, req.query, { body: req.body });
+      const { cookie, ...params } = req.query;
+
+      const query = Object.assign({}, { cookie: Object.assign(req.cookies, cookie) }, params, { body: req.body });
+
       const authHeader = req.headers['authorization'];
       if (authHeader) {
         query.cookie = {
           ...query.cookie,
-          ...cookieToJson(authHeader)
+          ...cookieToJson(authHeader),
         };
       }
       try {
