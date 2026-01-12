@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { cryptoMd5 } = require('./crypto');
 const { signKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
-const { parseCookieString } = require('./util');
+const { parseCookieString, randomString } = require('./util');
 const { appid, clientver, liteAppid, liteClientver } = require('./config.json');
 const { resolveProxy } = require('./runtime');
 
@@ -27,10 +27,13 @@ const { resolveProxy } = require('./runtime');
  * @param {string?} options.realIP
  * @returns {Promise<UseAxiosResponse>}
  */
+
+let tempDfid = randomString(24);
+
 const createRequest = (options) => {
   return new Promise(async (resolve, reject) => {
     const isLite = process.env.platform === 'lite';
-    const dfid = options?.cookie?.dfid || '-'; // 自定义
+    const dfid = options?.cookie?.dfid || tempDfid; // 自定义
     const mid = cryptoMd5(dfid); // 可以自定义
     const uuid = cryptoMd5(`${dfid}${mid}`); // 可以自定义
     const token = options?.cookie?.token || '';
