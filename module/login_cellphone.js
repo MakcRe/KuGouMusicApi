@@ -23,7 +23,7 @@ module.exports = (params, useAxios) => {
   if (isLite) {
     // dataMap['p2'] = cryptoRSAEncrypt({ 'clienttime_ms': dateTime, code: params.code, mobile: params.mobile }).toUpperCase();
     dataMap['dfid'] = dfid;
-    dataMap['pk'] = dataMap['dev'] = '23049RAD8C';
+    dataMap['dev'] = '23049RAD8C';
     dataMap['gitversion'] = '5f0b7c4';
   } else {
     dataMap['t3'] = 'MCwwLDAsMCwwLDAsMCwwLDA=';
