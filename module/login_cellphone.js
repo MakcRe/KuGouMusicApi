@@ -1,36 +1,39 @@
 // 手机登录
-const { cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncrypt, signParamsKey, isLite } = require('../util');
-
-
+const { cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncrypt, signParamsKey, isLite, randomString } = require('../util');
 
 module.exports = (params, useAxios) => {
   const dateTime = Date.now();
   const encrypt = cryptoAesEncrypt({ mobile: params?.mobile || '', code: params?.code || '' });
+  const mobile = params?.mobile && `${params.mobile.toString().substring(0, 2)}*****${params.mobile.toString().substring(10, 11)}`;
+  const dfid = params?.cookie?.dfid ?? randomString(24);
   let dataMap = {
     plat: 1,
     support_multi: 1,
     t1: 0,
     t2: 0,
     clienttime_ms: dateTime,
-    mobile: params.mobile,
-    key: signParamsKey(dateTime)
+    mobile,
+    key: signParamsKey(dateTime),
+    pk: cryptoRSAEncrypt({ 'clienttime_ms': dateTime, key: encrypt.key }).toUpperCase(),
+    params: encrypt.str,
   };
 
   if (params?.userid) dataMap['userid'] = params.userid;
 
   if (isLite) {
-    dataMap['p2'] = cryptoRSAEncrypt({ 'clienttime_ms': dateTime, code: params.code, mobile: params.mobile }).toUpperCase();
+    // dataMap['p2'] = cryptoRSAEncrypt({ 'clienttime_ms': dateTime, code: params.code, mobile: params.mobile }).toUpperCase();
+    dataMap['dfid'] = dfid;
+    dataMap['pk'] = dataMap['dev'] = '23049RAD8C';
+    dataMap['gitversion'] = '5f0b7c4';
   } else {
-    const mobile = params?.mobile && `${params.mobile.toString().substring(0, 2)}*****${params.mobile.toString().substring(10, 11)}`;
-    dataMap['mobile'] = mobile;
     dataMap['t3'] = 'MCwwLDAsMCwwLDAsMCwwLDA=';
-    dataMap['params'] = encrypt.str;
-    dataMap['pk'] = cryptoRSAEncrypt({ 'clienttime_ms': dateTime, key: encrypt.key }).toUpperCase()
+    // dataMap['params'] = encrypt.str;
+    // dataMap['pk'] = cryptoRSAEncrypt({ 'clienttime_ms': dateTime, key: encrypt.key }).toUpperCase();
   }
 
   return new Promise((resolve, reject) => {
     useAxios({
-      url: `/${isLite ? 'v6' : 'v7'}/login_by_verifycode`,
+      url: `/v7/login_by_verifycode`,
       method: 'POST',
       data: dataMap,
       encryptType: 'android',

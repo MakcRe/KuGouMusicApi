@@ -29,15 +29,18 @@ module.exports = (params, useAxios) => {
     clienttime_ms: dateNow,
   };
 
+  if (isLite) {
+    dataMap['dev'] = '23049RAD8C'
+  }
+
   return new Promise((resolve, reject) => {
     useAxios({
       baseURL: 'http://login.user.kugou.com',
-      url: `/${isLite ? 'v4' : 'v5'}/login_by_token`,
+      url: `/v5/login_by_token`,
       method: 'POST',
       data: dataMap,
       cookie: params?.cookie,
       encryptType: 'android',
-      headers: { 'x-router': 'login.user.kugou.com' },
     })
       .then((res) => {
         const { body } = res;
