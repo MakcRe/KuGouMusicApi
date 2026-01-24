@@ -1,8 +1,7 @@
-// 获取音乐详情
 module.exports = (params, useAxios) => {
   const dataMap = {
-    mid: params?.mid || '',
-    uuid: params?.uuid || '',
+    mid: params?.mid  || params?.cookie?.KUGOU_API_MID || '',
+    uuid: params?.uuid || '-',
     appid: '1014',
     userid: params?.userid || '0',
   };

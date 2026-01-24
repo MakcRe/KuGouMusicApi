@@ -2,7 +2,7 @@ const { appid, clientver, signParamsKey, cryptoMd5 } = require('../util');
 // 获取视频详情
 module.exports = (params, useAxios) => {
   const dfid = params?.cookie?.dfid || '-'; // 自定义
-  const mid = cryptoMd5(dfid.toString()); // 可以自定义
+  const mid = params?.cookie?.KUGOU_API_MID; // 可以自定义
   const uuid = cryptoMd5(`${dfid}${mid}`); // 可以自定义
   const token = params?.token || params?.cookie?.token || '';
   const clienttime = Math.floor(new Date().getTime() / 1000);

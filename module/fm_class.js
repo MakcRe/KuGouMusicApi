@@ -1,12 +1,11 @@
 const { appid, clientver, cryptoMd5, signParamsKey } = require('../util');
 module.exports = (params, useAxios) => {
   const dateTime = Date.now();
-  const dfid = params?.cookie?.dfid || params?.dfid || '-';
   const userid = params?.cookie?.userid || params?.userid || 0;
   const dataMap = {
     kguid: userid,
     clienttime: dateTime,
-    mid: cryptoMd5(dfid),
+    mid: params?.cookie?.KUGOU_API_MID,
     platform: 'android',
     clientver,
     uid: userid,

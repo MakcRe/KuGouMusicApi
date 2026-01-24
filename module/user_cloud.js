@@ -1,12 +1,11 @@
-const { playlistAesEncrypt, playlistAesDecrypt, rsaEncrypt2, signParamsKey, clientver, appid, cryptoMd5 } = require('../util');
+const { playlistAesEncrypt, playlistAesDecrypt, rsaEncrypt2, signParamsKey, clientver, appid } = require('../util');
 module.exports = (params, useAxios) => {
   const answer = { status: 500, body: {}, cookie: [] };
   return new Promise(async (resolve) => {
     try {
       const userid = params?.userid || params?.cookie?.userid || 0;
       const token = params?.token || params.cookie?.token || '';
-      const dfid = params?.cookie?.dfid || '-'; // 自定义
-      const mid = cryptoMd5(dfid.toString()); // 可以自定义
+      const mid = params?.cookie?.KUGOU_API_MID; // 可以自定义
       const clienttime = Math.floor(Date.now() / 1000);
 
       const dataMap = {

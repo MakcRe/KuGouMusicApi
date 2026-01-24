@@ -10,7 +10,7 @@ const { appid, clientver, cryptoMd5, signParamsKey } = require('../util');
 module.exports = (params, useAxios) => {
   const dfid = params?.dfid || params?.cookie?.dfid || '-';
   const fakem = '60f7ebf1f812edbac3c63a7310001701760f';
-  const mid = cryptoMd5(dfid);
+  const mid = params?.cookie?.KUGOU_API_MID;
   const dateTime = Date.now();
 
   const dataMap = {
@@ -23,7 +23,7 @@ module.exports = (params, useAxios) => {
     fakem,
     area_code: 1,
     mid,
-    uuid: cryptoMd5(`${dfid}${mid}`),
+    uuid: '-',
     client_playlist: [],
     u_info: 'a0c35cd40af564444b5584c2754dedec',
   };

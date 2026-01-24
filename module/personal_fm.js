@@ -8,7 +8,7 @@ module.exports = (params, useAxios) => {
   const dataMap = {
     appid,
     clienttime: dateTime,
-    mid: '',
+    mid: params?.cookie?.KUGOU_API_MID,
     action: params?.action || 'play',
     recommend_source_locked: 0,
     song_pool_id: Number(params?.song_pool_id || 0),

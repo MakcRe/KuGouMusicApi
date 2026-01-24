@@ -1,4 +1,4 @@
-const { appid, clientver, cryptoMd5, signParamsKey } = require('../util');
+const { appid, clientver, signParamsKey } = require('../util');
 module.exports = (params, useAxios) => {
   const dateTime = Date.now();
   const dfid = params?.cookie?.dfid || params?.dfid || '-';
@@ -6,7 +6,7 @@ module.exports = (params, useAxios) => {
     appid,
     clientver,
     clienttime: dateTime,
-    mid: cryptoMd5(dfid),
+    mid: params?.cookie?.KUGOU_API_MID,
     key: signParamsKey(dateTime),
     rcmdsongcount: 1,
     level: 0,

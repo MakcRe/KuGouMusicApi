@@ -12,6 +12,6 @@ module.exports = (params, useAxios) => {
     method: 'POST',
     data: dataMap,
     encryptType: 'android',
-    cookie: {mid: params.cookie?.mid},
+    cookie: {mid: params?.cookie?.KUGOU_API_MID},
   });
 };

@@ -10,7 +10,7 @@ module.exports = (params, useAxios) => {
     appid,
     playlist_ver: 2,
     clienttime: dateTime,
-    mid: '',
+    mid: params?.cookie?.KUGOU_API_MID,
     new_sync_point: dateTime,
     module_id: 1,
     action: 'login',

@@ -3,7 +3,7 @@ const { cryptoMd5, signParamsKey, clientver, appid } = require('../util');
 
 module.exports = (params, useAxios) => {
   const clienttime = Math.floor(new Date().getTime() / 1000);
-  const mid = cryptoMd5(params?.cookie?.dfid || '-');
+  const mid = params?.cookie?.KUGOU_API_MID;
   const dataMap = {
     appid,
     clientver,

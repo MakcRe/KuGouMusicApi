@@ -1,5 +1,6 @@
 const { clientver, appid, cryptoMd5, signParamsKey } = require('../util');
 
+
 module.exports = (params, useAxios) => {
   const dateTime = Date.now();
   const data = (params?.album_id || '').split(',').map((s) => ({ album_id: s, album_name: '', author_name: '' }));
@@ -15,7 +16,7 @@ module.exports = (params, useAxios) => {
     dfid,
     fields: params?.fields || '',
     key: signParamsKey(dateTime),
-    mid: cryptoMd5(dfid),
+    mid: params?.cookie?.KUGOU_API_MID,
   };
 
   if (token) dataMap['token'] = token;

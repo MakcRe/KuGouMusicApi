@@ -1,7 +1,6 @@
-const { appid, clientver, cryptoMd5, signParamsKey } = require('../util');
+const { appid, clientver, signParamsKey } = require('../util');
 module.exports = (params, useAxios) => {
   const dateTime = Date.now();
-  const dfid = params?.cookie?.dfid || params?.dfid || '-';
   const userid = params?.cookie?.userid || params?.userid;
 
   const fmData = (params?.fmid || '').split(',').map((s) => ({
@@ -27,7 +26,7 @@ module.exports = (params, useAxios) => {
     data: fmData,
     get_tracker: 1,
     key: signParamsKey(dateTime),
-    mid: cryptoMd5(dfid),
+    mid: params?.cookie?.KUGOU_API_MID,
     uid: userid,
   };
 

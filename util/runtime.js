@@ -47,6 +47,14 @@ function applyCliOverrides(args) {
     process.env.platform = parsed.platform;
   }
 
+  if (parsed.mid) {
+    process.env.KUGOU_API_MID = parsed.mid;
+  }
+
+  if (parsed.dev) {
+    process.env.KUGOU_API_DEV = parsed.dev;
+  }
+
   if (parsed.port) {
     const port = Number(parsed.port);
     if (!Number.isNaN(port) && port > 0) {

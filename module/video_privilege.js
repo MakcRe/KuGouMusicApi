@@ -3,7 +3,7 @@ const { cryptoMd5, signParamsKey, clientver, appid } = require('../util');
 
 module.exports = (params, useAxios) => {
   const dfid = params?.cookie?.dfid || '-';
-  const mid = cryptoMd5(dfid);
+  const mid = params?.cookie?.KUGOU_API_MID;
 
   const resource = (params?.hash || '').split(',').map((s) => ({ hash: s, id: 0, name: '' }));
 

@@ -29,7 +29,7 @@ module.exports = (params, useAxios) => {
       all_m: 1,
       auth: '',
       is_free_part: params?.free_part ? 1 : 0,
-      key: cryptoMd5(`${params.hash}185672dd44712f60bb1736df5a377e82${appid}${cryptoMd5(dfid)}${cryptoMd5(dfid).slice(0, 7)}${userid}`),
+      key: cryptoMd5(`${params.hash}185672dd44712f60bb1736df5a377e82${appid}${params?.cookie?.KUGOU_API_MID}${userid}`),
       module_id: 0,
       need_climax: 1,
       need_xcdn: 1,

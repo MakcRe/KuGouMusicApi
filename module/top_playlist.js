@@ -18,7 +18,7 @@ module.exports = (params, useAxios) => {
 
   const dataMap = {
     appid,
-    mid: cryptoMd5(params?.dfid || params?.cookie?.dfid || '-'),
+    mid: params?.cookie?.KUGOU_API_MID,
     clientver,
     platform: 'android',
     clienttime: dateTime,

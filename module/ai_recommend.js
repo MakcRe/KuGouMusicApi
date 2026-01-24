@@ -2,8 +2,7 @@ const { appid, clientver, signParamsKey, cryptoMd5 } = require('../util');
 
 module.exports = (params, useAxios) => {
   const userid = params?.userid || params?.cookie?.userid || 0;
-  const dfid = params?.dfid || params?.cookie?.dfid || '-'; // 自定义
-  const mid = cryptoMd5(dfid); // 可以自定义
+  const mid = params?.cookie?.KUGOU_API_MID; // 可以自定义
   const clienttime = Date.now();
 
   const recommend_source = (params?.album_audio_id || '').split(',').map((s) => ({ ID: Number(s) }));
