@@ -15,7 +15,6 @@ module.exports = (params, useAxios) => {
   const encryptParams = cryptoAesEncrypt({});
   const pk = cryptoRSAEncrypt({ clienttime_ms: dateNow, key: encryptParams.key });
 
-
   const dataMap = {
     dfid: params?.cookie?.dfid || '-',
     p3: encrypt,
@@ -30,7 +29,7 @@ module.exports = (params, useAxios) => {
   };
 
   if (isLite) {
-    dataMap['dev'] = '23049RAD8C'
+    dataMap['dev'] = params.cookie?.KUGOU_API_DEV;
   }
 
   return new Promise((resolve, reject) => {

@@ -32,8 +32,8 @@ const createRequest = (options) => {
   return new Promise(async (resolve, reject) => {
     const isLite = process.env.platform === 'lite';
     const dfid = options?.cookie?.dfid || '-'; // 自定义
-    const mid = `${cryptoMd5(dfid)}${cryptoMd5(dfid).slice(0, 7)}`; // 可以自定义
-    const uuid = cryptoMd5(`${dfid}${mid}`); // 可以自定义
+    const mid = `${options?.cookie?.KUGOU_API_MID}`; //'334689572176563962868706300678062568191';
+    const uuid = '-'; //cryptoMd5(`${dfid}${mid}`); // 可以自定义
     const token = options?.cookie?.token || '';
     const userid = options?.cookie?.userid || 0;
     const clienttime = Math.floor(Date.now() / 1000);
@@ -50,13 +50,14 @@ const createRequest = (options) => {
       mid,
       uuid,
       appid: isLite ? liteAppid : appid,
-      // apiver: apiver,
       clientver: isLite ? liteClientver : clientver,
-      userid,
       clienttime,
     };
 
+    
+
     if (token) defaultParams['token'] = token;
+    if (userid && userid !== 0) defaultParams['userid'] = userid;
     const params = options?.clearDefaultParams ? options?.params || {} : Object.assign({}, defaultParams, options?.params || {});
 
     headers['clienttime'] = params.clienttime;

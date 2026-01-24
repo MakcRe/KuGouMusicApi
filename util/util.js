@@ -18,6 +18,19 @@ const randomString = (len = 16) => {
   return _key.join('');
 };
 
+const randomNumber = (len = 16) => {
+  const keyString = '1234567890';
+  const _key = [];
+  const keyStringArr = keyString.split('');
+  for (let i = 0; i < len; i += 1) {
+    const ceil = Math.ceil((keyStringArr.length - 1) * Math.random());
+    const _tmp = keyStringArr[ceil];
+    _key.push(_tmp);
+  }
+
+  return _key.join('');
+};
+
 /**
  * 格式化cookie
  * @param {string} cookie
@@ -74,4 +87,5 @@ module.exports = {
   cookieToJson,
   parseCookieString,
   randomString,
+  randomNumber
 };

@@ -34,6 +34,7 @@ module.exports = (params, useAxios) => {
         const pk = cryptoRSAEncrypt({ 'clienttime_ms': dateNow, key: encrypt.key }).toUpperCase();
 
         const dataMap = {
+          dev: params.cookie?.KUGOU_API_DEV,
           force_login: 1,
           partnerid: 36,
           clienttime_ms: dateNow,

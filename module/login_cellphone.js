@@ -21,24 +21,22 @@ module.exports = (params, useAxios) => {
   if (params?.userid) dataMap['userid'] = params.userid;
 
   if (isLite) {
-    // dataMap['p2'] = cryptoRSAEncrypt({ 'clienttime_ms': dateTime, code: params.code, mobile: params.mobile }).toUpperCase();
     dataMap['dfid'] = dfid;
-    dataMap['dev'] = '23049RAD8C';
+    dataMap['dev'] = params.cookie?.KUGOU_API_DEV;
     dataMap['gitversion'] = '5f0b7c4';
   } else {
     dataMap['t3'] = 'MCwwLDAsMCwwLDAsMCwwLDA=';
-    // dataMap['params'] = encrypt.str;
-    // dataMap['pk'] = cryptoRSAEncrypt({ 'clienttime_ms': dateTime, key: encrypt.key }).toUpperCase();
   }
 
   return new Promise((resolve, reject) => {
     useAxios({
+      baseURL: 'http://loginserviceretry.kugou.com',
       url: `/v7/login_by_verifycode`,
       method: 'POST',
       data: dataMap,
       encryptType: 'android',
+      headers: {'SUPPORT-CALM': '1', 'User-Agent': 'Android16-1070-11440-130-0-LOGIN-wifi'},
       cookie: params?.cookie || {},
-      headers: { 'x-router': 'login.user.kugou.com' },
     })
       .then((res) => {
         const { body } = res;
