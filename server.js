@@ -22,7 +22,7 @@ const cache = require('./util/apicache').middleware;
  */
 
 const mid = randomNumber(39).toString();
-const serverDev = randomString(10);
+const serverDev = randomString(10).toUpperCase();
 
 const envPath = path.join(process.cwd(), '.env');
 if (fs.existsSync(envPath)) {
@@ -114,10 +114,11 @@ async function consturctServer(moduleDefs) {
       if (!cookies.hasOwnProperty('KUGOU_API_MID'))
         res.append('Set-Cookie', `KUGOU_API_MID=${process.env.KUGOU_API_MID ?? mid}; PATH=/; SameSite=None; Secure`);
       if (!cookies.hasOwnProperty('KUGOU_API_DEV'))
-        res.append('Set-Cookie', `KUGOU_API_DEV=${process.env.KUGOU_API_DEV ?? serverDev}; PATH=/; SameSite=None; Secure`);
+        res.append('Set-Cookie', `KUGOU_API_DEV=${(process.env.KUGOU_API_DEV ?? serverDev).toUpperCase()}; PATH=/; SameSite=None; Secure`);
     } else {
       if (!cookies.hasOwnProperty('KUGOU_API_MID')) res.append('Set-Cookie', `KUGOU_API_MID=${process.env.KUGOU_API_MID ?? mid}; PATH=/`);
-      if (!cookies.hasOwnProperty('KUGOU_API_DEV')) res.append('Set-Cookie', `KUGOU_API_DEV=${process.env.KUGOU_API_DEV ?? serverDev}; PATH=/`);
+      if (!cookies.hasOwnProperty('KUGOU_API_DEV'))
+        res.append('Set-Cookie', `KUGOU_API_DEV=${(process.env.KUGOU_API_DEV ?? serverDev).toUpperCase()}; PATH=/`);
     }
 
     next();
