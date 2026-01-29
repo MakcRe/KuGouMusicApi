@@ -23,7 +23,6 @@ const cache = require('./util/apicache').middleware;
  */
 
 const guid = cryptoMd5(getGuid());
-const mid = calculateMid(guid);
 const serverDev = randomString(10).toUpperCase();
 
 const envPath = path.join(process.cwd(), '.env');
@@ -111,6 +110,7 @@ async function consturctServer(moduleDefs) {
         res.append('Set-Cookie', `KUGOU_API_PLATFORM=${process.env.platform}; PATH=/`);
       }
     }
+    const mid = calculateMid(process.env.KUGOU_API_GUID ?? guid);
 
     if (req.protocol === 'https') {
       // 固定mid

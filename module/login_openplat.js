@@ -28,10 +28,10 @@ module.exports = (params, useAxios) => {
         const encrypt = cryptoAesEncrypt({ access_token: assetsTokenResp.data.access_token });
         const pk = cryptoRSAEncrypt({ 'clienttime_ms': dateNow, key: encrypt.key }).toUpperCase();
         const t2 = cryptoAesEncrypt(
-          `${params.cookie?.KUGOU_API_GUID}|0f607264fc6318a92b9e13c65db7cd3c|${params.cookie?.KUGOU_API_MAC}|${params.cookie?.KUGOU_API_DEV}|${dateTime}`,
+          `${params.cookie?.KUGOU_API_GUID}|0f607264fc6318a92b9e13c65db7cd3c|${params.cookie?.KUGOU_API_MAC}|${params.cookie?.KUGOU_API_DEV}|${dateNow}`,
           { key: liteT2Key, iv: liteT2Iv }
         );
-        const t1 = cryptoAesEncrypt(`|${dateTime}`, { key: liteT1Key, iv: liteT1Iv });
+        const t1 = cryptoAesEncrypt(`|${dateNow}`, { key: liteT1Key, iv: liteT1Iv });
 
         const dataMap = {
           dev: params.cookie?.KUGOU_API_DEV,

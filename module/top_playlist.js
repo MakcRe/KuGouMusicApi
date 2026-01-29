@@ -1,7 +1,7 @@
 // 歌单
 // categoryid 0：推荐，11292：HI-RES
 
-const { appid, clientver, signParamsKey, cryptoMd5 } = require('../util');
+const { appid, clientver, signParamsKey } = require('../util');
 
 module.exports = (params, useAxios) => {
   const dateTime = (Date.now() / 1000).toFixed(0);
