@@ -4,6 +4,11 @@ const { wx_appid, wx_secret, cryptoAesDecrypt, cryptoAesEncrypt, cryptoRSAEncryp
 const appid = isLite ? wx_lite_appid : wx_appid;
 const secret = isLite ? wx_lite_secret : wx_secret;
 
+let liteT2Key = 'fd14b35e3f81af3817a20ae7adae7020';
+let liteT2Iv = '17a20ae7adae7020';
+let liteT1Key = '5e4ef500e9597fe004bd09a46d8add98';
+let liteT1Iv = '04bd09a46d8add98';
+
 const assetsToken = (code) => {
   return axios({
     url: 'https://api.weixin.qq.com/sns/oauth2/access_token',
@@ -22,14 +27,19 @@ module.exports = (params, useAxios) => {
         const dateNow = Date.now();
         const encrypt = cryptoAesEncrypt({ access_token: assetsTokenResp.data.access_token });
         const pk = cryptoRSAEncrypt({ 'clienttime_ms': dateNow, key: encrypt.key }).toUpperCase();
+        const t2 = cryptoAesEncrypt(
+          `${params.cookie?.KUGOU_API_GUID}|0f607264fc6318a92b9e13c65db7cd3c|${params.cookie?.KUGOU_API_MAC}|${params.cookie?.KUGOU_API_DEV}|${dateTime}`,
+          { key: liteT2Key, iv: liteT2Iv }
+        );
+        const t1 = cryptoAesEncrypt(`|${dateTime}`, { key: liteT1Key, iv: liteT1Iv });
 
         const dataMap = {
           dev: params.cookie?.KUGOU_API_DEV,
           force_login: 1,
           partnerid: 36,
           clienttime_ms: dateNow,
-          t1: '562a6f12a6e803453647d16a08f5f0c2ff7eee692cba2ab74cc4c8ab47fc467561a7c6b586ce7dc46a63613b246737c03a1dc8f8d162d8ce1d2c71893d19f1d4b797685a4c6d3d81341cbde65e488c4829a9b4d42ef2df470eb102979fa5adcdd9b4eecfea8b909ff7599abeb49867640f10c3c70fc444effca9d15db44a9a6c907731e2bb0f22cd9b3536380169995693e5f0e2424e3378097d3813186e3fe96bbe7023808a0981b4e2b6135a76faac',
-          t2: '31c4daf4cf480169ccea1cb7d4a209295865a9d2b788510301694db229b87807469ea0d41b4d4b9173c2151da7294aeebfc9738df154bbdf11a4e117bb5dff6a3af8ce5ce333e681c1f29a44038f27567d58992eb81283e080778ac77db1400fdf49b7cf7e26be2e5af4da7830cc3be4',
+          t1: isLite ? t1 : 0,
+          t2: isLite ? t2 : 0,
           t3: 'MCwwLDAsMCwwLDAsMCwwLDA=',
           openid: assetsTokenResp.data.openid,
           params: encrypt.str,
@@ -54,6 +64,7 @@ module.exports = (params, useAxios) => {
             response.body.data['token'] = getToken;
             response.cookie.push(`token=${getToken}`);
           }
+          response.cookie.push(`t1=${response.body.data?.t1 ?? ''}`);
           response.cookie.push(`userid=${response.body.data?.userid || 0}`);
           response.cookie.push(`vip_type=${response.body.data?.vip_type || 0}`);
           response.cookie.push(`vip_token=${response.body.data?.vip_token || ''}`);

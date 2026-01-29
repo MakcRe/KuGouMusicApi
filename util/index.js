@@ -13,7 +13,7 @@ const {
 } = require('./crypto');
 const { createRequest } = require('./request');
 const { signKey, signParams, signParamsKey, signCloudKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
-const { randomString, decodeLyrics, parseCookieString, cookieToJson, randomNumber } = require('./util');
+const { randomString, decodeLyrics, parseCookieString, cookieToJson, randomNumber, calculateMid } = require('./util');
 
 // 判断是否为概念版
 const isLite = process.env.platform === 'lite';
@@ -54,5 +54,6 @@ module.exports = {
   cookieToJson,
   publicLiteRasKey,
   publicRasKey,
-  randomNumber
+  randomNumber,
+  calculateMid
 };

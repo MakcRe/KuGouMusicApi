@@ -1,4 +1,5 @@
 const pako = require('pako');
+const crypto = require('crypto');
 
 /**
  * 随机字符串
@@ -82,10 +83,34 @@ const decodeLyrics = (val) => {
   }
 };
 
+const calculateMid = (str) => {
+  let bigInteger = BigInt(0);
+  const bigInteger2 = BigInt(16);
+  const digest = crypto.createHash('md5').update(str).digest('hex');
+  const length = digest.length;
+  for (let i = 0; i < length; i += 1) {
+    const charValue = BigInt(parseInt(digest.charAt(i), 16));
+    const powerValue = bigInteger2 ** BigInt(length - 1 - i);
+    bigInteger += charValue * powerValue;
+  }
+
+  return bigInteger.toString();
+};
+
+const getGuid = () => {
+  const e = () => {
+    return ((65536 * (1 + Math.random())) | 0).toString(16).substring(1);
+  };
+
+  return `${e()}${e()}-${e()}-${e()}-${e()}-${e()}${e()}${e()}`;
+};
+
 module.exports = {
   decodeLyrics,
   cookieToJson,
   parseCookieString,
   randomString,
-  randomNumber
+  randomNumber,
+  calculateMid,
+  getGuid
 };
