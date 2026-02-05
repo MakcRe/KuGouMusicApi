@@ -1,52 +1,64 @@
+const { playlistAesEncrypt, playlistAesDecrypt, rsaEncrypt2, signParamsKey, clientver, appid } = require('../util');
 module.exports = (params, useAxios) => {
-  const cookie = params?.cookie || {};
-  const shouldRequest = !(params && Object.prototype.hasOwnProperty.call(params, 'register'));
+  const userid = params?.userid || params?.cookie?.userid || 0;
+  const token = params?.token || params.cookie?.token || '';
   const dataMap = {
-    mid: params?.mid  || cookie?.KUGOU_API_MID || '',
-    uuid: params?.uuid || '-',
-    appid: '1014',
-    userid: params?.userid || '0',
+    'availableRamSize': 4983533568,
+    'availableRomSize': 48114719,
+    'availableSDSize': 48114717,
+    'basebandVer': '',
+    'batteryLevel': 100,
+    'batteryStatus': 3,
+    'brand': 'Redmi',
+    'buildSerial': 'unknown',
+    'device': 'marble',
+    'imei': params.cookie?.KUGOU_API_GUID,
+    'imsi': '',
+    'manufacturer': 'Xiaomi',
+    'uuid': params.cookie?.KUGOU_API_GUID,
+    'accelerometer': false,
+    'accelerometerValue': '',
+    'gravity': false,
+    'gravityValue': '',
+    'gyroscope': false,
+    'gyroscopeValue': '',
+    'light': false,
+    'lightValue': '',
+    'magnetic': false,
+    'magneticValue': '',
+    'orientation': false,
+    'orientationValue': '',
+    'pressure': false,
+    'pressureValue': '',
+    'step_counter': false,
+    'step_counterValue': '',
+    'temperature': false,
+    'temperatureValue': '',
   };
 
-  if (!shouldRequest) {
-    return Promise.resolve({
-      status: 200,
-      body: {
-        status: 1,
-        data: {
-          mid: cookie?.KUGOU_API_MID,
-          guid: cookie?.KUGOU_API_GUID,
-          serverDev: cookie?.KUGOU_API_DEV,
-          mac: cookie?.KUGOU_API_MAC,
-        },
-      },
-      cookie: [],
-      headers: {},
-    });
-  }
+  const aesEncrypt = playlistAesEncrypt(dataMap);
+
+  const p = rsaEncrypt2({ aes: aesEncrypt.key, uid: userid, token });
 
   return new Promise((resolve, reject) => {
     useAxios({
       baseURL: 'https://userservice.kugou.com',
-      url: '/risk/v1/r_register_dev',
+      url: '/risk/v2/r_register_dev',
       method: 'POST',
-      data: Buffer.from(JSON.stringify(dataMap)).toString('base64'),
-      params: { ...dataMap, 'p.token': '', platid: 4 },
-      encryptType: 'register',
-      cookie,
+      data: aesEncrypt.str,
+      params: { part: 1, platid: 1, p },
+      encryptType: 'android',
+      cookie: params?.cookie || {},
+      responseType: 'arraybuffer',
     })
       .then((res) => {
+        res.body = playlistAesDecrypt({ str: res.body.toString('base64'), key: aesEncrypt.key });
+
         const { body } = res;
         if (body?.status === 1 && body?.data) {
           res.cookie.push(`dfid=${res.body.data['dfid']}`);
         }
-        res.body.data = {
-          ...(res.body.data || {}),
-          mid: cookie?.KUGOU_API_MID,
-          guid: cookie?.KUGOU_API_GUID,
-          serverDev: cookie?.KUGOU_API_DEV,
-          mac: cookie?.KUGOU_API_MAC,
-        };
+
         resolve(res);
       })
       .catch((e) => reject(e));

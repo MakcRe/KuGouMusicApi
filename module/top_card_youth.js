@@ -10,7 +10,9 @@
 module.exports = (params, useAxios) => {
 
   const dataMap = {
-    tagid: ''
+    tagid: params.tagid ?? '',
+    u_info: '',
+    source_mixsong: ''
   };
 
   return useAxios({
