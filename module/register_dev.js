@@ -3,67 +3,67 @@ module.exports = (params, useAxios) => {
   const userid = params?.userid || params?.cookie?.userid || 0;
   const token = params?.token || params.cookie?.token || '';
   //可用内存，单位是字节
-  const availableRamSize = params?.availableRamSize || params.cookie?.availableRamSize || 4983533568;
-  //内部存储可用空间，单位是字节（约 48 MB
-  const availableRomSize = params?.availableRomSize || params.cookie?.availableRomSize || 48114719;
+  const availableRamSize = params?.availableRamSize || 4983533568;
+  //内部存储可用空间，单位是字节（约 48 MB）
+  const availableRomSize = params?.availableRomSize || 48114719;
   //外部存储可用空间，单位是字节（约 48 MB）
-  const availableSDSize = params?.availableSDSize || params.cookie?.availableSDSize || 48114717;
+  const availableSDSize = params?.availableSDSize || 48114717;
   //基带版本
-  const basebandVer = params?.basebandVer || params.cookie?.basebandVer || '';
+  const basebandVer = params?.basebandVer || '';
   //电池电量百分比
-  const batteryLevel = params?.batteryLevel || params.cookie?.batteryLevel || 100;
+  const batteryLevel = params?.batteryLevel || 100;
   //电池状态
-  const batteryStatus = params?.batteryStatus || params.cookie?.batteryStatus || 3;
+  const batteryStatus = params?.batteryStatus || 3;
   //品牌
-  const brand = params?.brand || params.cookie?.brand || 'Redmi';
+  const brand = params?.brand || 'Redmi';
   //设备序号
-  const buildSerial = params?.buildSerial || params.cookie?.buildSerial || 'unknown';
+  const buildSerial = params?.buildSerial || 'unknown';
   //设备代号
-  const device = params?.device || params.cookie?.device || 'marble';
+  const device = params?.device || 'marble';
   //IMEI 号
-  const imei = params?.imei || params.cookie?.imei || params.cookie?.KUGOU_API_GUID;
+  const imei = params?.imei || params.cookie?.KUGOU_API_GUID;
   //sim 卡号序号
-  const imsi = params?.imsi || params.cookie?.imsi || '';
+  const imsi = params?.imsi || '';
   //厂商
-  const manufacturer = params?.manufacturer || params.cookie?.manufacturer || 'Xiaomi';
+  const manufacturer = params?.manufacturer || 'Xiaomi';
   //设备uuid
-  const uuid = params?.uuid || params.cookie?.uuid || params.cookie?.KUGOU_API_GUID;
+  const uuid = params?.uuid  || params.cookie?.KUGOU_API_GUID;
   //是否有加速度传感器
-  const accelerometer = params?.accelerometer || params.cookie?.accelerometer || false;
+  const accelerometer = params?.accelerometer || false;
   //加速度传感器值
-  const accelerometerValue = params?.accelerometerValue || params.cookie?.accelerometerValue || '';
+  const accelerometerValue = params?.accelerometerValue || '';
   //是否有重力传感器
-  const gravity = params?.gravity || params.cookie?.gravity || false;
+  const gravity = params?.gravity || false;
   //重力传感器的值
-  const gravityValue = params?.gravityValue || params.cookie?.gravityValue || '';
+  const gravityValue = params?.gravityValue  || '';
   //是否有陀螺仪
-  const gyroscope = params?.gyroscope || params.cookie?.gyroscope || false;
+  const gyroscope = params?.gyroscope || false;
   //陀螺仪的值
-  const gyroscopeValue = params?.gyroscopeValue || params.cookie?.gyroscopeValue || '';
+  const gyroscopeValue = params?.gyroscopeValue || '';
   //是否有光线传感器
-  const light = params?.light || params.cookie?.light || false;
+  const light = params?.light  || false;
   //光线传感器的值
-  const lightValue = params?.lightValue || params.cookie?.lightValue || '';
+  const lightValue = params?.lightValue || '';
   //是否有磁力传感器
-  const magnetic = params?.magnetic || params.cookie?.magnetic || false;
+  const magnetic = params?.magnetic || false;
   //磁力传感器的值
-  const magneticValue = params?.magneticValue || params.cookie?.magneticValue || '';
+  const magneticValue = params?.magneticValue  || '';
   //是否有方向传感器
-  const orientation = params?.orientation || params.cookie?.orientation || false;
+  const orientation = params?.orientation || false;
   //方向传感器的值
-  const orientationValue = params?.orientationValue || params.cookie?.orientationValue || '';
+  const orientationValue = params?.orientationValue || '';
   //是否有压力传感器
-  const pressure = params?.pressure || params.cookie?.pressure || false;
+  const pressure = params?.pressure|| false;
   //压力传感器的值
-  const pressureValue = params?.pressureValue || params.cookie?.pressureValue || '';
+  const pressureValue = params?.pressureValue || '';
   //是否有步数传感器
-  const step_counter = params?.step_counter || params.cookie?.step_counter || false;
+  const step_counter = params?.step_counter || false;
   //步数传感器的值
-  const step_counterValue = params?.step_counterValue || params.cookie?.step_counterValue || '';
+  const step_counterValue = params?.step_counterValue || '';
   //是否有温度传感器
-  const temperature = params?.temperature || params.cookie?.temperature || false;
+  const temperature = params?.temperature || false;
   //温度传感器的值
-  const temperatureValue = params?.temperatureValue || params.cookie?.temperatureValue || '';
+  const temperatureValue = params?.temperatureValue || '';
 
 
 
