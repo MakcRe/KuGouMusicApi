@@ -2,7 +2,7 @@
  * 该缓存中间件文件来源与 [Binaryify/NeteaseCloudMusicApi](ttps://github.com/Binaryify/NeteaseCloudMusicApi)
  */
 
-const url = require('node:url');
+const url = require('url');
 const MemoryCache = require('./memory-cache');
 
 const t = {
