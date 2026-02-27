@@ -1,5 +1,6 @@
 const pako = require('pako');
-const crypto = require('crypto');
+const CryptoJS = require('crypto-js');
+const bigInt = require('big-integer');
 
 /**
  * 随机字符串
@@ -84,16 +85,15 @@ const decodeLyrics = (val) => {
 };
 
 const calculateMid = (str) => {
-  let bigInteger = BigInt(0);
-  const bigInteger2 = BigInt(16);
-  const digest = crypto.createHash('md5').update(str).digest('hex');
+  let bigInteger = bigInt(0);
+  const bigInteger2 = bigInt(16);
+  const digest = CryptoJS.MD5(str).toString(CryptoJS.enc.Hex);
   const length = digest.length;
   for (let i = 0; i < length; i += 1) {
-    const charValue = BigInt(parseInt(digest.charAt(i), 16));
-    const powerValue = bigInteger2 ** BigInt(length - 1 - i);
-    bigInteger += charValue * powerValue;
+    const charValue = bigInt(parseInt(digest.charAt(i), 16));
+    const powerValue = bigInteger2.pow(length - 1 - i);
+    bigInteger = bigInteger.add(charValue.multiply(powerValue));
   }
-
   return bigInteger.toString();
 };
 
