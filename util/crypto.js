@@ -6,23 +6,129 @@ const publicLiteRasKey = `-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4
 
 const rsaKeyCache = new Map();
 
-function normalizeBuffer(data) {
-  if (Buffer.isBuffer(data)) return data;
-  if (typeof data === 'string') return Buffer.from(data);
-  return Buffer.from(JSON.stringify(data));
+function encodeUtf8(str) {
+  if (typeof TextEncoder !== 'undefined') {
+    return new TextEncoder().encode(str);
+  }
+
+  if (typeof Buffer !== 'undefined') {
+    return new Uint8Array(Buffer.from(str, 'utf8'));
+  }
+
+  const codePoints = [];
+  for (let i = 0; i < str.length; i++) {
+    let code = str.charCodeAt(i);
+    if (code >= 0xd800 && code <= 0xdbff && i + 1 < str.length) {
+      const next = str.charCodeAt(i + 1);
+      if (next >= 0xdc00 && next <= 0xdfff) {
+        code = ((code - 0xd800) << 10) + (next - 0xdc00) + 0x10000;
+        i++;
+      }
+    }
+    codePoints.push(code);
+  }
+
+  const bytes = [];
+  for (const code of codePoints) {
+    if (code <= 0x7f) {
+      bytes.push(code);
+    } else if (code <= 0x7ff) {
+      bytes.push(
+        0xc0 | (code >> 6),
+        0x80 | (code & 0x3f),
+      );
+    } else if (code <= 0xffff) {
+      bytes.push(
+        0xe0 | (code >> 12),
+        0x80 | ((code >> 6) & 0x3f),
+        0x80 | (code & 0x3f),
+      );
+    } else {
+      bytes.push(
+        0xf0 | (code >> 18),
+        0x80 | ((code >> 12) & 0x3f),
+        0x80 | ((code >> 6) & 0x3f),
+        0x80 | (code & 0x3f),
+      );
+    }
+  }
+
+  return new Uint8Array(bytes);
 }
 
-function wordArrayFromBuffer(buffer) {
-  return CryptoJS.lib.WordArray.create(buffer);
+function decodeUtf8(uint8) {
+  if (typeof TextDecoder !== 'undefined') {
+    return new TextDecoder().decode(uint8);
+  }
+
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(uint8).toString('utf8');
+  }
+
+  let out = '';
+  let i = 0;
+  while (i < uint8.length) {
+    const byte1 = uint8[i++];
+    if (byte1 < 0x80) {
+      out += String.fromCharCode(byte1);
+      continue;
+    }
+    if (byte1 < 0xe0) {
+      const byte2 = uint8[i++] & 0x3f;
+      const codePoint = ((byte1 & 0x1f) << 6) | byte2;
+      out += String.fromCharCode(codePoint);
+      continue;
+    }
+    if (byte1 < 0xf0) {
+      const byte2 = uint8[i++] & 0x3f;
+      const byte3 = uint8[i++] & 0x3f;
+      const codePoint = ((byte1 & 0x0f) << 12) | (byte2 << 6) | byte3;
+      out += String.fromCharCode(codePoint);
+      continue;
+    }
+
+    const byte2 = uint8[i++] & 0x3f;
+    const byte3 = uint8[i++] & 0x3f;
+    const byte4 = uint8[i++] & 0x3f;
+    let codePoint = ((byte1 & 0x07) << 18) | (byte2 << 12) | (byte3 << 6) | byte4;
+    codePoint -= 0x10000;
+    out += String.fromCharCode(
+      (codePoint >> 10) + 0xd800,
+      (codePoint & 0x3ff) + 0xdc00,
+    );
+  }
+
+  return out;
+}
+
+function normalizeBuffer(data) {
+  if (data instanceof Uint8Array) return data;
+  const str = typeof data === 'string' ? data : JSON.stringify(data);
+  return encodeUtf8(str);
+}
+
+function wordArrayFromBuffer(uint8) {
+  const words = [];
+  for (let i = 0; i < uint8.length; i += 4) {
+    words.push(
+      ((uint8[i] || 0) << 24) | ((uint8[i + 1] || 0) << 16) |
+      ((uint8[i + 2] || 0) << 8) | (uint8[i + 3] || 0)
+    );
+  }
+  return CryptoJS.lib.WordArray.create(words, uint8.length);
 }
 
 function wordArrayToBuffer(wordArray) {
   const { words, sigBytes } = wordArray;
-  const buffer = Buffer.alloc(sigBytes);
+  const uint8 = new Uint8Array(sigBytes);
   for (let i = 0; i < sigBytes; i++) {
-    buffer[i] = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+    uint8[i] = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
   }
-  return buffer;
+  return uint8;
+}
+
+function uint8ArrayToHex(arr) {
+  return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 function utf8WordArray(input) {
@@ -44,7 +150,7 @@ function bufferToBinaryString(buffer) {
 
 function rsaRawEncrypt(buffer, publicKey) {
   const keyLength = Math.ceil(publicKey.n.bitLength() / 8);
-  const message = new forge.jsbn.BigInteger(buffer.toString('hex'), 16);
+  const message = new forge.jsbn.BigInteger(uint8ArrayToHex(buffer), 16);
   const encrypted = message.modPow(publicKey.e, publicKey.n);
   return encrypted.toString(16).padStart(keyLength * 2, '0');
 }
@@ -124,7 +230,7 @@ function cryptoAesDecrypt(data, key, iv) {
     padding: CryptoJS.pad.Pkcs7,
   });
 
-  const text = wordArrayToBuffer(decrypted).toString();
+  const text = decodeUtf8(wordArrayToBuffer(decrypted));
   try {
     return JSON.parse(text);
   } catch (e) {
@@ -146,7 +252,11 @@ function cryptoRSAEncrypt(data, publicKey) {
   const keyLength = Math.ceil(key.n.bitLength() / 8);
 
   if (buffer.length > keyLength) throw new Error('Data length exceeds key size');
-  const padded = buffer.length === keyLength ? buffer : Buffer.concat([buffer, Buffer.alloc(keyLength - buffer.length)]);
+  let padded = buffer;
+  if (buffer.length < keyLength) {
+    padded = new Uint8Array(keyLength);
+    padded.set(buffer);
+  }
 
   return rsaRawEncrypt(padded, key);
 }
@@ -156,8 +266,7 @@ function rsaEncrypt2(data) {
   const buffer = normalizeBuffer(data);
   const key = getForgePublicKey(isLite ? publicLiteRasKey : publicRasKey);
   const encrypted = key.encrypt(bufferToBinaryString(buffer), 'RSAES-PKCS1-V1_5');
-  const encryptedBuffer = Buffer.from(encrypted, 'binary');
-  return encryptedBuffer.toString('hex');
+  return forge.util.bytesToHex(encrypted);
 }
 
 function playlistAesEncrypt(data) {
@@ -186,7 +295,7 @@ function playlistAesDecrypt(data) {
     padding: CryptoJS.pad.Pkcs7,
   });
 
-  const text = wordArrayToBuffer(decrypted).toString();
+  const text = decodeUtf8(wordArrayToBuffer(decrypted));
   try {
     return JSON.parse(text);
   } catch (e) {
