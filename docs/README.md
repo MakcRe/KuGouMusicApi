@@ -880,7 +880,7 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 **接口地址：** `/search`
 
-**调用例子：** `/search?keywords=海阔天空`，`/search?keywords==周杰伦&cookie=token=xxxx;userid=xxxx;dfid=xxxx`（必须携带认证信息）
+**调用例子：** `/search?keywords=海阔天空`，`/search?keywords=周杰伦&cookie=token=xxxx;userid=xxxx;dfid=xxxx`（必须携带认证信息）
 
 ### 默认搜索关键词
 
