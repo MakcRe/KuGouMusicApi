@@ -876,9 +876,13 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 `type`: 搜索类型；默认为单曲，special：歌单，lyric：歌词，song：单曲，album：专辑，author：歌手，mv：mv
 
+⚠️ 注意：因接口问题，获取搜索结果需要在url后添加`cookie`认证信息或者`Set-cookie`，否则会返回 `error_code: 152`
+
+⚠️ 注意：建议请求在所有搜索接口时添加认证信息防止调用失败！
+
 **接口地址：** `/search`
 
-**调用例子：** `/search?keywords=海阔天空`
+**调用例子：** `/search?keywords=海阔天空`（错误示例），`/search?keywords=周杰伦&cookie=token=xxxx;userid=xxxx;dfid=xxxx`（必须携带认证信息）
 
 ### 默认搜索关键词
 
