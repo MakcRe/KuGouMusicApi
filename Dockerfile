@@ -2,16 +2,23 @@ FROM node:lts-alpine
 
 RUN apk add --no-cache tini
 
-ENV NODE_ENV production
+RUN corepack enable
 
-USER node
+ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY --chown=node:node . ./
+RUN chown node:node /app
 
-RUN yarn --network-timeout=100000
+COPY --chown=node:node package.json pnpm-lock.yaml ./
+
+USER node
+
+RUN pnpm install --prod --frozen-lockfile
+
+COPY --chown=node:node . ./
 
 EXPOSE 3000
 
-CMD [ "/sbin/tini", "--", "node", "app.js" ]
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "app.js"]

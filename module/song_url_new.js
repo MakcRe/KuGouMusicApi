@@ -14,7 +14,7 @@ module.exports = (params, useAxios) => {
   const dataMap = {
     area_code: '1',
     behavior: 'play',
-    qualities: ['128', '320', 'flac', 'high', 'multitrack', 'viper_atmos', 'viper_tape', 'viper_clear'],
+    qualities: ['128', '320', 'flac', 'high', 'multitrack', 'viper_atmos', 'viper_tape', 'viper_clear', 'super'],
     'resource': {
       'album_audio_id': params.album_audio_id,
       'collect_list_id': '3',

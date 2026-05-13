@@ -531,6 +531,18 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 **调用例子：** `/user/follow`
 
+### 获取关注歌手消息
+
+说明：登录后调用此接口，可以关注的歌手/用户消息
+
+`id`: 需要获取歌手/用户消息的 userid
+
+`pagesize `: 每页页数, 默认为 30
+
+**接口地址：** `/user/follow/message`
+
+**调用例子：** `/user/follow/message`
+
 ### 获取用户云盘
 
 说明：登录后调用此接口可以获取用户上传到云盘的音乐（需要登录）
@@ -807,6 +819,8 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 `viper_tape`：蝰蛇母带，仅部分音乐支持, 该音质需要转码，关于转码相关的技术还不会
 
+`super`：返回 DSD 格式音频，支持的音频少的可伶
+
 **接口地址：** `/song/url`
 
 **调用例子：** `/song/url?hash=xxx`
@@ -862,9 +876,13 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 `type`: 搜索类型；默认为单曲，special：歌单，lyric：歌词，song：单曲，album：专辑，author：歌手，mv：mv
 
+⚠️ 注意：因接口问题，获取搜索结果需要在url后添加`cookie`认证信息或者`Set-cookie`，否则会返回 `error_code: 152`
+
+⚠️ 注意：建议请求在所有搜索接口时添加认证信息防止调用失败！
+
 **接口地址：** `/search`
 
-**调用例子：** `/search?keywords=海阔天空`
+**调用例子：** `/search?keywords=海阔天空`（错误示例），`/search?keywords=周杰伦&cookie=token=xxxx;userid=xxxx;dfid=xxxx`（必须携带认证信息）
 
 ### 默认搜索关键词
 

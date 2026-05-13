@@ -14,14 +14,16 @@ module.exports = (params, useAxios) => {
 
   const isLite = process.env.platform === 'lite';
   const page_id = isLite ? 967177915 : 151369488;
-  const ppage_id = isLite ? '356753938,823673182,967485191' : '463467626,350369493,788954147';
+  const ppage_id = isLite
+    ? (params.ppage_id || '356753938,823673182,967485191')
+    : '463467626,350369493,788954147';
 
   const dataMap = {
     album_id: Number(params.album_id ?? 0),
     area_code: 1,
     hash: (params?.hash || '').toLowerCase(),
     ssa_flag: 'is_fromtrack',
-    version: 11436,
+    version: 11430,
     page_id,
     quality: quality || 128,
     album_audio_id: Number(params.album_audio_id ?? 0),
@@ -33,8 +35,8 @@ module.exports = (params, useAxios) => {
     IsFreePart: params?.free_part ? 1 : 0, //是否返回试听部分（仅部分歌曲）
     ppage_id,
     cdnBackup: 1,
-    kcard: 0,
     module: '',
+    clientver: 11430,
   };
   
   return useAxios({
