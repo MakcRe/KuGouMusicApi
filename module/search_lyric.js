@@ -6,7 +6,7 @@ module.exports = (params, useAxios) => {
     album_audio_id: params?.album_audio_id || 0,
     appid,
     clientver,
-    duration: 0,
+    duration: params.duration || 0,
     hash: params?.hash || '',
     keyword: params?.keywords || '',
     lrctxt: 1,
