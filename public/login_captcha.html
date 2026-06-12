@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登录</title>
+    <script src="./verify-pkg/verifycode.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #e0ecff 0%, #f5f0ff 50%, #fce4ec 100%);
+      }
+
+      .login-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 20px;
+        padding: 48px 40px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 8px 32px rgba(100, 120, 180, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+
+      .login-header {
+        text-align: center;
+        margin-bottom: 36px;
+      }
+
+      .login-header h1 {
+        font-size: 26px;
+        font-weight: 600;
+        color: #1a1a2e;
+        letter-spacing: 0.5px;
+      }
+
+      .login-header p {
+        font-size: 14px;
+        color: #7c8db5;
+        margin-top: 8px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: #4a5568;
+        margin-bottom: 8px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 15px;
+        color: #1a1a2e;
+        background: #f7f9fc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        outline: none;
+        transition: all 0.25s ease;
+      }
+
+      .form-group input::placeholder {
+        color: #a0aec0;
+      }
+
+      .form-group input:focus {
+        border-color: #6c8cff;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(108, 140, 255, 0.12);
+      }
+
+      .login-btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(135deg, #6c8cff 0%, #a78bfa 100%);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+        letter-spacing: 0.5px;
+      }
+
+      .login-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(108, 140, 255, 0.35);
+      }
+
+      .login-btn:active {
+        transform: translateY(0);
+      }
+
+      .captcha-box {
+        margin-top: 24px;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #7c8db5;
+        text-decoration: none;
+        transition: color 0.25s ease;
+      }
+
+      .back-link:hover {
+        color: #6c8cff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-card">
+      <div class="login-header">
+        <h1>欢迎登录</h1>
+        <p>请输入您的账号信息</p>
+      </div>
+      <div class="form-group">
+        <label>用户名</label>
+        <input type="text" id="username" placeholder="请输入用户名" />
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="password" placeholder="请输入密码" />
+      </div>
+      <button class="login-btn" id="loginBtn">登 录</button>
+      <div class="captcha-box" id="captchaBox"></div>
+      <a class="back-link" href="./index.html">← 返回首页</a>
+    </div>
+
+    <script>
+      (async () => {
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+
+        function $(id) {
+          return document.getElementById(id);
+        }
+
+        function loadScript(url, cb) {
+          var s = document.createElement('script');
+          s.src = url;
+          s.onload = function () {
+            cb();
+          };
+          s.onerror = function () {
+            cb(new Error('load failed'));
+          };
+          document.head.appendChild(s);
+        }
+
+        // ===== WASM =====
+        if (typeof wasm_bindgen !== 'undefined' && wasm_bindgen.run) {
+          try {
+            await wasm_bindgen('./verify-pkg/verifycode_bg_ios.wasm');
+            wasm_bindgen.run();
+          } catch (e) {
+            console.warn('WASM initialization failed:', e);
+          }
+        }
+
+        loginBtn.addEventListener('click', async () => {
+          const username = usernameInput.value;
+          const password = passwordInput.value;
+          const eData = new wasm_bindgen.EData();
+          const sid = eData.get_sid();
+          const edt = eData.get_edt();
+          let sessionid = '';
+
+          try {
+            const loginPromise = await fetch(`/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`).then(
+              (response) => response.json()
+            );
+            if (loginPromise.status === 1) {
+              alert('登录成功！');
+            } else {
+              if (loginPromise.error_code === 20028 && loginPromise.ssaCode) {
+                const verifyInfo = await fetch(`/get/verify/info?eventid=${loginPromise.ssaCode}`).then((response) => response.json());
+                console.log('Verify Info:', verifyInfo);
+                sessionid = verifyInfo.data.sessionid;
+                const txappid = verifyInfo.data.txappid;
+                const business = verifyInfo.data.business;
+                const v_type = verifyInfo.data.v_type;
+
+                loadScript('https://turing.captcha.qcloud.com/TCaptcha.js', function () {
+                  if (typeof TencentCaptcha === 'undefined') {
+                    return;
+                  }
+                  var appId = txappid;
+                  var captcha = new TencentCaptcha(
+                    appId,
+                    function (res) {
+                      console.log('Captcha response:', res);
+                      if (res.ret === 0) {
+                        const a = 'KGCodeTX|' + JSON.stringify({ ticket: res.ticket, randstr: res.randstr, txappid: appId });
+                        fetch(
+                          `/verify/user/info?eventid=${loginPromise.ssaCode}&v_type=${v_type}&verifycode=${encodeURIComponent(
+                            a
+                          )}&sid=${encodeURIComponent(sid)}&edt=${encodeURIComponent(edt)}`,
+                          {
+                            method: 'GET',
+                          }
+                        )
+                          .then((response) => response.json())
+                          .then((data) => {
+                            console.log('Verification Result:', data);
+                          })
+                          .catch((error) => {
+                            console.error('Verification request failed:', error);
+                            alert('验证码验证请求失败');
+                          });
+                      } else {
+                        alert(`用户取消 (ret=${res.ret})`);
+                      }
+                    },
+                    {
+                      type: '',
+                      showHeader: false,
+                      ready: function () {},
+                    }
+                  );
+                  console.log('Captcha initialized:', captcha);
+                  captcha.show();
+                });
+              }
+            }
+          } catch (e) {
+            console.warn('Login request failed:', e);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

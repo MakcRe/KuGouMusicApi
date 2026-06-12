@@ -122,12 +122,16 @@ const createRequest = (options) => {
     try {
       const response = await axios(requestOptions);
 
+      let ssaCode = '';
+
       const body = response.data;
 
       answer.cookie = (response.headers['set-cookie'] || []).map((x) => parseCookieString(x));
 
-      if (response.headers['ssa-code']) {
-        answer.headers['ssa-code'] = response.headers['ssa-code'];
+      if (response.headers['ssa-code'] || response.headers['SSA-CODE']) {
+        const _ssaCode = response.headers['ssa-code'] || response.headers['SSA-CODE'];
+        answer.headers['ssa-code'] = _ssaCode;
+        ssaCode = _ssaCode;
       }
 
       try {
@@ -138,9 +142,15 @@ const createRequest = (options) => {
 
       if (response.data.status === 0 || (response.data?.error_code && response.data.error_code !== 0)) {
         answer.status = 502;
+        if (ssaCode) {
+          answer.body.ssaCode = ssaCode;
+        }
         reject(answer);
       } else {
         answer.status = 200;
+        if (ssaCode) {
+          answer.body.ssaCode = ssaCode;
+        }
         resolve(answer);
       }
     } catch (e) {

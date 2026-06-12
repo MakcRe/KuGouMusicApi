@@ -2412,6 +2412,38 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 
 **调用例子：** `/song/ranking/filter?album_audio_id=32155307`
 
+### 验证码 - 获取验证码格式
+
+说明：碰到错误码 20028 时，可调用该接口获取验证码的格式。
+
+**必选参数：**
+
+`eventid`：当请求出现错误码为 20028 时，一般会返回
+
+**接口地址：** `/get/verify/info`
+
+**调用例子：** `/get/verify/info?eventid=gz_tx_event_xxx`
+
+### 验证码 - 验证验证码格式
+
+说明：通过验证码后通过该请求验证。（目前仅实现了腾讯验证码，其他的没碰到）
+
+**必选参数：**
+
+`eventid`：当请求出现错误码为 20028 时，一般会返回
+
+`v_type`：`/get/verify/info` 下获取
+
+`verifycode`：通过滑块验证码等获取
+
+`sid`：通过 wasm 获取，具体可查看 `public\login_captcha.html`
+
+`edt`：同上
+
+**接口地址：** `/verify/user/info`
+
+**调用例子：** `/verify/user/info?eventid=gz_tx_event_xxx&v_type=xx&verifycode=xxx&sid=xxx&edt=xxx`
+
 ## License
 
 [The MIT License (MIT)](https://github.com/MakcRe/KuGouMusicApi/blob/main/LICENSE)
