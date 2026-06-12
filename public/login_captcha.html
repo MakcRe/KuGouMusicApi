@@ -112,6 +112,34 @@
       .captcha-box {
         margin-top: 24px;
       }
+      
+      .sms-captcha {
+        margin-top: 24px;
+        display: none;
+      }
+      
+      .sms-captcha .form-group {
+        margin-bottom: 16px;
+      }
+      
+      .sms-captcha .verify-btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(135deg, #6c8cff 0%, #a78bfa 100%);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+      }
+      
+      .sms-captcha .verify-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(108, 140, 255, 0.35);
+      }
 
       .back-link {
         display: inline-flex;
@@ -145,6 +173,13 @@
       </div>
       <button class="login-btn" id="loginBtn">登 录</button>
       <div class="captcha-box" id="captchaBox"></div>
+      <div class="sms-captcha" id="smsCaptcha">
+        <div class="form-group">
+          <label>验证码</label>
+          <input type="text" id="smsCode" placeholder="请输入验证码" maxlength="6" />
+        </div>
+        <button class="verify-btn" id="smsVerifyBtn">验证</button>
+      </div>
       <a class="back-link" href="./index.html">← 返回首页</a>
     </div>
 
@@ -153,6 +188,10 @@
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const loginBtn = document.getElementById('loginBtn');
+        const captchaBox = document.getElementById('captchaBox');
+        const smsCaptcha = document.getElementById('smsCaptcha');
+        const smsCode = document.getElementById('smsCode');
+        const smsVerifyBtn = document.getElementById('smsVerifyBtn');
 
         function $(id) {
           return document.getElementById(id);
@@ -187,6 +226,7 @@
           const sid = eData.get_sid();
           const edt = eData.get_edt();
           let sessionid = '';
+          console.log('sid:', sid, 'edt:', edt);
 
           try {
             const loginPromise = await fetch(`/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`).then(
@@ -202,47 +242,86 @@
                 const txappid = verifyInfo.data.txappid;
                 const business = verifyInfo.data.business;
                 const v_type = verifyInfo.data.v_type;
-
-                loadScript('https://turing.captcha.qcloud.com/TCaptcha.js', function () {
-                  if (typeof TencentCaptcha === 'undefined') {
-                    return;
-                  }
-                  var appId = txappid;
-                  var captcha = new TencentCaptcha(
-                    appId,
-                    function (res) {
-                      console.log('Captcha response:', res);
-                      if (res.ret === 0) {
-                        const a = 'KGCodeTX|' + JSON.stringify({ ticket: res.ticket, randstr: res.randstr, txappid: appId });
-                        fetch(
-                          `/verify/user/info?eventid=${loginPromise.ssaCode}&v_type=${v_type}&verifycode=${encodeURIComponent(
-                            a
-                          )}&sid=${encodeURIComponent(sid)}&edt=${encodeURIComponent(edt)}`,
-                          {
-                            method: 'GET',
-                          }
-                        )
-                          .then((response) => response.json())
-                          .then((data) => {
-                            console.log('Verification Result:', data);
-                          })
-                          .catch((error) => {
-                            console.error('Verification request failed:', error);
-                            alert('验证码验证请求失败');
-                          });
-                      } else {
-                        alert(`用户取消 (ret=${res.ret})`);
-                      }
-                    },
-                    {
-                      type: '',
-                      showHeader: false,
-                      ready: function () {},
+                
+                if (v_type === 23) {
+                  // 腾讯验证码
+                  captchaBox.style.display = 'block';
+                  smsCaptcha.style.display = 'none';
+                  
+                  loadScript('https://turing.captcha.qcloud.com/TCaptcha.js', function () {
+                    if (typeof TencentCaptcha === 'undefined') {
+                      return;
                     }
-                  );
-                  console.log('Captcha initialized:', captcha);
-                  captcha.show();
-                });
+                    var appId = txappid;
+                    var captcha = new TencentCaptcha(
+                      appId,
+                      function (res) {
+                        console.log('Captcha response:', res);
+                        if (res.ret === 0) {
+                          const a = 'KGCodeTX|' + JSON.stringify({ ticket: res.ticket, randstr: res.randstr, txappid: appId });
+                          fetch(
+                            `/verify/user/info?eventid=${loginPromise.ssaCode}&v_type=${v_type}&verifycode=${encodeURIComponent(
+                              a
+                            )}&sid=${encodeURIComponent(sid)}&edt=${encodeURIComponent(edt)}`,
+                            {
+                              method: 'GET',
+                            }
+                          )
+                            .then((response) => response.json())
+                            .then((data) => {
+                              console.log('Verification Result:', data);
+                            })
+                            .catch((error) => {
+                              console.error('Verification request failed:', error);
+                              alert('验证码验证请求失败');
+                            });
+                        } else {
+                          alert(`用户取消 (ret=${res.ret})`);
+                        }
+                      },
+                      {
+                        type: '',
+                        showHeader: false,
+                        ready: function () {},
+                      }
+                    );
+                    console.log('Captcha initialized:', captcha);
+                    captcha.show();
+                  });
+                } else if (v_type === 32) {
+                  // 手机验证码
+                  captchaBox.style.display = 'none';
+                  smsCaptcha.style.display = 'block';
+                  smsCode.value = '';
+                  smsCode.focus();
+                  
+                  // 添加手机验证码验证事件
+                  smsVerifyBtn.onclick = async function() {
+                    const code = smsCode.value.trim();
+                    if (!code) {
+                      alert('请输入验证码');
+                      return;
+                    }
+                    
+                    try {
+                      const verifyResponse = await fetch(
+                        `/verify/user/info?eventid=${loginPromise.ssaCode}&v_type=${v_type}&verifycode=${encodeURIComponent(code)}&sid=${encodeURIComponent(sid)}&edt=${encodeURIComponent(edt)}`,
+                        {
+                          method: 'GET',
+                        }
+                      );
+                      const verifyData = await verifyResponse.json();
+                      console.log('SMS Verification Result:', verifyData);
+                      alert('验证成功');
+                    } catch (error) {
+                      console.error('SMS Verification request failed:', error);
+                      alert('验证码验证请求失败');
+                    }
+                  };
+                } else {
+                  console.warn('未知的验证类型:', v_type);
+                  alert('未知的验证类型');
+                }
               }
             }
           } catch (e) {
