@@ -1,16 +1,3 @@
-/**
- * sidEdt.js
- * ----------
- * 完整移植自你提供的浏览器 script（未删减任何函数），
- * 只把浏览器专属的 API 替换为 Node 等价实现。
- *
- * 使用方法:
- *   const { generateSidEdt } = require('./sidEdt');
- *   const { sid, edt } = await generateSidEdt({ userid, dfid, mid });
- *
- *   // sid、edt 均为 Base64 编码，可直接放到登录请求的 URL/JSON 中
- */
-
 'use strict';
 const crypto = require('crypto'); // Node 原生 crypto（提供 RSA、AES、Random）
 const { TextEncoder, TextDecoder } = require('util'); // Web Crypto 兼容层
