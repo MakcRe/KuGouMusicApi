@@ -1,0 +1,11 @@
+services:
+  kugoumusicapi:
+    build: .
+    container_name: kugou-api
+    restart: unless-stopped
+    ports:
+      # 端口映射格式为 "宿主机对外端口:容器内部端口"
+      # 如果你在.env中修改了PORT，请同步修改后面的容器端口
+      - "3000:3000"
+    env_file:
+      - .env
