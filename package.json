@@ -29,6 +29,11 @@
   "engines": {
     "node": ">=12"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
   "keywords": [
     "酷狗音乐",
     "酷狗",

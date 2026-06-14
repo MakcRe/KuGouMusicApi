@@ -20,7 +20,7 @@ module.exports = (params, useAxios) => {
     encryptType: 'android',
     method: 'POST',
     data: dataMap,
-    params: { 'card_id': params?.card_id || 3005, area_code: 1, platform: 'ops', module_id: 1, ver: 'v2', pagesize: params.pagesize ?? 30 },
+    params: { 'card_id': params?.card_id || 3005, area_code: 1, platform: 'ios', module_id: 1, ver: 'v2', pagesize: params.pagesize ?? 30 , module_id: 1,  clientver: 11490 },
     cookie: params?.cookie || {},
   });
 };

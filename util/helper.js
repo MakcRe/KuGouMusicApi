@@ -26,6 +26,7 @@ const signatureAndroidParams = (params, data) => {
   const str = isLite ? 'LnT6xpN3khm36zse0QzvmgTZ3waWdRSA' : `OIlwieks28dk2k092lksi2UIkp`;
   const paramsString = Object.keys(params)
     .sort()
+    .filter((key) => key !== 'srcappid')
     .map((key) => `${key}=${typeof params[key] === 'object' ? JSON.stringify(params[key]) : params[key]}`)
     .join('');
   return cryptoMd5(`${str}${paramsString}${data || ''}${str}`);
