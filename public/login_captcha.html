@@ -17,7 +17,7 @@
 
       /* ========== 页面主体：全屏居中 + 渐变背景 ========== */
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         min-height: 100vh;
         display: flex;
         align-items: center;
@@ -29,8 +29,8 @@
       /* ========== 登录卡片容器：毛玻璃效果 ========== */
       .login-card {
         background: rgba(255, 255, 255, 0.85); /* 半透明白色背景 */
-        backdrop-filter: blur(20px);            /* 毛玻璃模糊效果 */
-        -webkit-backdrop-filter: blur(20px);    /* Safari 兼容 */
+        backdrop-filter: blur(20px); /* 毛玻璃模糊效果 */
+        -webkit-backdrop-filter: blur(20px); /* Safari 兼容 */
         border: 1px solid rgba(255, 255, 255, 0.6);
         border-radius: 20px;
         padding: 48px 40px;
@@ -76,7 +76,7 @@
         padding: 14px 16px;
         font-size: 15px;
         color: #1a1a2e;
-        background: #f7f9fc;       /* 浅灰蓝输入框背景 */
+        background: #f7f9fc; /* 浅灰蓝输入框背景 */
         border: 1.5px solid #e2e8f0;
         border-radius: 12px;
         outline: none;
@@ -233,10 +233,10 @@
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const loginBtn = document.getElementById('loginBtn');
-        const captchaBox = document.getElementById('captchaBox');       // 腾讯验证码容器
-        const smsCaptcha = document.getElementById('smsCaptcha');       // 短信验证码区域
-        const smsCode = document.getElementById('smsCode');             // 短信验证码输入框
-        const smsVerifyBtn = document.getElementById('smsVerifyBtn');   // 短信验证按钮
+        const captchaBox = document.getElementById('captchaBox'); // 腾讯验证码容器
+        const smsCaptcha = document.getElementById('smsCaptcha'); // 短信验证码区域
+        const smsCode = document.getElementById('smsCode'); // 短信验证码输入框
+        const smsVerifyBtn = document.getElementById('smsVerifyBtn'); // 短信验证按钮
 
         /**
          * 根据 id 获取 DOM 元素的简写函数
@@ -285,10 +285,8 @@
           // sid: session id（会话标识）
           // edt: encrypted data token（加密数据令牌）
           const eData = new wasm_bindgen.EData();
-          const sid = eData.get_sid();
-          const edt = eData.get_edt();
+
           let sessionid = '';
-          console.log('sid:', sid, 'edt:', edt);
 
           try {
             // 第一步：调用登录接口
@@ -305,12 +303,17 @@
               if (loginPromise.error_code === 20028 && loginPromise.ssaCode) {
                 // 第二步：获取验证详情（验证类型、腾讯验证码 appid 等）
                 const verifyInfo = await fetch(`/get/verify/info?eventid=${loginPromise.ssaCode}`).then((response) => response.json());
+
+                const sid = loginPromise?.sid || eData.get_sid();
+                const edt = loginPromise?.edt || eData.get_edt();
+
+                console.log('sid:', sid, 'edt:', edt);
                 console.log('Verify Info:', verifyInfo);
 
-                sessionid = verifyInfo.data.sessionid;   // 验证会话 ID
+                sessionid = verifyInfo.data.sessionid; // 验证会话 ID
                 const txappid = verifyInfo.data.txappid; // 腾讯验证码应用 ID
                 const business = verifyInfo.data.business; // 业务标识
-                const v_type = verifyInfo.data.v_type;     // 验证类型（23=腾讯验证码，32=手机验证码）
+                const v_type = verifyInfo.data.v_type; // 验证类型（23=腾讯验证码，32=手机验证码）
 
                 if (v_type === 23) {
                   // ===== 腾讯图形验证码流程（v_type=23） =====
@@ -363,8 +366,8 @@
                         }
                       },
                       {
-                        type: '',           // 验证码类型（空字符串表示使用后台配置的默认类型）
-                        showHeader: false,   // 不显示验证码弹窗标题栏
+                        type: '', // 验证码类型（空字符串表示使用后台配置的默认类型）
+                        showHeader: false, // 不显示验证码弹窗标题栏
                         ready: function () {}, // 验证码就绪回调（当前无操作）
                       }
                     );
@@ -380,7 +383,7 @@
                   smsCode.focus(); // 自动聚焦到验证码输入框
 
                   // 绑定短信验证按钮的点击事件
-                  smsVerifyBtn.onclick = async function() {
+                  smsVerifyBtn.onclick = async function () {
                     const code = smsCode.value.trim();
                     if (!code) {
                       alert('请输入验证码');
@@ -390,7 +393,9 @@
                     try {
                       // 第三步：将手机验证码提交到服务端校验
                       const verifyResponse = await fetch(
-                        `/verify/user/info?eventid=${loginPromise.ssaCode}&v_type=${v_type}&verifycode=${encodeURIComponent(code)}&sid=${encodeURIComponent(sid)}&edt=${encodeURIComponent(edt)}`,
+                        `/verify/user/info?eventid=${loginPromise.ssaCode}&v_type=${v_type}&verifycode=${encodeURIComponent(
+                          code
+                        )}&sid=${encodeURIComponent(sid)}&edt=${encodeURIComponent(edt)}`,
                         {
                           method: 'GET',
                         }

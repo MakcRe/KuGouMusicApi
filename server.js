@@ -24,7 +24,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const express = require('express');
 const decode = require('safe-decode-uri-component');
-const { cookieToJson, randomString, getGuid, calculateMid } = require('./util/util');
+const { cookieToJson, randomString, getGuid, calculateMid, generateWebGLHash } = require('./util/util');
 const { cryptoMd5 } = require('./util/crypto');
 const { createRequest } = require('./util/request');
 const dotenv = require('dotenv');
@@ -262,6 +262,7 @@ async function consturctServer(moduleDefs) {
     ensureCookie('KUGOU_API_GUID', process.env.KUGOU_API_GUID ?? guid);
     ensureCookie('KUGOU_API_DEV', (process.env.KUGOU_API_DEV ?? serverDev).toUpperCase());
     ensureCookie('KUGOU_API_MAC', (process.env.KUGOU_API_MAC ?? '02:00:00:00:00:00').toUpperCase());
+    ensureCookie('KUGOU_API_WEBGL', (process.env.KUGOU_API_WEBGL ?? generateWebGLHash()))
 
     // 将注入后的 cookies 回写到 req 对象上，供后续中间件和路由处理器使用
     req.cookies = cookies;

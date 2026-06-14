@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SID / EDT Generator</title>
+  <script>
+    window.__cryptoLog = [];
+    var __keyMap = new WeakMap();
+
+    function ab2hex(buf) {
+      if (!buf) return '';
+      var arr;
+      if (buf instanceof ArrayBuffer) arr = new Uint8Array(buf);
+      else if (ArrayBuffer.isView(buf)) arr = new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
+      else return String(buf);
+      var s = '';
+      for (var i = 0; i < arr.length; i++) s += arr[i].toString(16).padStart(2, '0');
+      return s;
+    }
+    function ab2str(buf) {
+      try { return new TextDecoder().decode(buf); } catch(e) { return ab2hex(buf); }
+    }
+    function algoStr(a) {
+      try { return JSON.stringify(a, function(k, v) {
+        if (v instanceof ArrayBuffer) return ab2hex(v);
+        if (v instanceof Uint8Array) return ab2hex(v);
+        return v;
+      }); } catch(e) { return String(a); }
+    }
+  </script>
+  <script src="verify-pkg/verifycode.js"></script>
+  <script>
+    // Patch AFTER verifycode.js loads (so wasm_bindgen init is defined)
+    // but BEFORE wasm_bindgen() is called (so WASM sees patched methods)
+
+    var origEncrypt = SubtleCrypto.prototype.encrypt;
+    var origDecrypt = SubtleCrypto.prototype.decrypt;
+    var origSign = SubtleCrypto.prototype.sign;
+    var origImportKey = SubtleCrypto.prototype.importKey;
+    var origGenerateKey = SubtleCrypto.prototype.generateKey;
+
+    SubtleCrypto.prototype.encrypt = function(algorithm, key, data) {
+      var ki = __keyMap.get(key);
+      var entry = {
+        op: 'encrypt',
+        algo: algoStr(algorithm),
+        plaintext: ab2str(data),
+        plaintextHex: ab2hex(data),
+        keyType: key.type,
+        keyAlgorithm: JSON.stringify(key.algorithm),
+        keyUsages: key.usages
+      };
+      if (ki) { entry.importedKey = ki.keyDataHex; entry.importedAlgo = ki.algorithm; }
+      window.__cryptoLog.push(entry);
+      var p = origEncrypt.call(this, algorithm, key, data);
+      p.then(function(result) {
+        entry.ciphertextHex = ab2hex(result);
+        entry.ciphertextLen = result.byteLength;
+      }).catch(function(){});
+      return p;
+    };
+
+    SubtleCrypto.prototype.decrypt = function(algorithm, key, data) {
+      var ki = __keyMap.get(key);
+      var entry = { op: 'decrypt', algo: algoStr(algorithm), ciphertextHex: ab2hex(data) };
+      if (ki) { entry.importedKey = ki.keyDataHex; entry.importedAlgo = ki.algorithm; }
+      window.__cryptoLog.push(entry);
+      var p = origDecrypt.call(this, algorithm, key, data);
+      p.then(function(result) {
+        entry.plaintext = ab2str(result);
+        entry.plaintextHex = ab2hex(result);
+      }).catch(function(){});
+      return p;
+    };
+
+    SubtleCrypto.prototype.sign = function(algorithm, key, data) {
+      var entry = { op: 'sign', algo: algoStr(algorithm), dataHex: ab2hex(data) };
+      window.__cryptoLog.push(entry);
+      var p = origSign.call(this, algorithm, key, data);
+      p.then(function(result) {
+        entry.signatureHex = ab2hex(result);
+        entry.signatureLen = result.byteLength;
+      }).catch(function(){});
+      return p;
+    };
+
+    SubtleCrypto.prototype.importKey = function(format, keyData, algorithm, extractable, usages) {
+      var ki = {
+        format: format, keyDataHex: ab2hex(keyData),
+        algorithm: algoStr(algorithm), usages: usages
+      };
+      var p = origImportKey.call(this, format, keyData, algorithm, extractable, usages);
+      p.then(function(cryptoKey) {
+        __keyMap.set(cryptoKey, ki);
+        window.__cryptoLog.push({ op: 'importKey', keyDataHex: ki.keyDataHex, algorithm: ki.algorithm, usages: ki.usages });
+      }).catch(function(){});
+      return p;
+    };
+
+    SubtleCrypto.prototype.generateKey = function(algorithm, extractable, usages) {
+      window.__cryptoLog.push({ op: 'generateKey', algo: algoStr(algorithm), usages: usages });
+      return origGenerateKey.call(this, algorithm, extractable, usages);
+    };
+
+    var origGRV = crypto.getRandomValues;
+    crypto.getRandomValues = function(arr) {
+      window.__cryptoLog.push({ op: 'getRandomValues', len: arr.length });
+      return origGRV.call(crypto, arr);
+    };
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f5; padding: 40px 20px; }
+    .container { max-width: 800px; margin: 0 auto; }
+    h2 { font-size: 20px; color: #333; margin-bottom: 20px; text-align: center; }
+    .btn { display: block; width: 100%; padding: 12px; background: #1677ff; color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; margin-bottom: 8px; }
+    .btn:active { opacity: 0.8; }
+    .btn-clear { background: #999; }
+    .result { margin-top: 16px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
+    .field .val { background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 10px 12px; font-size: 12px; color: #333; word-break: break-all; font-family: monospace; min-height: 40px; white-space: pre-wrap; max-height: 300px; overflow-y: auto; }
+    .log-section { margin-top: 24px; }
+    .log-section h3 { font-size: 15px; color: #333; margin-bottom: 8px; }
+    .log-entry { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-bottom: 8px; font-size: 12px; font-family: monospace; }
+    .log-entry .op { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; margin-bottom: 6px; }
+    .op-encrypt { background: #fff2f0; color: #ff4d4f; }
+    .op-importKey { background: #e6f4ff; color: #1677ff; }
+    .op-decrypt { background: #f6ffed; color: #52c41a; }
+    .op-generateKey { background: #fffbe6; color: #faad14; }
+    .op-sign { background: #f9f0ff; color: #722ed1; }
+    .op-getRandomValues { background: #f5f5f5; color: #666; }
+    .log-row { display: flex; gap: 8px; margin-bottom: 3px; }
+    .log-label { color: #999; min-width: 100px; flex-shrink: 0; }
+    .log-value { color: #333; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>SID / EDT Generator</h2>
+    <button class="btn" id="generate">Generate</button>
+    <button class="btn btn-clear" id="clearLog">Clear Log</button>
+    <div class="result">
+      <div class="field">
+        <label>sid</label>
+        <div class="val" id="outSid"></div>
+      </div>
+      <div class="field">
+        <label>edt</label>
+        <div class="val" id="outEdt"></div>
+      </div>
+    </div>
+    <div class="log-section">
+      <h3>Crypto API Intercept Log</h3>
+      <div id="logContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const btn = document.getElementById('generate');
+      const outSid = document.getElementById('outSid');
+      const outEdt = document.getElementById('outEdt');
+      const logContainer = document.getElementById('logContainer');
+
+      function renderLog() {
+        const logs = window.__cryptoLog;
+        if (!logs.length) { logContainer.innerHTML = '<div style="color:#999;font-size:13px">No crypto calls captured yet.</div>'; return; }
+        let html = '';
+        for (let i = logs.length - 1; i >= 0; i--) {
+          const e = logs[i];
+          const opClass = 'op-' + (e.op || 'unknown');
+          html += '<div class="log-entry">';
+          html += '<div class="op ' + opClass + '">' + e.op + '</div>';
+          for (const k of Object.keys(e)) {
+            if (k === 'op' || k === 'timestamp' || k === 'keyId' || k === '_keyInfo') continue;
+            html += '<div class="log-row"><span class="log-label">' + k + ':</span><span class="log-value">' + e[k] + '</span></div>';
+          }
+          html += '</div>';
+        }
+        logContainer.innerHTML = html;
+      }
+
+      document.getElementById('clearLog').addEventListener('click', () => {
+          window.__cryptoLog.length = 0;
+        renderLog();
+      });
+
+      async function initApp() {
+        try {
+          if (typeof wasm_bindgen !== "undefined") {
+            await wasm_bindgen("./verify-pkg/verifycode_bg.wasm");
+            wasm_bindgen.run();
+            console.log("[WASM] Loaded successfully");
+          }
+        } catch (e) {
+          console.warn("[WASM] initialization failed:", e);
+        }
+
+        renderLog();
+
+        btn.addEventListener('click', () => {
+          btn.disabled = true;
+          btn.textContent = 'Generating...';
+          outSid.textContent = '';
+          outEdt.textContent = '';
+
+          setTimeout(() => {
+            try {
+              if (typeof wasm_bindgen !== "undefined" && wasm_bindgen.EData) {
+                const e = new wasm_bindgen.EData();
+                outSid.textContent = e.get_sid();
+                outEdt.textContent = e.get_edt();
+              } else {
+                outSid.textContent = '(WASM not loaded)';
+              }
+            } catch (err) {
+              outSid.textContent = 'Error: ' + err.message;
+            }
+            // Wait for async .then() callbacks to populate the log
+            setTimeout(function() {
+              renderLog();
+              btn.disabled = false;
+              btn.textContent = 'Generate';
+            }, 200);
+          }, 50);
+        });
+      }
+
+      await initApp();
+    })();
+  </script>
+</body>
+</html>
