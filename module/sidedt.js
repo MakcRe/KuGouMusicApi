@@ -14,6 +14,10 @@
 'use strict';
 const crypto = require('crypto'); // Node 原生 crypto（提供 RSA、AES、Random）
 const { TextEncoder, TextDecoder } = require('util'); // Web Crypto 兼容层
+const { generateSimulate } = require('../util/generate_simulate');
+const { generateWebGLHash } = require('../util/util');
+const verifyUserInfo = require('./verify_user_info');
+
 
 // ------------------------------------------------------------------
 // 1️⃣ 常量（直接拷贝自原脚本）
@@ -66,12 +70,6 @@ function ri(min, max) {
  * - 在 Node 环境直接返回 64‑bit 随机数的十进制字符串
  * @returns {string}
  */
-function generateWebGLHash() {
-  // Node 环境或 WebGL 不可用：生成随机 uint64
-  const hi = Math.floor(Math.random() * 0xffffffff);
-  const lo = Math.floor(Math.random() * 0xffffffff);
-  return (BigInt(hi) * BigInt(0x100000000) + BigInt(lo)).toString();
-}
 
 /**
  * 贝塞尔曲线生成平滑鼠标路径（未改动）
@@ -310,6 +308,11 @@ async function generateSidEdt(opts) {
   const sid = hexToBase64(result.rsaCiphertextHex);
   const edt = hexToBase64(result.aesCiphertextHex);
 
+  console.log('SID 明文:', sidPlaintext);
+  console.log('EDT 明文:', edtData);
+  console.log('SID (Base64):', sid);
+  console.log('EDT (Base64):', edt);  
+
   return { sid, edt };
 }
 
@@ -334,4 +337,15 @@ module.exports = {
   buf2hex,
   encryptSid,
   hexToBase64,
+};
+
+
+module.exports = async (params, useAxios) => {
+  const webglHash = params?.cookie.KUGOU_API_WEBGL || generateWebGLHash(); // WebGL 指纹哈希
+  const userid = params?.userid || params?.cookie.userid || '0';
+  const dfid = params?.dfid || params?.cookie.dfid || '0';
+  const mid = params?.mid || params?.cookie.KUGOU_API_MID || '0';
+  const value = generateSimulate(mid, userid, dfid, webglHash);
+  const userParams = { ...params, edt: value.edt, sid: value.sid };
+  return verifyUserInfo(userParams, useAxios);
 };
