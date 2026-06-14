@@ -306,12 +306,7 @@ async function generateSidEdt(opts) {
 
   // ---- 转为 Base64（和浏览器端保持一致） ----
   const sid = hexToBase64(result.rsaCiphertextHex);
-  const edt = hexToBase64(result.aesCiphertextHex);
-
-  console.log('SID 明文:', sidPlaintext);
-  console.log('EDT 明文:', edtData);
-  console.log('SID (Base64):', sid);
-  console.log('EDT (Base64):', edt);  
+  const edt = hexToBase64(result.aesCiphertextHex); 
 
   return { sid, edt };
 }
