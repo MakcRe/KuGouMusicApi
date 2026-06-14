@@ -311,7 +311,6 @@ async function generateSidEdt(opts) {
   return { sid, edt };
 }
 
-
 // ------------------------------------------------------------------
 // 导出接口（CommonJS）
 // ------------------------------------------------------------------
@@ -333,7 +332,6 @@ module.exports = {
   encryptSid,
   hexToBase64,
 };
-
 
 module.exports = async (params, useAxios) => {
   const webglHash = params?.cookie.KUGOU_API_WEBGL || generateWebGLHash(); // WebGL 指纹哈希
