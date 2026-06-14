@@ -1,12 +1,13 @@
-const { cryptoAesEncrypt, rsaEncrypt2, cryptoRSAEncrypt } = require('../util');
+const { cryptoAesEncrypt, cryptoRSAEncrypt } = require('../util');
 // 验证验证码数据
 module.exports = (params, useAxios) => {
   const clienttime = Date.now();
   const v_type = Number(params?.v_type || 23);
+  const userid = Number(params?.userid || params?.cookie?.userid || '0');
   //
   let dataMap = {
     eventid: params?.eventid,
-    userid: params?.userid || 0,
+    userid,
     platid: params?.platid || 2,
     v_type,
     wasm: 1,
