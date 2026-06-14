@@ -29,7 +29,6 @@ const { cryptoMd5 } = require('./util/crypto');
 const { createRequest } = require('./util/request');
 const dotenv = require('dotenv');
 const cache = require('./util/apicache').middleware;
-const { generateSidEdt } = require('./module/sidedt');//引入自动生成模块
 
 /**
  * @typedef {Object} ModuleDefinition
@@ -282,49 +281,6 @@ async function consturctServer(moduleDefs) {
    */
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-
-  /**
-   * ============================================================
-   * 新接口路由
-   * ============================================================
-   *
-   * - express.json(): 解析 Content-Type 为 application/json 的请求体
-   * - express.urlencoded(): 解析 Content-Type 为 application/x-www-form-urlencoded 的请求体
-   *   - extended: false 使用 querystring 库解析（不支持嵌套对象）
-   */
-    app.all('/sidedt', async (req, res) => {
-    // ① 统一取参：GET 用 query，其他方法用 body
-    const src = req.method === 'GET' ? req.query : req.body || {};
-    const { userid = '', dfid = '', mid = '' } = src;
-
-    // ② 参数校验
-    if (!userid || !dfid || !mid) {
-      return res.status(400).json({
-        status: 0,
-        error_code: 400,
-        msg: '缺少必填参数: userid、dfid、mid',
-        data: null,
-      });
-    }
-
-    // ③ 调用 sid/edt 生成函数
-    try {
-      const { sid, edt } = await generateSidEdt({ userid, dfid, mid });
-      res.json({
-        status: 1,
-        msg: 'success',
-        data: { sid, edt },
-      });
-    } catch (err) {
-      console.error('[SID/EDT ERROR]', err);
-      res.status(500).json({
-        status: 0,
-        error_code: 500,
-        msg: err.message || '内部错误',
-        data: null,
-      });
-    }
-  });
 
   /**
    * ============================================================
