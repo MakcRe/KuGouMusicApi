@@ -1,3 +1,4 @@
+//过人机验证
 'use strict';
 const crypto = require('crypto'); // Node 原生 crypto（提供 RSA、AES、Random）
 const { TextEncoder, TextDecoder } = require('util'); // Web Crypto 兼容层
