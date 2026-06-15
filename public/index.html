@@ -82,8 +82,8 @@
       .example-list {
         list-style: none;
         padding: 0;
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 10px;
       }
 
@@ -104,8 +104,11 @@
         border: 1.5px solid #e2e8f0;
         border-radius: 10px;
         transition: all 0.25s ease;
-        flex: 1;
-        max-width: 200px;
+        width: 100%;
+      }
+
+      @media (max-width: 400px) {
+        .example-list { grid-template-columns: 1fr; }
       }
 
       .example-list a:hover {
@@ -153,6 +156,10 @@
         <li>
           <span class="index">4</span>
           <a href="./login_captcha.html">登录验证码</a>
+        </li>
+        <li>
+          <span class="index">5</span>
+          <a href="./verifySlide.html">验证码验证</a>
         </li>
       </ul>
     </div>

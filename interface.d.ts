@@ -275,6 +275,58 @@ export interface CaptchaSentParams extends CommonParams {
 /** dfid 获取参数 */
 export interface RegisterDevParams extends CommonParams {}
 
+/** 获取验证码信息参数 */
+export interface GetVerifyInfoParams extends CommonParams {
+  /** 验证事件 ID（必选） */
+  eventid: string;
+  /** 用户 id */
+  userid?: string;
+  /** 平台 id，默认 2 */
+  platid?: number;
+}
+
+/** 提交验证码验证参数 */
+export interface VerifyUserInfoParams extends CommonParams {
+  /** 验证事件 ID（必选） */
+  eventid: string;
+  /** 验证类型：23 = 腾讯验证码，32 = 手机验证码 */
+  v_type?: number;
+  /** 验证码数据（必选） */
+  verifycode: string;
+  /** RSA 加密的 AES 密钥（从 get_verify_info 或 sidedt 获取） */
+  sid?: string;
+  /** AES 加密的行为数据（从 get_verify_info 或 sidedt 获取） */
+  edt?: string;
+  /** 用户 id */
+  userid?: string;
+  /** 平台 id，默认 2 */
+  platid?: number;
+}
+
+/** 获取设备列表参数 */
+export interface LoginDeviceParams extends CommonParams {
+  /** 用户 id */
+  userid?: string;
+}
+
+/** 登出指定设备参数 */
+export interface LoginDeviceKickParams extends CommonParams {
+  /** 用户 token */
+  token?: string;
+  /** 设备 mid */
+  mid?: string;
+}
+
+/** 获取 sid/edt 参数 */
+export interface SidedtParams extends CommonParams {
+  /** 用户 id */
+  userid?: string;
+  /** 设备指纹 ID */
+  dfid?: string;
+  /** 设备 MID */
+  mid?: string;
+}
+
 // ============================================================
 //  请求参数类型 —— 用户信息
 // ============================================================
@@ -343,6 +395,15 @@ export interface UserHistoryParams extends CommonParams {
 export interface LastestSongsListenParams extends CommonParams {
   /** 每页页数，默认 30 */
   pagesize?: number;
+}
+
+/** 获取用户动态参数 */
+export interface YouthDynamicParams extends CommonParams {}
+
+/** 听歌领取 VIP 参数 */
+export interface YouthListenSongParams extends CommonParams {
+  /** 专辑音乐 id (album_audio_id/MixSongID) */
+  mixsongid?: number | string;
 }
 
 // ============================================================
@@ -472,6 +533,9 @@ export interface AlbumSongsParams extends PaginatedParams {
   /** 专辑 id（必选） */
   id: string;
 }
+
+/** 唱片店参数 */
+export interface AlbumShopParams extends CommonParams {}
 
 // ============================================================
 //  请求参数类型 —— 音乐 / 歌曲
@@ -637,6 +701,12 @@ export interface LyricParams extends CommonParams {
   decode?: boolean | string;
 }
 
+/** 混合搜索参数 */
+export interface SearchMixedParams extends CommonParams {
+  /** 搜索关键词（必选） */
+  keyword: string;
+}
+
 // ============================================================
 //  请求参数类型 —— 主题音乐
 // ============================================================
@@ -689,6 +759,9 @@ export interface TopCardYouthParams extends CommonParams {
   /** 每页条数，默认 30 */
   pagesize?: number;
 }
+
+/** 曲风盲盒参数（概念版） */
+export interface TopTagCardYouthParams extends CommonParams {}
 
 // ============================================================
 //  请求参数类型 —— 图片
@@ -817,6 +890,12 @@ export interface IpParams extends PaginatedParams {
   type?: IpDataType;
 }
 
+/** 编辑精选详情参数 */
+export interface IpDateilParams extends CommonParams {
+  /** ip id，多个以逗号分隔（必选） */
+  id: string;
+}
+
 /** 编辑精选歌单参数 */
 export interface IpPlaylistParams extends PaginatedParams {
   /** ip id（必选） */
@@ -937,6 +1016,22 @@ export interface ArtistFollowNewsongsParams extends CommonParams {
   opt_sort?: FollowNewSongsSort;
 }
 
+/** 获取歌手荣誉详情参数 */
+export interface ArtistHonourParams extends PaginatedParams {
+  /** 歌手 id（必选） */
+  id: string;
+}
+
+/** 获取歌手列表（新版）参数 */
+export interface SingerListParams extends CommonParams {
+  /** 性别类型：0 = 全部，1 = 男，2 = 女 */
+  sextype?: number;
+  /** 地区类型：0 = 全部，1 = 华语，2 = 欧美，3 = 日韩，4 = 其他 */
+  type?: number;
+  /** 返回热门数量，默认 200 */
+  hotsize?: number;
+}
+
 // ============================================================
 //  请求参数类型 —— 视频
 // ============================================================
@@ -1025,6 +1120,12 @@ export interface SceneAudioListParams extends PaginatedParams {
   tag: string;
 }
 
+/** 场景音乐推荐参数 */
+export interface SceneMusicParams extends PaginatedParams {
+  /** 场景音乐 scene_id（必选） */
+  id: string;
+}
+
 // ============================================================
 //  请求参数类型 —— 推荐
 // ============================================================
@@ -1058,6 +1159,17 @@ export interface EverydayStyleRecommendParams extends CommonParams {
   /** 风格标签 id，多个以逗号分隔 */
   tagids?: string;
 }
+
+/** 每日推荐歌曲参数 */
+export interface RecommendSongsParams extends CommonParams {
+  /** 设备类型，默认 android */
+  platform?: Platform;
+  /** 用户 id */
+  userid?: string;
+}
+
+/** 好友推荐参数 */
+export interface EverydayFriendParams extends CommonParams {}
 
 // ============================================================
 //  请求参数类型 —— 排行榜
@@ -1222,6 +1334,51 @@ export interface SheetCollectionParams extends PaginatedParams {
   /** 合集 id（获取合集详情时传入） */
   collection_id?: string;
 }
+
+/**
+ * 曲谱推荐参数
+ *
+ * instruments 乐器类型：
+ * - 1：吉他（opern_level: 0=中级, 1=进阶, 2=基础）
+ * - 2：尤克里里（opern_level: 0=基础, 1=进阶）
+ * - 3：钢琴（opern_level: 0=基础, 1=进阶）
+ * - 4：简谱（opern_level: 0=基础）
+ */
+export interface SheetExploreParams extends PaginatedParams {
+  /** 乐器类型，默认 1 */
+  instruments?: number;
+  /** 难度等级，默认 0 */
+  level?: number;
+  /** 标签 id */
+  tagid?: number;
+}
+
+/**
+ * 曲谱排行榜参数
+ *
+ * instruments 乐器类型同 SheetExploreParams
+ */
+export interface SheetRankParams extends PaginatedParams {
+  /** 乐器类型，默认 1 */
+  instruments?: number;
+  /** 难度等级，默认 0 */
+  level?: number;
+  /** 标签 id */
+  tagid?: number;
+}
+
+/** 曲谱歌曲详情参数 */
+export interface SheetSongParams extends CommonParams {
+  /** 专辑音乐 id (album_audio_id/MixSongID)（必选） */
+  album_audio_id: string;
+  /** 乐器类型，默认 1 */
+  instruments?: number;
+  /** 难度等级，默认 0 */
+  level?: number;
+}
+
+/** 获取曲谱标签参数 */
+export interface SheetTagsParams extends CommonParams {}
 
 // ============================================================
 //  请求参数类型 —— 听歌历史 & 服务器
@@ -1451,6 +1608,18 @@ export function login_wx_check(params: LoginWxCheckParams): Promise<ApiResponse>
  */
 export function login_token(params?: LoginTokenParams): Promise<ApiResponse>;
 
+/**
+ * 获取用户设备列表（需登录）
+ * @route /v2/get_dev
+ */
+export function login_device(params?: LoginDeviceParams): Promise<ApiResponse>;
+
+/**
+ * 登出指定设备（需登录）
+ * @route /loginservice/v1/dev_logout
+ */
+export function login_device_kick(params?: LoginDeviceKickParams): Promise<ApiResponse>;
+
 // ============================================================
 //  导出函数 —— 验证码 & 设备
 // ============================================================
@@ -1466,6 +1635,24 @@ export function captcha_sent(params: CaptchaSentParams): Promise<ApiResponse>;
  * @route /register/dev
  */
 export function register_dev(params?: RegisterDevParams): Promise<ApiResponse>;
+
+/**
+ * 获取验证码信息（登录触发二次验证时调用）
+ * @route /verifyservice/v3/get_verify_info
+ */
+export function get_verify_info(params: GetVerifyInfoParams): Promise<ApiResponse>;
+
+/**
+ * 提交验证码验证（腾讯验证码/手机验证码）
+ * @route /verifyservice/v4/verify_user_info
+ */
+export function verify_user_info(params: VerifyUserInfoParams): Promise<ApiResponse>;
+
+/**
+ * 生成 sid/edt 并提交验证（内部调用 generateSimulate + verify_user_info）
+ * @route /verifyservice/v4/verify_user_info
+ */
+export function sidedt(params?: SidedtParams): Promise<ApiResponse>;
 
 // ============================================================
 //  导出函数 —— 用户信息
@@ -1665,6 +1852,12 @@ export function album_detail(params: AlbumDetailParams): Promise<ApiResponse>;
  */
 export function album_songs(params: AlbumSongsParams): Promise<ApiResponse>;
 
+/**
+ * 获取唱片店分类数据
+ * @route /zhuanjidata/v3/album_shop_v2/get_classify_data
+ */
+export function album_shop(params?: AlbumShopParams): Promise<ApiResponse>;
+
 // ============================================================
 //  导出函数 —— 音乐 / 歌曲
 // ============================================================
@@ -1736,6 +1929,12 @@ export function top_card(params: TopCardParams): Promise<ApiResponse>;
 export function top_card_youth(params: TopCardYouthParams): Promise<ApiResponse>;
 
 /**
+ * 获取曲风盲盒（概念版）
+ * @route /youth/v1/song/tag_card_recommend
+ */
+export function top_tag_card_youth(params?: TopTagCardYouthParams): Promise<ApiResponse>;
+
+/**
  * 获取歌手和专辑图片
  * @route /images
  */
@@ -1787,6 +1986,12 @@ export function search_suggest(params: SearchSuggestParams): Promise<ApiResponse
  * @route /search/lyric
  */
 export function search_lyric(params: SearchLyricParams): Promise<ApiResponse>;
+
+/**
+ * 混合搜索（iOS 端接口）
+ * @route /v3/search/mixed
+ */
+export function search_mixed(params: SearchMixedParams): Promise<ApiResponse>;
 
 /**
  * 获取歌词（需先调用 /search/lyric 获取 id 和 accesskey）
@@ -1877,6 +2082,12 @@ export function top_ip(params?: TopIpParams): Promise<ApiResponse>;
 export function ip(params: IpParams): Promise<ApiResponse>;
 
 /**
+ * 获取编辑精选详情（批量）
+ * @route /openapi/v1/ip
+ */
+export function ip_dateil(params: IpDateilParams): Promise<ApiResponse>;
+
+/**
  * 获取编辑精选歌单数据
  * @route /ip/playlist
  */
@@ -1927,6 +2138,12 @@ export function youth_month_vip_record(params?: YouthMonthVipRecordParams): Prom
  * @route /youth/union/vip
  */
 export function youth_union_vip(params?: YouthUnionVipParams): Promise<ApiResponse>;
+
+/**
+ * 听歌领取 VIP（需登录）
+ * @route /youth/v2/report/listen_song
+ */
+export function youth_listen_song(params?: YouthListenSongParams): Promise<ApiResponse>;
 
 // ============================================================
 //  导出函数 —— 歌手
@@ -1979,6 +2196,18 @@ export function artist_unfollow(params: ArtistUnfollowParams): Promise<ApiRespon
  * @route /artist/follow/newsongs
  */
 export function artist_follow_newsongs(params?: ArtistFollowNewsongsParams): Promise<ApiResponse>;
+
+/**
+ * 获取歌手荣誉详情
+ * @route /v1/query_singer_honour_detail
+ */
+export function artist_honour(params: ArtistHonourParams): Promise<ApiResponse>;
+
+/**
+ * 获取歌手列表（新版）
+ * @route /ocean/v6/singer/list
+ */
+export function singer_list(params?: SingerListParams): Promise<ApiResponse>;
 
 // ============================================================
 //  导出函数 —— 视频
@@ -2038,7 +2267,7 @@ export function scene_module(params: SceneModuleParams): Promise<ApiResponse>;
  * 获取场景音乐讨论区
  * @route /scene/list/v2
  */
-export function scene_list_v2(params: SceneListV2Params): Promise<ApiResponse>;
+export function scene_lists_v2(params: SceneListV2Params): Promise<ApiResponse>;
 
 /**
  * 获取场景音乐模块 Tag
@@ -2064,6 +2293,12 @@ export function scene_video_list(params: SceneVideoListParams): Promise<ApiRespo
  */
 export function scene_audio_list(params: SceneAudioListParams): Promise<ApiResponse>;
 
+/**
+ * 获取场景音乐推荐
+ * @route /genesisapi/v1/scene_music/rec_music
+ */
+export function scene_music(params: SceneMusicParams): Promise<ApiResponse>;
+
 // ============================================================
 //  导出函数 —— 推荐
 // ============================================================
@@ -2085,6 +2320,18 @@ export function everyday_history(params?: EverydayHistoryParams): Promise<ApiRes
  * @route /everyday/style/recommend
  */
 export function everyday_style_recommend(params?: EverydayStyleRecommendParams): Promise<ApiResponse>;
+
+/**
+ * 获取每日推荐歌曲
+ * @route /everyday_song_recommend
+ */
+export function recommend_songs(params?: RecommendSongsParams): Promise<ApiResponse>;
+
+/**
+ * 获取好友推荐
+ * @route /sing7/relation/json/v3/friend_rec_by_using_song_list
+ */
+export function everyday_friend(params?: EverydayFriendParams): Promise<ApiResponse>;
 
 // ============================================================
 //  导出函数 —— 排行榜
@@ -2200,6 +2447,30 @@ export function sheet_hot(params?: SheetHotParams): Promise<ApiResponse>;
  */
 export function sheet_collection(params?: SheetCollectionParams): Promise<ApiResponse>;
 
+/**
+ * 获取曲谱推荐
+ * @route /opern/v1/home/get_rec_opern
+ */
+export function sheet_explore(params?: SheetExploreParams): Promise<ApiResponse>;
+
+/**
+ * 获取曲谱排行榜
+ * @route /opern/v1/home/get_rank_opern
+ */
+export function sheet_rank(params?: SheetRankParams): Promise<ApiResponse>;
+
+/**
+ * 获取曲谱歌曲详情
+ * @route /opern/v1/detail/song_info
+ */
+export function sheet_song(params: SheetSongParams): Promise<ApiResponse>;
+
+/**
+ * 获取曲谱标签
+ * @route /opern/v1/home/get_tags
+ */
+export function sheet_tags(params?: SheetTagsParams): Promise<ApiResponse>;
+
 // ============================================================
 //  导出函数 —— 听歌历史 & 服务器
 // ============================================================
@@ -2283,6 +2554,12 @@ export function youth_channel_song_detail(params: YouthChannelSongDetailParams):
  * @route /youth/dynamic/recent
  */
 export function youth_dynamic_recent(params?: YouthDynamicRecentParams): Promise<ApiResponse>;
+
+/**
+ * 获取用户动态（需登录）
+ * @route /youth/v3/user/get_dynamic
+ */
+export function youth_dynamic(params?: YouthDynamicParams): Promise<ApiResponse>;
 
 // ============================================================
 //  导出函数 —— 用户公开音乐

@@ -2,7 +2,7 @@
 
 async function start() {
   require('./util/runtime').applyCliOverrides();
-  require('./server').startService();
+  await require('./server').startService();
 }
 
-start();
+start().catch(console.error);
