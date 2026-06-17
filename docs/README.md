@@ -160,6 +160,7 @@
 131. [`听书 - 专辑音乐列表`](#听书-专辑音乐列表)
 132. [`歌曲详情 - 歌曲成绩单`](#歌曲详情-歌曲成绩单)
 133. [`歌曲详情 - 歌曲成绩单详情`](#歌曲详情---歌曲成绩单详情)
+134. [`听歌识曲`](#听歌识曲)
 
 ### 安装
 
@@ -2443,6 +2444,27 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 **接口地址：** `/verify/user/info`
 
 **调用例子：** `/verify/user/info?eventid=gz_tx_event_xxx&v_type=xx&verifycode=xxx&sid=xxx&edt=xxx`
+
+### 听歌识曲
+
+说明：调用此接口，传入 PCM 音频数据（`application/octet-stream`），可识别歌曲信息。**该接口必须使用 POST 请求**
+
+**必选参数：**
+
+`data`：PCM 音频二进制数据（16bit 采样，通过 POST body 以 `application/octet-stream` 格式传入）
+
+**接口地址：** `/audio/match`
+
+**调用例子：** 使用 POST 请求，`Content-Type: application/octet-stream`，body 为 PCM 二进制数据
+
+```javascript
+// 前端示例
+const res = await fetch('/audio/match', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/octet-stream' },
+  body: pcmArrayBuffer,
+});
+```
 
 ## License
 

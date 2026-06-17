@@ -20,7 +20,8 @@
  * @requires ./config.json - 平台配置（appid、clientver 等）
  */
 
-const { cryptoMd5 } = require('./crypto');
+const CryptoJS = require('crypto-js');
+const { cryptoMd5, wordArrayFromBuffer } = require('./crypto');
 const { appid: useAppid, liteAppid, clientver: useClientver, liteClientver } = require('./config.json');
 
 /**
@@ -58,12 +59,21 @@ const signatureWebParams = (params) => {
  */
 const signatureAndroidParams = (params, data) => {
   const isLite = process.env.platform === 'lite';
-  // 标准版和概念版使用不同的盐值
   const str = isLite ? 'LnT6xpN3khm36zse0QzvmgTZ3waWdRSA' : `OIlwieks28dk2k092lksi2UIkp`;
   const paramsString = Object.keys(params)
     .sort()
     .map((key) => `${key}=${typeof params[key] === 'object' ? JSON.stringify(params[key]) : params[key]}`)
     .join('');
+
+  if (Buffer.isBuffer(data)) {
+    const hasher = CryptoJS.algo.MD5.create();
+    hasher.update(CryptoJS.enc.Utf8.parse(str));
+    hasher.update(CryptoJS.enc.Utf8.parse(paramsString));
+    hasher.update(wordArrayFromBuffer(data));
+    hasher.update(CryptoJS.enc.Utf8.parse(str));
+    return hasher.finalize().toString(CryptoJS.enc.Hex);
+  }
+
   return cryptoMd5(`${str}${paramsString}${data || ''}${str}`);
 };
 

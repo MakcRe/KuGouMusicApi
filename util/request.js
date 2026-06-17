@@ -116,7 +116,7 @@ const createRequest = (options) => {
     }
 
     // ========== 序列化请求体 ==========
-    const data = typeof options?.data === 'object' ? JSON.stringify(options.data) : options?.data || '';
+    const data = Buffer.isBuffer(options?.data) ? options.data : typeof options?.data === 'object' ? JSON.stringify(options.data) : options?.data || '';
 
     // ========== 生成请求签名 ==========
     // 根据 encryptType 选择不同的签名算法

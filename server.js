@@ -279,8 +279,9 @@ async function consturctServer(moduleDefs) {
    * - express.urlencoded(): 解析 Content-Type 为 application/x-www-form-urlencoded 的请求体
    *   - extended: false 使用 querystring 库解析（不支持嵌套对象）
    */
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json({ limit: '5mb' }));
+  app.use(express.urlencoded({ extended: false, limit: '5mb' }));
+  app.use(express.raw({ type: 'application/octet-stream', limit: '10mb' }));
 
   /**
    * ============================================================
@@ -351,7 +352,8 @@ async function consturctServer(moduleDefs) {
       //   - cookie: 合并请求 Cookie 和 query 中传入的 cookie 参数
       //   - params: query 中除 cookie 外的其余参数
       //   - body: 请求体（POST 数据）
-      const query = Object.assign({}, { cookie: Object.assign({}, req.cookies, cookie) }, params, { body: req.body });
+      const body = Buffer.isBuffer(req.body) ? { data: req.body } : req.body;
+      const query = Object.assign({}, { cookie: Object.assign({}, req.cookies, cookie) }, params, body);
 
       // Step 4: 如果请求携带了 Authorization 头，将其解析为 Cookie 并合并
       // 这样客户端可以通过 Authorization 头传递认证信息，例如: token=xxx;userid=xxx
