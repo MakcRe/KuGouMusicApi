@@ -76,7 +76,7 @@ const createRequest = (options) => {
     const userid = options?.cookie?.userid || 0;           // 用户 ID
     const clienttime = Math.floor(Date.now() / 1000);     // 当前时间戳（秒）
     const ip = options?.realIP || options?.ip || '';       // 客户端 IP（用于 IP 透传）
-    const webglHash = options?.cookie.KUGOU_API_WEBGL;    // WebGL 指纹哈希
+    const webglHash = options?.cookie?.KUGOU_API_WEBGL;   // WebGL 指纹哈希
 
     // ========== 构建请求头 ==========
     // kg-rc / kg-thash / kg-rec / kg-rf: 酷狗内部标识头，用于服务端识别请求来源
