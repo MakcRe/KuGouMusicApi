@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传测试页面 - 上传文件</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.2/spark-md5.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="file"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+        .loading {
+            color: #666;
+            margin-top: 10px;
+        }
+        .error {
+            color: #d32f2f;
+            margin-top: 10px;
+        }
+        .success {
+            color: #388e3c;
+            margin-top: 10px;
+        }
+        pre {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文件上传测试 - 上传文件</h1>
+        
+        <div class="form-group">
+            <label for="fileInput">选择文件：</label>
+            <input type="file" id="fileInput">
+        </div>
+
+        <div class="form-group">
+            <label for="token">Token：</label>
+            <input type="text" id="token" placeholder="输入 token">
+        </div>
+
+        <div class="form-group">
+            <label for="userid">User ID：</label>
+            <input type="text" id="userid" placeholder="输入 userid">
+        </div>
+
+        <div class="form-group">
+            <label for="dfid">DFID：</label>
+            <input type="text" id="dfid" placeholder="输入 dfid">
+        </div>
+
+        <button onclick="calculateHash()">计算 Hash</button>
+        <button onclick="uploadFile()">上传文件</button>
+
+        <div id="loading" class="loading"></div>
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+        
+        <div id="result" class="result" style="display:none;">
+            <h3>结果：</h3>
+            <p><strong>文件名：</strong><span id="fileName"></span></p>
+            <p><strong>文件大小：</strong><span id="fileSize"></span> bytes</p>
+            <p><strong>MD5 Hash：</strong><span id="fileHash"></span></p>
+            <p><strong>后端响应：</strong></p>
+            <pre id="response"></pre>
+        </div>
+    </div>
+
+    <script>
+        let fileHash = null;
+        let selectedFile = null;
+        const API_URL = 'http://127.0.0.6:6521/file/add';
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            selectedFile = e.target.files[0];
+            fileHash = null;
+            document.getElementById('result').style.display = 'none';
+            clearMessages();
+        });
+
+        function clearMessages() {
+            document.getElementById('loading').textContent = '';
+            document.getElementById('error').textContent = '';
+            document.getElementById('success').textContent = '';
+        }
+
+        function calculateHash() {
+            if (!selectedFile) {
+                document.getElementById('error').textContent = '请先选择文件';
+                return;
+            }
+
+            clearMessages();
+            const loading = document.getElementById('loading');
+            loading.textContent = '正在计算 Hash...';
+
+            const reader = new FileReader();
+            const spark = new SparkMD5.ArrayBuffer();
+
+            reader.onload = (e) => {
+                spark.append(e.target.result);
+                fileHash = spark.end();
+                loading.textContent = '';
+                document.getElementById('success').textContent = 'Hash 计算完成';
+                showResult();
+            };
+
+            reader.onerror = () => {
+                document.getElementById('error').textContent = '读取文件失败';
+            };
+
+            reader.readAsArrayBuffer(selectedFile);
+        }
+
+        function showResult() {
+            document.getElementById('fileName').textContent = selectedFile.name;
+            document.getElementById('fileSize').textContent = selectedFile.size;
+            document.getElementById('fileHash').textContent = fileHash;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function uploadFile() {
+            if (!fileHash) {
+                document.getElementById('error').textContent = '请先计算 Hash';
+                return;
+            }
+
+            const token = document.getElementById('token').value;
+            const userid = document.getElementById('userid').value;
+            const dfid = document.getElementById('dfid').value;
+
+            if (!token || !userid || !dfid) {
+                document.getElementById('error').textContent = '请填写所有请求头参数';
+                return;
+            }
+
+            clearMessages();
+            const loading = document.getElementById('loading');
+            loading.textContent = '正在上传...';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('fileHash', fileHash);
+
+            const url = `${API_URL}?fileHash=${encodeURIComponent(fileHash)}`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `token=${token};userid=${userid};dfid=${dfid}`
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.textContent = '';
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.status === 0 || data.error_code !== 0) {
+                    document.getElementById('error').textContent = `上传失败: ${data.msg || '未知错误'}`;
+                } else {
+                    document.getElementById('success').textContent = '上传成功';
+                }
+                
+                document.getElementById('result').style.display = 'block';
+            })
+            .catch(error => {
+                loading.textContent = '';
+                document.getElementById('error').textContent = `上传失败: ${error.message}`;
+            });
+        }
+    </script>
+</body>
+</html>
