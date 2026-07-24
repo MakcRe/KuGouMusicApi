@@ -2628,6 +2628,58 @@ export function song_ranking(params: SongRankingParams): Promise<ApiResponse>;
 export function song_ranking_filter(params: SongRankingFilterParams): Promise<ApiResponse>;
 
 // ============================================================
+//  导出函数 —— 已购单曲/专辑
+// ============================================================
+
+/** 已购单曲/专辑商品信息 */
+export interface PurchasedGoods {
+  /** 商品类型：audio 或 album */
+  type: 'audio' | 'album';
+  /** 商品 ID */
+  id: number;
+  /** 哈希值（单曲有，专辑为空） */
+  hash: string;
+  /** 商品名称（歌手 - 歌曲名 或 专辑名） */
+  name: string;
+  /** 过期时间（0 表示永不过期） */
+  expire: number;
+  /** 专辑 ID */
+  album_id: string;
+  /** 付费类型 */
+  pay_type: number;
+  /** 添加时间（Unix 时间戳） */
+  addtime: number;
+  /** 是否已发布 */
+  is_publish: number;
+  /** 专辑音频 ID（单曲有，专辑为 0） */
+  album_audio_id: number;
+  /** 歌手名（仅专辑） */
+  singer_name?: string;
+  /** 封面图片 URL（仅专辑） */
+  img?: string;
+}
+
+/** 已购单曲/专辑响应数据 */
+export interface PurchasedGoodsData {
+  /** 总数 */
+  total: number;
+  /** 商品列表 */
+  goods: PurchasedGoods[];
+}
+
+/**
+ * 获取已购单曲列表（需登录）
+ * @route /user/purchased/songs
+ */
+export function user_purchased_songs(params?: PaginatedParams): Promise<ApiResponse<PurchasedGoodsData>>;
+
+/**
+ * 获取已购专辑列表（需登录）
+ * @route /user/purchased/albums
+ */
+export function user_purchased_albums(params?: PaginatedParams): Promise<ApiResponse<PurchasedGoodsData>>;
+
+// ============================================================
 //  导出函数 —— 服务器管理（来自 server 模块）
 // ============================================================
 
