@@ -6,8 +6,8 @@ module.exports = (params, useAxios) => {
     appid,
     userid: Number(params?.cookie?.userid) || 0,
     token: params?.cookie?.token || '',
-    page: params?.page || 1,
-    pagesize: params?.pagesize || 15,
+    page: Number(params?.page) || 1,
+    pagesize: Number(params?.pagesize) || 15,
     clientver: String(clientver),
     deleted: 0,
   };
