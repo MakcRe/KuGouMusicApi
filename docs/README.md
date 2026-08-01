@@ -587,7 +587,8 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 ### 上传音乐到云盘
 
-说明：登录后调用此接口可以将音乐文件上传到用户云盘（需要登录），需通过请求体传入文件二进制数据（`Content-Type: application/octet-stream`）
+说明：登录后调用此接口可以将音乐文件上传到用户云盘，需通过请求体传入文件二进制数据（`Content-Type: application/octet-stream`）  
+可选参数建议传入，否则手机端无法正常播放。当audio_id传入时，服务端会匹配audio_id，若匹配到则使用匹配到的文件名，否则使用name
 
 **必选参数：**
 
@@ -605,11 +606,7 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 `audio_id`: 音频 id，默认为 0
 
-`bitrate`: 码率标识，默认为 4
-
 `album_audio_id`: 专辑音频 id，默认为 0
-
-`timelen`: 时长，默认为 0
 
 **接口地址：** `/user/cloud/upload`
 
