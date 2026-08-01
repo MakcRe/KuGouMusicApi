@@ -281,7 +281,7 @@ async function consturctServer(moduleDefs) {
    */
   app.use(express.json({ limit: '5mb' }));
   app.use(express.urlencoded({ extended: false, limit: '5mb' }));
-  app.use(express.raw({ type: 'application/octet-stream', limit: '10mb' }));
+  app.use(express.raw({ type: 'application/octet-stream', limit: '100mb' }));
 
   /**
    * ============================================================
