@@ -24,6 +24,8 @@ const CryptoJS = require('crypto-js');
 const { cryptoMd5, wordArrayFromBuffer } = require('./crypto');
 const { appid: useAppid, liteAppid, clientver: useClientver, liteClientver } = require('./config.json');
 
+const isLiteAppid = (appid) => Number(appid) === Number(liteAppid);
+
 /**
  * Web 版 API 请求 signature 签名
  *
@@ -58,7 +60,7 @@ const signatureWebParams = (params) => {
  * @returns {string} MD5 签名字符串
  */
 const signatureAndroidParams = (params, data) => {
-  const isLite = process.env.platform === 'lite';
+  const isLite = process.env.platform === 'lite' || isLiteAppid(params?.appid);
   const str = isLite ? 'LnT6xpN3khm36zse0QzvmgTZ3waWdRSA' : `OIlwieks28dk2k092lksi2UIkp`;
   const paramsString = Object.keys(params)
     .sort()
@@ -132,7 +134,7 @@ const signParams = (params, data) => {
  * @returns {string} MD5 签名字符串
  */
 const signKey = (hash, mid, userid, appid) => {
-  const isLite = process.env.platform === 'lite';
+  const isLite = process.env.platform === 'lite' || isLiteAppid(appid);
   // 标准版和概念版使用不同的盐值
   const str = isLite ? '185672dd44712f60bb1736df5a377e82' : '57ae12eb6890223e355ccfcb74edf70d';
   return cryptoMd5(`${hash}${str}${appid || useAppid}${mid}${userid || 0}`);
@@ -165,7 +167,7 @@ const signCloudKey = (hash, pid) => {
  * @returns {string} MD5 签名字符串
  */
 const signParamsKey = (data, appid, clientver) => {
-  const isLite = process.env.platform === 'lite';
+  const isLite = process.env.platform === 'lite' || isLiteAppid(appid);
   // 标准版和概念版使用不同的盐值
   const str = isLite ? 'LnT6xpN3khm36zse0QzvmgTZ3waWdRSA' : 'OIlwieks28dk2k092lksi2UIkp';
 
