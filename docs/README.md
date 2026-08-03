@@ -272,7 +272,7 @@ $ set HOST=127.0.0.1 && npm run dev
 
 #### 更新记录
 
-26-08-01：添加 `上传音乐到云盘` 接口
+26-08-01：添加 `上传音乐到云盘`、`删除用户云盘音乐` 接口
 
 26-05-20：更新曲谱相关接口
 
@@ -585,10 +585,54 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 **调用例子：** `/user/cloud/url`
 
+### 删除用户云盘音乐
+
+说明：登录后调用此接口可以删除用户云盘中的音乐（需要登录）
+
+**必选参数：**
+
+`hash`: 音乐 hash，多个可用逗号分隔；也可使用 `hashes` 传数组。若已知云盘文件 ID，优先使用可选参数 `fileid` 和 `album_audio_id`
+
+**可选参数：**
+
+`clientver`: 覆盖客户端版本号，默认使用当前平台配置
+
+`appid`: 覆盖 appid，默认使用当前平台配置
+
+`fileid`: 云盘文件 ID（列表接口返回的 `kv_id`），多个可用逗号分隔；也可使用 `fileids` 传数组
+
+`kv_id`: `fileid` 别名
+
+`album_audio_id`: 专辑音频 ID（列表接口返回的 `album_audio_id`），多个可用逗号分隔；也可使用 `album_audio_ids` 传数组
+
+**接口地址：** `/user/cloud/del`
+
+**调用例子：** `/user/cloud/del?fileid=1&album_audio_id=123`
+
+### 云盘上传前曲库匹配
+
+说明：登录后调用此接口可以根据文件 hash 匹配曲库信息，用于上传前获取 `hash_std`、`audio_id`、`album_audio_id`
+
+**必选参数：**
+
+`hash`: 文件 hash（即文件 MD5），多个可用逗号分隔；也可通过请求体传入文件二进制数据自动计算
+
+**可选参数：**
+
+`album_audio_id`: 专辑音频 ID，已有时可辅助匹配，多个可用逗号分隔；也可使用 `album_audio_ids` 传数组
+
+`clientver`: 覆盖客户端版本号，默认使用当前平台配置
+
+`appid`: 覆盖 appid，默认使用当前平台配置
+
+**接口地址：** `/user/cloud/match`
+
+**调用例子：** `/user/cloud/match?hash=e1fe087ba28766b8c95239487a0e46dc`
+
 ### 上传音乐到云盘
 
 说明：登录后调用此接口可以将音乐文件上传到用户云盘，需通过请求体传入文件二进制数据（`Content-Type: application/octet-stream`）  
-可选参数建议传入，否则手机端无法正常播放。当audio_id传入时，服务端会匹配audio_id，若匹配到则使用匹配到的文件名，否则使用name
+默认会先根据文件 hash 调用曲库匹配接口，并将匹配到的 `hash_std`、`audio_id`、`album_audio_id` 写入云盘；手动传入这些参数时会优先使用手动值
 
 **必选参数：**
 
@@ -604,9 +648,13 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 `author_name`: 歌手名
 
+`hash_std`: 曲库标准 hash，默认自动匹配
+
 `audio_id`: 音频 id，默认为 0
 
 `album_audio_id`: 专辑音频 id，默认为 0
+
+`auto_match`: 是否自动匹配曲库，默认 `1`；传 `0`、`false` 或 `no` 可关闭
 
 **接口地址：** `/user/cloud/upload`
 
