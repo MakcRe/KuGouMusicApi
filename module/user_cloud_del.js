@@ -1,6 +1,5 @@
 // 删除用户云盘音乐
-const { playlistAesEncrypt, playlistAesDecrypt, rsaEncrypt2, signParamsKey, clientver, appid, publicLiteRasKey } = require('../util');
-const { liteAppid, liteClientver } = require('../util/config.json');
+const { playlistAesEncrypt, playlistAesDecrypt, rsaEncrypt2, signParamsKey, clientver, appid } = require('../util');
 
 module.exports = (params, useAxios) => {
   const answer = { status: 500, body: {}, cookie: [] };
@@ -10,8 +9,7 @@ module.exports = (params, useAxios) => {
       const token = params?.token || params?.cookie?.token || '';
       const mid = params?.cookie?.KUGOU_API_MID;
       const requestAppid = params?.appid || appid;
-      const isLiteRequest = params?.platform === 'lite' || params?.cookie?.KUGOU_API_PLATFORM === 'lite' || Number(requestAppid) === Number(liteAppid);
-      const requestClientver = params?.clientver || (isLiteRequest ? liteClientver : clientver);
+      const requestClientver = params?.clientver || clientver;
       const clienttime = Math.floor(Date.now() / 1000);
 
       const fileids = []
@@ -42,7 +40,7 @@ module.exports = (params, useAxios) => {
         : { data: hashes };
 
       const aesEncrypt = playlistAesEncrypt(dataMap);
-      const p = rsaEncrypt2({ aes: aesEncrypt.key, uid: userid, token }, isLiteRequest ? publicLiteRasKey : undefined).toUpperCase();
+      const p = rsaEncrypt2({ aes: aesEncrypt.key, uid: userid, token }).toUpperCase();
 
       const respone = await useAxios({
         baseURL: 'https://mcloudservice.kugou.com',
