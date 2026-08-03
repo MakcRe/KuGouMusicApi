@@ -272,7 +272,7 @@ $ set HOST=127.0.0.1 && npm run dev
 
 #### 更新记录
 
-26-08-01：添加 `上传音乐到云盘` 接口
+26-08-01：添加 `上传音乐到云盘`、`删除用户云盘音乐` 接口
 
 26-05-20：更新曲谱相关接口
 
@@ -584,6 +584,32 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 **接口地址：** `/user/cloud/url`
 
 **调用例子：** `/user/cloud/url`
+
+### 删除用户云盘音乐
+
+说明：登录后调用此接口可以删除用户云盘中的音乐（需要登录）
+
+**必选参数：**
+
+`hash`: 音乐 hash，多个可用逗号分隔；也可使用 `hashes` 传数组。若已知云盘文件 ID，优先使用可选参数 `fileid` 和 `album_audio_id`
+
+**可选参数：**
+
+`clientver`: 覆盖客户端版本号，默认使用当前平台配置
+
+`appid`: 覆盖 appid，默认使用当前平台配置
+
+`platform`: 平台类型；传 `lite` 时使用概念版 RSA 公钥（`appid=3116` 时会自动识别为概念版）
+
+`fileid`: 云盘文件 ID（列表接口返回的 `kv_id`），多个可用逗号分隔；也可使用 `fileids` 传数组
+
+`kv_id`: `fileid` 别名
+
+`album_audio_id`: 专辑音频 ID（列表接口返回的 `album_audio_id`），多个可用逗号分隔；也可使用 `album_audio_ids` 传数组
+
+**接口地址：** `/user/cloud/del`
+
+**调用例子：** `/user/cloud/del?fileid=1&album_audio_id=123&platform=lite`
 
 ### 上传音乐到云盘
 

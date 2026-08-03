@@ -366,6 +366,36 @@ export interface UserCloudUrlParams extends CommonParams {
   album_audio_id?: string;
 }
 
+/** 删除用户云盘音乐参数 */
+export interface UserCloudDelParams extends CommonParams {
+  /** 音乐 hash，多个可用逗号分隔 */
+  hash?: string;
+  /** 音乐 hash 列表 */
+  hashes?: string[] | string;
+  /** 云盘文件 ID，多个可用逗号分隔 */
+  fileid?: number | string;
+  /** 云盘文件 ID 列表 */
+  fileids?: Array<number | string> | string;
+  /** 云盘文件 ID 别名 */
+  kv_id?: number | string;
+  /** 专辑音频 ID，列表接口返回 album_audio_id */
+  album_audio_id?: number | string;
+  /** 专辑音频 ID 列表 */
+  album_audio_ids?: Array<number | string> | string;
+  /** album_audio_id 别名 */
+  mix_id?: number | string;
+  /** album_audio_id 别名 */
+  mixid?: number | string;
+  /** 文件 hash 别名 */
+  filename?: string;
+  /** 覆盖客户端版本号，默认使用当前平台配置 */
+  clientver?: number | string;
+  /** 覆盖 appid，默认使用当前平台配置 */
+  appid?: number | string;
+  /** 平台类型，传 lite 时使用概念版 RSA 公钥 */
+  platform?: 'lite' | string;
+}
+
 /** 获取用户收藏的视频参数 */
 export interface UserVideoCollectParams extends PaginatedParams {}
 
@@ -1699,6 +1729,12 @@ export function user_cloud(params?: UserCloudParams): Promise<ApiResponse>;
  * @route /user/cloud/url
  */
 export function user_cloud_url(params: UserCloudUrlParams): Promise<ApiResponse>;
+
+/**
+ * 删除用户云盘音乐（需登录）
+ * @route /user/cloud/del
+ */
+export function user_cloud_del(params: UserCloudDelParams): Promise<ApiResponse>;
 
 /**
  * 获取用户收藏的视频（需登录）

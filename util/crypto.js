@@ -261,10 +261,10 @@ function cryptoRSAEncrypt(data, publicKey) {
   return rsaRawEncrypt(padded, key);
 }
 
-function rsaEncrypt2(data) {
+function rsaEncrypt2(data, publicKey) {
   const isLite = process.env.platform === 'lite';
   const buffer = normalizeBuffer(data);
-  const key = getForgePublicKey(isLite ? publicLiteRasKey : publicRasKey);
+  const key = getForgePublicKey(publicKey || (isLite ? publicLiteRasKey : publicRasKey));
   const encrypted = key.encrypt(bufferToBinaryString(buffer), 'RSAES-PKCS1-V1_5');
   return forge.util.bytesToHex(encrypted);
 }
