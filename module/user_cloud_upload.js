@@ -96,6 +96,7 @@ module.exports = (params, useAxios) => {
 
       // ========== 步骤5 添加文件到云盘（AES 加密 body + RSA 加密密钥） ==========
       // 请求体结构来自 APK：data 数组（所有字段必需）+ list_ver
+      // 数字字段必须为 number 类型（query 传入时为字符串，需转换，否则服务端返回 500）
       const aesEncrypt = playlistAesEncrypt({
         data: [
           {
@@ -104,14 +105,14 @@ module.exports = (params, useAxios) => {
             author_name,
             hash: filename,
             hash_std: filename,
-            audio_id: params?.audio_id ?? 0,
-            bitrate: params?.bitrate ?? 4,
-            album_audio_id: params?.album_audio_id ?? 0,
+            audio_id: Number(params?.audio_id) || 0,
+            bitrate: Number(params?.bitrate) || 4,
+            album_audio_id: Number(params?.album_audio_id) || 0,
             size: fileData.length,
-            timelen: params?.timelen ?? 0,
+            timelen: Number(params?.timelen) || 0,
           },
         ],
-        list_ver: params?.list_ver ?? 0,
+        list_ver: Number(params?.list_ver) || 0,
       });
       const p = rsaEncrypt2({ aes: aesEncrypt.key, uid: userid, token }).toUpperCase();
 
@@ -158,9 +159,17 @@ module.exports = (params, useAxios) => {
       resolve(respone);
     } catch (error) {
       console.log(error);
+      // useAxios 失败时 reject 的是 { status, body } 结构，body.msg 为 AxiosError，
+      // 从中提取上游响应内容（arraybuffer 需转字符串），便于定位酷狗侧的具体错误
+      let upstream = error?.body?.msg?.response?.data;
+      if (upstream && Buffer.isBuffer(upstream)) upstream = upstream.toString();
       answer.body = {
         status: 0,
-        msg: error?.message || String(error),
+        msg: upstream
+          ? typeof upstream === 'string'
+            ? upstream
+            : JSON.stringify(upstream)
+          : error?.message || String(error),
         stack: error?.stack,
       };
       resolve(answer);
