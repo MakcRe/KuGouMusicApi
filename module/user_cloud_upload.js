@@ -238,7 +238,7 @@ module.exports = (params, useAxios) => {
       }
 
       // ========== 步骤5 添加文件到云盘（AES 加密 body + RSA 加密密钥） ==========
-      // 请求体结构来自 APK：data 数组（所有字段必需）+ list_ver
+      // 请求体结构：data 数组（所有字段必需）+ list_ver
       // 数字字段必须为 number 类型（query 传入时为字符串，需转换，否则服务端返回 500）
       const aesEncrypt = playlistAesEncrypt({
         data: [
