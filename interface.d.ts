@@ -366,6 +366,92 @@ export interface UserCloudUrlParams extends CommonParams {
   album_audio_id?: string;
 }
 
+/** 删除用户云盘音乐参数 */
+export interface UserCloudDelParams extends CommonParams {
+  /** 音乐 hash，多个可用逗号分隔 */
+  hash?: string;
+  /** 音乐 hash 列表 */
+  hashes?: string[] | string;
+  /** 云盘文件 ID，多个可用逗号分隔 */
+  fileid?: number | string;
+  /** 云盘文件 ID 列表 */
+  fileids?: Array<number | string> | string;
+  /** 云盘文件 ID 别名 */
+  kv_id?: number | string;
+  /** 专辑音频 ID，列表接口返回 album_audio_id */
+  album_audio_id?: number | string;
+  /** 专辑音频 ID 列表 */
+  album_audio_ids?: Array<number | string> | string;
+  /** album_audio_id 别名 */
+  mix_id?: number | string;
+  /** album_audio_id 别名 */
+  mixid?: number | string;
+  /** 文件 hash 别名 */
+  filename?: string;
+  /** 覆盖客户端版本号，默认使用当前平台配置 */
+  clientver?: number | string;
+  /** 覆盖 appid，默认使用当前平台配置 */
+  appid?: number | string;
+}
+
+/** 云盘上传前曲库匹配参数 */
+export interface UserCloudMatchParams extends CommonParams {
+  /** 文件 hash（即文件 MD5），多个可用逗号分隔；不传时可通过请求体二进制自动计算 */
+  hash?: string;
+  /** 文件 hash 别名 */
+  filename?: string;
+  /** 专辑音频 ID，已有时可辅助匹配 */
+  album_audio_id?: number | string;
+  /** 专辑音频 ID 列表 */
+  album_audio_ids?: Array<number | string> | string;
+  /** album_audio_id 别名 */
+  mix_id?: number | string;
+  /** album_audio_id 别名 */
+  mixid?: number | string;
+  /** 覆盖客户端版本号，默认使用当前平台配置 */
+  clientver?: number | string;
+  /** 覆盖 appid，默认使用当前平台配置 */
+  appid?: number | string;
+}
+
+/** 上传音乐到用户云盘参数 */
+export interface UserCloudUploadParams extends CommonParams {
+  /** 文件 hash（即文件 MD5），默认根据请求体二进制自动计算 */
+  filename?: string;
+  /** 文件扩展名，默认 mp3 */
+  extendname?: string;
+  /** 云盘音乐显示名称 */
+  name?: string;
+  /** 歌曲名，不传 name 时用于拼接显示名称 */
+  track_name?: string;
+  /** 歌曲名别名 */
+  songname?: string;
+  /** 歌手名 */
+  author_name?: string;
+  /** 曲库标准 hash，不传时默认自动匹配 */
+  hash_std?: string;
+  /** 音频 id，不传时默认自动匹配 */
+  audio_id?: number | string;
+  /** 专辑音频 id，不传时默认自动匹配 */
+  album_audio_id?: number | string;
+  /** album_audio_id 别名 */
+  mix_id?: number | string;
+  /** album_audio_id 别名 */
+  mixid?: number | string;
+  /** 是否自动匹配曲库，默认 1；传 0/false/no 关闭 */
+  auto_match?: number | string | boolean;
+  /** 码率类型，默认 4 */
+  bitrate?: number | string;
+  /** 时长，毫秒 */
+  timelen?: number | string;
+  /** 云盘列表版本，默认 0 */
+  list_ver?: number | string;
+  /** 覆盖客户端版本号，默认使用当前平台配置 */
+  clientver?: number | string;
+  /** 覆盖 appid，默认使用当前平台配置 */
+  appid?: number | string;
+}
+
 /** 获取用户收藏的视频参数 */
 export interface UserVideoCollectParams extends PaginatedParams {}
 
@@ -1699,6 +1785,24 @@ export function user_cloud(params?: UserCloudParams): Promise<ApiResponse>;
  * @route /user/cloud/url
  */
 export function user_cloud_url(params: UserCloudUrlParams): Promise<ApiResponse>;
+
+/**
+ * 删除用户云盘音乐（需登录）
+ * @route /user/cloud/del
+ */
+export function user_cloud_del(params: UserCloudDelParams): Promise<ApiResponse>;
+
+/**
+ * 云盘上传前曲库匹配（需登录）
+ * @route /user/cloud/match
+ */
+export function user_cloud_match(params: UserCloudMatchParams): Promise<ApiResponse>;
+
+/**
+ * 上传音乐到云盘（需登录）
+ * @route /user/cloud/upload
+ */
+export function user_cloud_upload(params: UserCloudUploadParams): Promise<ApiResponse>;
 
 /**
  * 获取用户收藏的视频（需登录）
