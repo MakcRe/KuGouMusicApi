@@ -1,14 +1,6 @@
 // module/login_device_kick.js
 const crypto = require('crypto');
-const { signatureWebParams,appid,clientver,srcappid } = require('../util');
-
-// 概念版 RSA 公钥（已验证，与酷狗客户端一致）
-const PUBLIC_KEY_LITE = `-----BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDECi0Np2UR87scwrvTr72L6oO0
-1rBbbBPriSDFPxr3Z5syug0O24QyQO8bg27+0+4kBzTBTBOZ/WWU0WryL1JSXRTX
-LgFVxtzIY41Pe7lPOgsfTCn5kZcvKhYKJesKnnJDNr5/abvTGf+rHG3YRwsCHcQ0
-8/q6ifSioBszvb3QiwIDAQAB
------END PUBLIC KEY-----`;
+const { signatureWebParams,appid,clientver,srcappid,publicLiteRasKey } = require('../util');
 
 /**
  * RSA 无填充加密（用于 Token 加密）
@@ -43,17 +35,13 @@ module.exports = (params, useAxios) => {
 
     // ----- Token 加密（原始 token 为 64 位十六进制） -----
     let token = rawToken;
-    if (/^[0-9a-f]{64}$/i.test(rawToken)) {
-        const prefix = 'moc.uoguk.59::';                // 固定前缀
-        const input = Buffer.from(prefix + rawToken, 'utf8');
-        const padded = Buffer.alloc(128);              // RSA 1024-bit 密钥长度
-        input.copy(padded);
-
-        // 加密并添加 h5 前缀
-        const encrypted = rsaNoPadEncrypt(padded, PUBLIC_KEY_LITE).toUpperCase();
-        token = 'h5' + encrypted;                       // 与客户端格式一致
-    }
-    // 否则 token 已经是加密后的密文（含 h5 前缀），直接使用
+    const prefix = 'moc.uoguk.59::';                // 固定前缀
+    const input = Buffer.from(prefix + rawToken, 'utf8');
+    const padded = Buffer.alloc(128);
+    input.copy(padded);
+    // 加密并添加 h5 前缀
+    const encrypted = rsaNoPadEncrypt(padded, publicLiteRasKey).toUpperCase();
+    token = 'h5' + encrypted;                       // 与客户端格式一致
 
     // ----- 组装请求参数 -----
     const clienttime = Date.now();
@@ -64,10 +52,10 @@ module.exports = (params, useAxios) => {
         mid,
         uuid,
         dfid,
-        plat: params?.plat || 1,
+        plat: 1,
         userid,
         token,
-        srcappid,                                 // 固定值，参与签名
+        srcappid,
         t_mid: params.t_mid,
         t: params.t,
         t_appid: params.t_appid,
@@ -78,13 +66,12 @@ module.exports = (params, useAxios) => {
     const signature = signatureWebParams(dataMap);
     const finalParams = { ...dataMap, signature };
 
-
     // ----- 发送请求 -----
     return useAxios({
         url: '/loginservice/v1/dev_logout',
         method: 'GET',
         params: finalParams,
-        cookie: params.cookie,
+        cookie: params?.cookie || {},
         headers: { host: 'gateway.kugou.com' },
     });
 };
