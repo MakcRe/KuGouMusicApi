@@ -36,7 +36,7 @@ const { createRequest } = require('./request');
 const { signKey, signParams, signParamsKey, signCloudKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
 
 // ========== 工具函数 ==========
-const { randomString, decodeLyrics, parseCookieString, cookieToJson, randomNumber, calculateMid } = require('./util');
+const { randomString, decodeLyrics, parseCookieString, cookieToJson, randomNumber, calculateMid, isUUIDv4 } = require('./util');
 
 // ========== 平台判断 ==========
 // 根据环境变量 platform 判断当前是否为概念版（lite）
@@ -94,5 +94,6 @@ module.exports = {
   publicLiteRasKey,             // 概念版 RSA 公钥
   publicRasKey,                 // 标准版 RSA 公钥
   randomNumber,                 // 随机数字字符串生成
-  calculateMid                  // 设备 MID 计算
+  calculateMid,                 // 设备 MID 计算
+  isUUIDv4                      // 判断是否为 UUID V4
 };

@@ -24,7 +24,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const express = require('express');
 const decode = require('safe-decode-uri-component');
-const { cookieToJson, randomString, getGuid, calculateMid, generateWebGLHash } = require('./util/util');
+const { cookieToJson, randomString, getGuid, calculateMid, generateWebGLHash, isUUIDv4 } = require('./util/util');
 const { cryptoMd5 } = require('./util/crypto');
 const { createRequest } = require('./util/request');
 const dotenv = require('dotenv');
@@ -253,16 +253,19 @@ async function consturctServer(moduleDefs) {
       res.append('Set-Cookie', `${key}=${cookies[key]}${cookieSuffix}`);
     };
 
+    // 获取 env guid
+    const env_guid = isUUIDv4(process.env.KUGOU_API_GUID) ? cryptoMd5(process.env.KUGOU_API_GUID) : process.env.KUGOU_API_GUID;
+
     // 计算设备 MID（基于 GUID 的衍生标识）
-    const mid = calculateMid(process.env.KUGOU_API_GUID ?? guid);
+    const mid = calculateMid(env_guid ?? guid);
 
     // 依次注入各平台标识 Cookie
     ensureCookie('KUGOU_API_PLATFORM', process.env.platform);
     ensureCookie('KUGOU_API_MID', mid);
-    ensureCookie('KUGOU_API_GUID', process.env.KUGOU_API_GUID ?? guid);
+    ensureCookie('KUGOU_API_GUID', env_guid ?? guid);
     ensureCookie('KUGOU_API_DEV', (process.env.KUGOU_API_DEV ?? serverDev).toUpperCase());
     ensureCookie('KUGOU_API_MAC', (process.env.KUGOU_API_MAC ?? '02:00:00:00:00:00').toUpperCase());
-    ensureCookie('KUGOU_API_WEBGL', (process.env.KUGOU_API_WEBGL ?? generateWebGLHash()))
+    ensureCookie('KUGOU_API_WEBGL', process.env.KUGOU_API_WEBGL ?? generateWebGLHash());
 
     // 将注入后的 cookies 回写到 req 对象上，供后续中间件和路由处理器使用
     req.cookies = cookies;
