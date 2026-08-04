@@ -1,9 +1,8 @@
-// module/login_device_kick.js
 const crypto = require('crypto');
 const { signatureWebParams,appid,clientver,srcappid,publicLiteRasKey } = require('../util');
 
 /**
- * RSA 无填充加密（用于 Token 加密）
+ * RSA 无填充加密（用于 Token 加密，区别于项目的RSA加密函数）
  */
 function rsaNoPadEncrypt(data, publicKeyPem) {
     const key = crypto.createPublicKey(publicKeyPem);
@@ -19,13 +18,9 @@ function rsaNoPadEncrypt(data, publicKeyPem) {
 
 /**
  * 设备登出（踢下线）模块
- * 接受原始 token（64位十六进制），自动加密并发送请求
+ *  token需要加密为接口需要的特定格式才能成功进行鉴权
  */
 module.exports = (params, useAxios) => {
-    if (typeof useAxios !== 'function') {
-        throw new Error('useAxios must be a function');
-    }
-
     // ----- 提取参数（优先从 cookie 获取） -----
     const rawToken = params?.token || params?.cookie?.token || '';
     const userid = Number(params?.userid || params?.cookie?.userid || '0');
@@ -33,7 +28,7 @@ module.exports = (params, useAxios) => {
     const dfid = params?.dfid || params?.cookie?.dfid || '-';
     const uuid = params?.uuid || params?.cookie?.uuid || '-';
 
-    // ----- Token 加密（原始 token 为 64 位十六进制） -----
+    // ----- Token 加密部分 -----
     let token = rawToken;
     const prefix = 'moc.uoguk.59::';                // 固定前缀
     const input = Buffer.from(prefix + rawToken, 'utf8');
@@ -64,7 +59,7 @@ module.exports = (params, useAxios) => {
 
     // ----- 生成签名 -----
     const signature = signatureWebParams(dataMap);
-    const finalParams = { ...dataMap, signature };
+    const finalParams = { ...dataMap, signature };      //封装好的最终请求参数
 
     // ----- 发送请求 -----
     return useAxios({
