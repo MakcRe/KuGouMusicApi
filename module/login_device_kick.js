@@ -50,7 +50,7 @@ module.exports = (params, useAxios) => {
         input.copy(padded);
 
         // 加密并添加 h5 前缀
-        const encrypted = rsaNoPadEncrypt(padded, PUBLIC_KEY_LITE);
+        const encrypted = rsaNoPadEncrypt(padded, PUBLIC_KEY_LITE).toUpperCase();
         token = 'h5' + encrypted;                       // 与客户端格式一致
     }
     // 否则 token 已经是加密后的密文（含 h5 前缀），直接使用
@@ -78,7 +78,6 @@ module.exports = (params, useAxios) => {
     const signature = signatureWebParams(dataMap);
     const finalParams = { ...dataMap, signature };
 
-    console.log(finalParams)
 
     // ----- 发送请求 -----
     return useAxios({
