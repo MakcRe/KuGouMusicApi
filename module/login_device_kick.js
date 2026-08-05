@@ -58,7 +58,7 @@ module.exports = (params, useAxios) => {
     };
 
     // ----- 生成签名 -----
-    const signature = signatureWebParams(dataMap);
+    const signature = signatureWebParams(dataMap);      //这里使用web版签名
     const finalParams = { ...dataMap, signature };      //封装好的最终请求参数
 
     // ----- 发送请求 -----
@@ -67,6 +67,6 @@ module.exports = (params, useAxios) => {
         method: 'GET',
         params: finalParams,
         cookie: params?.cookie || {},
-        headers: { host: 'gateway.kugou.com' },
+        headers: { 'Host':'gateway.kugou.com'}
     });
 };
