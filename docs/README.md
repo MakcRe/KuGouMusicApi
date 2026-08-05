@@ -591,15 +591,13 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 **必选参数：**
 
-`hash`: 音乐 hash，多个可用逗号分隔；也可使用 `hashes` 传数组。若已知云盘文件 ID，优先使用可选参数 `fileid` 和 `album_audio_id`
+`fileid`: 云盘文件 ID（列表接口返回的 `kv_id`），多个可用逗号分隔；也可使用 `fileids` 传数组
 
 **可选参数：**
 
 `clientver`: 覆盖客户端版本号，默认使用当前平台配置
 
 `appid`: 覆盖 appid，默认使用当前平台配置
-
-`fileid`: 云盘文件 ID（列表接口返回的 `kv_id`），多个可用逗号分隔；也可使用 `fileids` 传数组
 
 `kv_id`: `fileid` 别名
 
