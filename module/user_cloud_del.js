@@ -1,6 +1,24 @@
 // 删除用户云盘音乐
 const { playlistAesEncrypt, playlistAesDecrypt, rsaEncrypt2, signParamsKey, clientver, appid } = require('../util');
 
+const splitList = (value) =>
+  []
+    .concat(value || [])
+    .flatMap((item) => {
+      if (Array.isArray(item)) return item;
+      const text = String(item).trim();
+      if (!text) return [];
+      if (text.startsWith('[') && text.endsWith(']')) {
+        try {
+          const parsed = JSON.parse(text);
+          if (Array.isArray(parsed)) return parsed;
+        } catch (e) {}
+      }
+      return text.split(',');
+    })
+    .map((item) => String(item).trim())
+    .filter(Boolean);
+
 module.exports = (params, useAxios) => {
   const answer = { status: 500, body: {}, cookie: [] };
   return new Promise(async (resolve) => {
@@ -12,32 +30,19 @@ module.exports = (params, useAxios) => {
       const requestClientver = params?.clientver || clientver;
       const clienttime = Math.floor(Date.now() / 1000);
 
-      const fileids = []
-        .concat(params?.fileids || params?.fileid || params?.kv_ids || params?.kv_id || [])
-        .flatMap((item) => String(item).split(','))
-        .map((item) => item.trim())
-        .filter(Boolean);
-      const albumAudioIds = []
-        .concat(params?.album_audio_ids || params?.album_audio_id || [])
-        .flatMap((item) => String(item).split(','))
-        .map((item) => item.trim())
-        .filter(Boolean);
-      const hashes = []
-        .concat(params?.hashes || params?.hash || params?.filename || [])
-        .flatMap((item) => String(item).split(','))
-        .map((item) => item.trim())
-        .filter(Boolean);
+      const fileids = splitList(params?.fileids || params?.fileid || params?.kv_ids || params?.kv_id);
+      const albumAudioIds = splitList(params?.album_audio_ids || params?.album_audio_id);
 
-      if (!fileids.length && !hashes.length) throw new Error('请传入 fileid、kv_id、hash 或 hashes');
+      if (!fileids.length) {
+        throw new Error('请传入 fileid 或 kv_id');
+      }
 
-      const dataMap = fileids.length
-        ? {
-            data: fileids.map((id, index) => ({
-              kv_id: Number(id) || id,
-              album_audio_id: Number(albumAudioIds[index] || albumAudioIds[0] || params?.mixid || params?.mix_id || 0),
-            })),
-          }
-        : { data: hashes };
+      const dataMap = {
+        data: fileids.map((id, index) => ({
+          kv_id: Number(id) || id,
+          album_audio_id: Number(albumAudioIds[index] || albumAudioIds[0] || params?.mixid || params?.mix_id || 0),
+        })),
+      };
 
       const aesEncrypt = playlistAesEncrypt(dataMap);
       const p = rsaEncrypt2({ aes: aesEncrypt.key, uid: userid, token }).toUpperCase();

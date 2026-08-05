@@ -368,10 +368,6 @@ export interface UserCloudUrlParams extends CommonParams {
 
 /** 删除用户云盘音乐参数 */
 export interface UserCloudDelParams extends CommonParams {
-  /** 音乐 hash，多个可用逗号分隔 */
-  hash?: string;
-  /** 音乐 hash 列表 */
-  hashes?: string[] | string;
   /** 云盘文件 ID，多个可用逗号分隔 */
   fileid?: number | string;
   /** 云盘文件 ID 列表 */
@@ -386,8 +382,6 @@ export interface UserCloudDelParams extends CommonParams {
   mix_id?: number | string;
   /** album_audio_id 别名 */
   mixid?: number | string;
-  /** 文件 hash 别名 */
-  filename?: string;
   /** 覆盖客户端版本号，默认使用当前平台配置 */
   clientver?: number | string;
   /** 覆盖 appid，默认使用当前平台配置 */
