@@ -164,6 +164,7 @@
 135. [`获取已购单曲`](#获取已购单曲)
 136. [`获取已购专辑`](#获取已购专辑)
 137. [`上传音乐到云盘`](#上传音乐到云盘)
+138. [`获取听歌等级信息`](#获取听歌等级信息)
 
 ### 安装
 
@@ -2571,6 +2572,66 @@ const res = await fetch('/audio/match', {
 **接口地址：** `/user/purchased/albums`
 
 **调用例子：** `/user/purchased/albums`
+
+### 获取听歌等级信息
+
+说明：获取并上报用户听歌等级信息（听歌时长），登录后调用。支持两种调用方式：
+
+- **查询**（默认）：返回服务器当前累计听歌时长、等级与积分
+- **上报**：传入 `d_sec`（本地累计听歌秒数）与 `diff_sec`（本次新增秒数），同步本地累计时长
+
+**双协议支持**：
+
+- `platform=lite`（概念版）走 **v2 协议**（`userinfo.user.kugou.com/v2/get_grade_info`），上报按 `diff_sec` 累加记账
+- 标准版（不配置 `platform`）走 **v4 协议**（`userinfoservice.kugou.com/v4/get_grade_info`，pk/params 加密结构），**可查询**；但标准版听歌时长由服务端真实播放统计维护，**上报增量不会记账**
+- 可用 `protocol=v2|v4` 参数强制指定协议
+
+**必选参数（登录态）：**
+
+`cookie`：登录凭证，需包含 `token`、`userid`，建议同时包含 `mid`、`dfid`
+
+**可选参数：**
+
+`uuid`：设备 UUID，默认为 `-`
+
+`type`：类型，默认为 `1`（仅 v2 生效；v4 固定为 `0`）
+
+**上报参数：**
+
+`d_sec`：本地累计听歌秒数（须大于等于服务器当前值）
+
+`diff_sec`：本次新增秒数，请按正常听歌节奏调用
+
+`y_type`：年份类型，默认为 `0`
+
+`m_type`：音乐类型，默认为 `0`
+
+**接口地址：** `/user/grade/info`
+
+**调用例子：**
+
+查询：`/user/grade/info?cookie=token%3Dxxx%3Buserid%3D123`
+
+上报：`/user/grade/info?cookie=token%3Dxxx%3Buserid%3D123&d_sec=123456&diff_sec=600&uuid=xxx`
+
+**返回示例：**
+
+```json
+{
+  "status": 1,
+  "error_code": 0,
+  "data": {
+    "d_sec": 125755,
+    "duration": 2095,
+    "p_grade": 3,
+    "p_current_point": 3809,
+    "p_grade_point": 3000,
+    "p_next_grade": 4,
+    "p_next_grade_point": 6000,
+    "servertime": "2026-08-05 23:10:40"
+  }
+}
+```
 
 ## License
 
