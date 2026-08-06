@@ -2580,8 +2580,11 @@ const res = await fetch('/audio/match', {
 - **查询**（默认）：返回服务器当前累计听歌时长、等级与积分
 - **上报**：传入 `d_sec`（本地累计听歌秒数）与 `diff_sec`（本次新增秒数），同步本地累计时长
 
-> **平台限制**：本接口为概念版（lite）客户端协议，仅 `platform=lite` 下上报有效；
-> 标准版账号（不配置 `platform`）可查询，但上报不会记账（服务端静默忽略）。
+**双协议支持**：
+
+- `platform=lite`（概念版）走 **v2 协议**（`userinfo.user.kugou.com/v2/get_grade_info`），上报按 `diff_sec` 累加记账
+- 标准版（不配置 `platform`）走 **v4 协议**（`userinfoservice.kugou.com/v4/get_grade_info`，pk/params 加密结构），**可查询**；但标准版听歌时长由服务端真实播放统计维护，**上报增量不会记账**
+- 可用 `protocol=v2|v4` 参数强制指定协议
 
 **必选参数（登录态）：**
 
@@ -2591,7 +2594,7 @@ const res = await fetch('/audio/match', {
 
 `uuid`：设备 UUID，默认为 `-`
 
-`type`：类型，默认为 `1`
+`type`：类型，默认为 `1`（仅 v2 生效；v4 固定为 `0`）
 
 **上报参数：**
 
