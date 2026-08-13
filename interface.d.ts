@@ -220,10 +220,18 @@ export interface LoginParams extends CommonParams {
   password: string;
 }
 
-/** 开放接口登录参数（目前仅支持微信） */
+/** 微信开放接口登录参数 */
 export interface LoginOpenplatParams extends CommonParams {
   /** 微信扫码成功后生成的 code（必选） */
   code: string;
+}
+
+/** QQ 授权登录参数 */
+export interface LoginQqParams extends CommonParams {
+  /** QQ 授权返回的 openid（必选） */
+  openid: string;
+  /** QQ 授权返回的 access_token（必选） */
+  access_token: string;
 }
 
 /** 二维码 key 生成参数 */
@@ -250,6 +258,27 @@ export interface LoginWxCreateParams extends CommonParams {}
 export interface LoginWxCheckParams extends CommonParams {
   /** 由 `/login/wx/create` 生成的 uuid（必选） */
   uuid: string;
+  /** 建议传递，避免缓存导致延迟 */
+  timestamp?: number | string;
+}
+
+/** QQ 二维码生成参数 */
+export interface LoginQqQrCreateParams extends CommonParams {}
+
+/** QQ 二维码扫码状态检测参数 */
+export interface LoginQqQrCheckParams extends CommonParams {
+  /** 由 `/login/qq/qr/create` 返回的 QQ 扫码会话 Cookie（必选） */
+  cookie: string | CookieMap;
+  /** 由 `/login/qq/qr/create` 生成的 qrsig（必选） */
+  qrsig: string;
+  /** qrsig 的 hash33 值，由 `/login/qq/qr/create` 返回（必选） */
+  ptqrtoken: string | number;
+  /** QQ 登录签名，由 `/login/qq/qr/create` 返回（必选） */
+  pt_login_sig: string;
+  /** xlogin 完整参数（含 h5sig），由 `/login/qq/qr/create` 返回（必选） */
+  pt_openlogin_data: string;
+  /** xlogin 接口完整链接，用作轮询 Referer（必选） */
+  xlogin_url: string;
   /** 建议传递，避免缓存导致延迟 */
   timestamp?: number | string;
 }
@@ -1638,10 +1667,16 @@ export function login_cellphone(params: LoginCellphoneParams): Promise<ApiRespon
 export function login(params: LoginParams): Promise<ApiResponse>;
 
 /**
- * 开放接口登录（目前仅支持微信）
+ * 微信开放接口登录
  * @route /login/openplat
  */
 export function login_openplat(params: LoginOpenplatParams): Promise<ApiResponse>;
+
+/**
+ * QQ 授权登录
+ * @route /login/qq
+ */
+export function login_qq(params: LoginQqParams): Promise<ApiResponse>;
 
 /**
  * 二维码登录 - 生成 key
@@ -1681,6 +1716,18 @@ export function login_wx_create(params?: LoginWxCreateParams): Promise<ApiRespon
  * @route /login/wx/check
  */
 export function login_wx_check(params: LoginWxCheckParams): Promise<ApiResponse>;
+
+/**
+ * QQ 登录 - 生成二维码
+ * @route /login/qq/qr/create
+ */
+export function login_qq_qr_create(params?: LoginQqQrCreateParams): Promise<ApiResponse>;
+
+/**
+ * QQ 登录 - 检测扫码状态，扫码成功后返回酷狗登录态
+ * @route /login/qq/qr/check
+ */
+export function login_qq_qr_check(params: LoginQqQrCheckParams): Promise<ApiResponse>;
 
 /**
  * 刷新登录状态，延长 token 过期时间
