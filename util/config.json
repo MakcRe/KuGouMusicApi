@@ -8,5 +8,7 @@
   "apiver": 20,
   "clientver": 20489,
   "liteAppid": 3116,
-  "liteClientver": 11440
+  "liteClientver": 11440,
+  "qq_appid": "205141",
+  "qq_lite_appid": "101706348"
 }
