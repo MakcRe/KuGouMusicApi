@@ -10,7 +10,7 @@ module.exports = (params, useAxios) => {
     classify: '2,3',
     plat: 2,
     privilege: 1,
-    sort: 2
+    sort: params.sort || 2
   };
 
 
