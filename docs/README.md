@@ -273,6 +273,8 @@ $ set HOST=127.0.0.1 && npm run dev
 
 #### 更新记录
 
+26-08-15：添加 `一起听（音乐室/众乐房）` 接口
+
 26-08-14：`获取社区音效` 接口支持 `sort` 参数排序
 
 26-08-01：添加 `上传音乐到云盘`、`删除用户云盘音乐` 接口
@@ -360,6 +362,61 @@ $ set HOST=127.0.0.1 && npm run dev
 23-06-22: 添加支持 vercel
 
 23-06-22: 密码登录、验证码登录、扫码登录
+
+### 一起听（音乐室/众乐房）
+
+说明：调用此接口可实现酷狗音乐"一起听"（音乐室/众乐房）相关功能，包括房间查询、创建、加入、离开、聊天、播放同步、点歌等。
+
+> ⚠️ 前置条件：需要 `platform=lite`（概念版）模式 + 概念版登录态，`userid`/`token` 需通过 cookie 传递（rmservice 系接口的 userid 必须是数字）
+
+**必选参数：**
+
+`action`: 操作类型，可选值如下
+
+**查询类：**
+
+- `room_list`: 房间列表（按标签），支持 `page`、`pagesize`、`sort`、`tag_id`
+- `room_detail`: 房间详情，需传 `room_id`
+- `member_list`: 房间成员列表，需传 `room_id`，`member_type`（1 在线 / 2 全部）
+- `kugroup_square`: 酷群广场
+- `genting_square`: 歌厅广场
+- `kugroup_streamer_list`: 酷群主播列表
+- `genting_streamer_list`: 歌厅主播列表
+- `recent_room_dynamic`: 用户最近房间动态（需登录）
+- `privilege`: 特权详情（需登录）
+- `genting_recommend`: 歌厅推荐（需登录）
+- `channel_search`: 频道搜索，需传 `keyword`
+- `check_minor`: 未成年人检测（`make_room` 前置）
+
+**房间生命周期：**
+
+- `create`: 创建房间（仅房主）
+- `join`: 加入房间，需传 `room_id`
+- `heartbeat`: 房间心跳（建议 60s 间隔）
+- `get_status`: 用户房间状态
+- `leave`: 离开房间
+- `dismiss`: 解散房间（仅房主）
+- `make_room`: 提交房间配置（核心），`music_type=1` 必须同时传 `music_style` + `audios`
+
+**聊天：**
+
+- `send_msg`: 发送消息，需传 `room_id`，`message` 文本
+- `msg_history`: 历史消息，`maxid=0` 取最新
+
+**播放：**
+
+- `sync_player`: 播放同步（获取当前播放进度）
+- `fetch_list`: 播放列表（房间歌单）
+- `reqcmd`: 点歌/播放命令（返回歌曲播放 URL），需传 `hash`
+
+**接口地址：** `/multiplayer/room`
+
+**调用例子：** `/multiplayer/room?action=room_list` `/multiplayer/room?action=room_detail&room_id=xxx` `/multiplayer/room?action=send_msg&room_id=xxx&message=你好`
+
+> ⚠️ **缓存注意事项**：服务端对所有成功响应缓存 2 分钟，缓存键为 hostname + 完整 URL（含 query 参数）。请务必注意：
+>
+> 1. **有副作用的操作**（`create`、`join`、`leave`、`dismiss`、`send_msg`、`heartbeat`、`make_room` 等）**务必在 URL 末尾追加 `timestamp` 参数**使每次请求 URL 不同，否则相同 URL 的重复调用会直接命中缓存而不会真正执行，例如：`/multiplayer/room?action=join&room_id=xxx&timestamp=1691256061923`
+> 2. **参数尽量通过 query 传递**；POST body 参数不参与缓存键，相同 URL 不同 body 的请求会互相污染缓存，导致返回错误数据
 
 ### 登录
 
