@@ -1,7 +1,6 @@
 const {
   GATEWAY_BASE,
   MUSIC_ROOM_BIZ,
-  authBody,
   createDomainHandler,
   musicRoomAudios,
   parseArray,
@@ -37,12 +36,15 @@ module.exports = createDomainHandler({
   },
   members: {
     baseURL: GATEWAY_BASE,
-    url: '/rmservice/v1/livestream/members',
-    method: 'POST',
-    data: (p) => ({
-      ...authBody(p),
-      biz: p.biz || MUSIC_ROOM_BIZ,
-      groupid: p.groupid || p.room_id || '',
+    // 概念版房间成员弹窗使用的是众乐房听众列表；rmservice/members
+    // 返回的是连麦席位，普通进入房间的听众不会出现在其中。
+    url: '/youth/v1/genting/get_musicroom_member',
+    method: 'GET',
+    params: (p) => ({
+      roomid: p.roomid || p.room_id || '',
+      page: Math.max(1, Number(p.page || 1)),
+      pagesize: Number(p.pagesize || 100),
+      apiver: '3',
     }),
   },
   initialize: {
@@ -109,6 +111,14 @@ module.exports = createDomainHandler({
       }
       return body;
     },
+  },
+  recent_playlist: {
+    baseURL: GATEWAY_BASE,
+    url: '/youth/v1/genting/music_recent_list',
+    method: 'POST',
+    params: (p) => ({ roomid: p.roomid || p.room_id || '' }),
+    // 概念版为这个接口签名并发送空请求体，不是 JSON 对象。
+    data: () => '',
   },
   order_song: {
     baseURL: GATEWAY_BASE,
