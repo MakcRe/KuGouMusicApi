@@ -110,6 +110,14 @@ module.exports = createDomainHandler({
       return body;
     },
   },
+  recent_playlist: {
+    baseURL: GATEWAY_BASE,
+    url: '/youth/v1/genting/music_recent_list',
+    method: 'POST',
+    params: (p) => ({ roomid: p.roomid || p.room_id || '' }),
+    // 概念版为这个接口签名并发送空请求体，不是 JSON 对象。
+    data: () => '',
+  },
   order_song: {
     baseURL: GATEWAY_BASE,
     url: '/youth/v1/genting/order_song',
