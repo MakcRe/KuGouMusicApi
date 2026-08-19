@@ -167,6 +167,7 @@
 138. [`获取听歌等级信息`](#获取听歌等级信息)
 139. [`编辑内容黑名单`](#编辑内容黑名单)
 140. [`获取内容黑名单`](#获取内容黑名单)
+141. [`获取歌手单曲（新版）`](#获取歌手单曲新版)
 
 ### 安装
 
@@ -2844,3 +2845,23 @@ const res = await fetch('/audio/match', {
 ## License
 
 [The MIT License (MIT)](https://github.com/MakcRe/KuGouMusicApi/blob/main/LICENSE)
+
+### 获取歌手单曲（新版）
+
+说明 : 调用此接口 , 传入歌手 id, 可获得歌手歌曲（新版接口），每条歌曲带作者列表（`authors`），支持多歌手。
+
+**必选参数：**
+
+`id`： 歌手 id
+
+**可选参数：**
+
+`page`： 页码
+
+`pagesize`: 每页页数, 默认为 30（**上限 100**，超过返回 `error_code=20010`）
+
+`sort`: 排序，hot : 热门, new: 最新
+
+**接口地址：** `/artist/audios/new`
+
+**调用例子：** `/artist/audios/new?id=6539`
