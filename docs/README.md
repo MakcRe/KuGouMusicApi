@@ -167,6 +167,7 @@
 138. [`获取听歌等级信息`](#获取听歌等级信息)
 139. [`编辑内容黑名单`](#编辑内容黑名单)
 140. [`获取内容黑名单`](#获取内容黑名单)
+141. [`导入外部歌单`](#导入外部歌单)
 
 ### 安装
 
@@ -898,6 +899,22 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 **接口地址：** `/playlist/tracks/del`
 
 **调用例子：** `/playlist/tracks/del?listid=1&fileids=xx` `/playlist/tracks/del?listid=1&fileids=xx,xx`
+
+### 导入外部歌单
+
+说明：登录后调用此接口，可通过外部歌单链接或歌单截图创建酷狗云端导入任务。接口统一使用 `POST /import/playlist`，通过请求体中的 `operation` 区分操作。
+
+HTTP 服务模式存在响应缓存，调用时建议附加变化的 `timestamp` 查询参数，例如 `/import/playlist?timestamp=1691256061923`。
+
+**链接导入**：`operation=add_task`、`task_type=0`、`url=外部歌单链接`。
+
+**截图导入**：先逐张调用 `operation=submit_img`，传入相同的 `task_sn` 与 `img_base64`；上传完成后调用 `operation=add_task`，传入 `task_type=1`、`task_sn`、目标歌单 `listid` 和 `list_name`。`task_sn` 可使用 `userid + 毫秒时间戳`。
+
+**查询任务状态**：`operation=query_task_status`、`ids=[任务 ID]`。状态 `3` 表示成功，状态大于等于 `10` 表示失败，其余状态表示处理中。
+
+**查询导入结果**：`operation=query_task`、`listid=导入后的歌单 ID`，可选 `page`、`pagesize`、`show_missed`。注意这里的 `listid` 是歌单 ID，不是任务 ID。
+
+**查询任务数量**：`operation=task_count`，可选 `classify`（默认 `1`）。
 
 ### 新碟上架
 
