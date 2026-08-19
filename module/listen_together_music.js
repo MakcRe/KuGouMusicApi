@@ -1,6 +1,7 @@
 const {
   GATEWAY_BASE,
   MUSIC_ROOM_BIZ,
+  authBody,
   createDomainHandler,
   musicRoomAudios,
   parseArray,
@@ -65,6 +66,19 @@ module.exports = createDomainHandler({
     method: 'POST',
     params: (p) => ({ roomid: p.roomid || p.room_id || '', frm: Number(p.frm || 2) }),
     data: () => ({}),
+  },
+  playback_url: {
+    baseURL: GATEWAY_BASE,
+    url: '/youth/v1/genting/music_reqcmd',
+    method: 'POST',
+    data: (p) => ({
+      ...authBody(p),
+      roomid: p.roomid || p.room_id || '',
+      audio: {
+        hash: p.hash || '',
+        mixsongid: p.mixsongid ?? '',
+      },
+    }),
   },
   switch_song: {
     baseURL: GATEWAY_BASE,
