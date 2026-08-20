@@ -1,7 +1,6 @@
 const {
   GATEWAY_BASE,
   MUSIC_ROOM_BIZ,
-  authBody,
   createDomainHandler,
   musicRoomAudios,
   parseArray,
