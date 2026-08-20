@@ -72,6 +72,16 @@ module.exports = createDomainHandler({
   status: groupOperation('/rmservice/v1/user/get_status'),
   leave: groupOperation('/rmservice/v1/group/leave'),
   dismiss: groupOperation('/rmservice/v1/group/dismiss'),
+  update_chat: {
+    baseURL: GATEWAY_BASE,
+    url: '/rmservice/v1/group/update_info',
+    method: 'POST',
+    data: (p) => ({
+      groupid: p.groupid || p.room_id || '',
+      biz: MUSIC_ROOM_BIZ,
+      switch: { chat: Number(p.chat) === 1 ? 1 : 2 },
+    }),
+  },
   check_minor: {
     baseURL: YOUTH_BASE,
     url: '/v1/risk/check_minor',
