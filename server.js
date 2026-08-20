@@ -282,7 +282,7 @@ async function consturctServer(moduleDefs) {
    * - express.urlencoded(): 解析 Content-Type 为 application/x-www-form-urlencoded 的请求体
    *   - extended: false 使用 querystring 库解析（不支持嵌套对象）
    */
-  app.use(express.json({ limit: '5mb' }));
+  app.use(express.json({ limit: '16mb' }));
   app.use(express.urlencoded({ extended: false, limit: '5mb' }));
   app.use(express.raw({ type: 'application/octet-stream', limit: '100mb' }));
 
