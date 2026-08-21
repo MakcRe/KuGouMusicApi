@@ -1,6 +1,7 @@
 const {
   GATEWAY_BASE,
   MUSIC_ROOM_BIZ,
+  authBody,
   createDomainHandler,
   musicRoomAudios,
   parseArray,
@@ -70,6 +71,9 @@ module.exports = createDomainHandler({
     baseURL: GATEWAY_BASE,
     url: '/youth/v1/genting/music_reqcmd',
     method: 'POST',
+    // 概念版从房间播放页请求 genting 授权地址时会携带固定页面链路。
+    // gateway 会据此路由 music_reqcmd；缺失时上游直接返回 404。
+    params: () => ({ page_id: 147780134, ppage_id: '356753938' }),
     data: (p) => ({
       ...authBody(p),
       roomid: p.roomid || p.room_id || '',
