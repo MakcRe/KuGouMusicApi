@@ -1,0 +1,23 @@
+// 音效 - 明星音效
+
+module.exports = (params, useAxios) => {
+  const paramsMap = {
+    plat: 2,
+    version: 12460,
+    apiver: 2,
+    sort: 1,
+    pagesize: params.pagesize || 30,
+    page: params.page || 1,
+    classify: 1
+  }
+
+  return useAxios({
+    baseURL: 'http://mobilecdngz.kugou.com',
+    url: '/api/v3/sound/list',
+    method: 'GET',
+    params: paramsMap,
+    encryptType: 'android',
+    clearDefaultParams: true,
+    cookie: params?.cookie || {},
+  });
+};
