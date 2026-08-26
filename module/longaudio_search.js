@@ -1,0 +1,35 @@
+// 听书搜索
+// 走标准版综合搜索 /complexsearch/v4/search/song（默认 host gateway.kugou.com，
+// appid=1005 + 标准签名盐），返回 data.lists 章节列表；按 AlbumID 可聚合成有声书专辑。
+module.exports = (params, useAxios) => {
+  const dataMap = {
+    area_code: 1,
+    albumhide: 1,
+    com_user_type: 0,
+    privilegefilter: 0,
+    dopicfull: 1,
+    filter: 12,
+    platform: 'AndroidFilter',
+    tag: 'em',
+    recver: 2,
+    iscorrection: 1,
+    search_ability: 223,
+    sec_aggre: 1,
+    sec_aggre_bitmap: 0,
+    mode_ability: 1,
+    nocollect: 1,
+    user_type: 0,
+    keyword: params.keywords ?? params.keyword, // 兼容 keywords / keyword 两种写法
+    page: params?.page || 1,
+    pagesize: params?.pagesize || 10,
+    clientver: 20789, // 覆盖为与官方 Android 客户端一致
+  };
+
+  return useAxios({
+    url: '/complexsearch/v4/search/song',
+    method: 'get',
+    params: dataMap,
+    encryptType: 'android',
+    cookie: params?.cookie || {},
+  });
+};
