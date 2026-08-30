@@ -10,8 +10,8 @@
 const { cryptoRSAEncrypt, signParamsKey } = require('../util');
 const { appid, clientver, liteAppid, liteClientver } = require('../util/config.json');
 
-// signature / tags 允许传空串来清空；其余字段的空值会被忽略
-const NULLABLE_FIELDS = ['signature', 'tags'];
+// signature / tags / birthday 允许传空串来清空；其余字段的空值会被忽略
+const NULLABLE_FIELDS = ['signature', 'tags', 'birthday'];
 const FIELDS = ['nickname', 'sex', 'birthday', 'photo', 'province', 'city', 'memo', 'signature', 'tags'];
 
 module.exports = (params, useAxios) => {

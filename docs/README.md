@@ -3222,7 +3222,7 @@ const res = await fetch('/audio/match', {
 
 `nickname`：昵称
 
-`sex`：性别，`0` 女 / `1` 男
+`sex`：性别，`0` 女 / `1` 男 / `2` 保密
 
 `birthday`：生日，格式 `yyyy-MM-dd`，传空串可清空
 
