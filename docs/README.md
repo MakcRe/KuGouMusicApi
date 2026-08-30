@@ -3214,6 +3214,65 @@ const res = await fetch('/audio/match', {
 
 **调用例子**： `/effects/car/brand/lists?rel_id=15`
 
+### 修改个人资料
+
+说明：修改登录账号的昵称、性别、生日、个性签名、地区等资料。仅需登录态，无需账号密码。
+
+**可选参数（至少提供一项）：**
+
+`nickname`：昵称
+
+`sex`：性别，`0` 女 / `1` 男
+
+`birthday`：生日，格式 `yyyy-MM-dd`，传空串可清空
+
+`signature`：个性签名，传空串可清空
+
+`province`：省份名
+
+`city`：城市名
+
+`memo`：备注
+
+`tags`：标签，传空串可清空
+
+`photo`：头像文件名（一般不直接传，改头像请用 `/user/update/avatar`）
+
+**接口地址**： `/user/update`
+
+**调用例子**： `/user/update?signature=这是新签名&sex=1`
+
+> 注意：cookie 中含 `;` 分隔符，用 GET 查询串传递容易被截断，建议改用 POST body 传 `cookie` 字段：
+> ```bash
+> curl -X POST http://127.0.0.1:3000/user/update \
+>   -H 'Content-Type: application/json' \
+>   -d '{"cookie":"token=xxx;userid=xxx","signature":"这是新签名"}'
+> ```
+
+### 修改头像
+
+说明：上传并更换账号头像。内部分两步完成：先把图片传到酷狗图床拿到文件名，再写入个人资料。
+
+**必选参数：**
+
+`imgFile`：图片数据，支持 base64 字符串、dataURL（`data:image/jpeg;base64,...`）。仅接受 JPEG / PNG / GIF / BMP / WEBP，非图片数据会被拦截并返回 400
+
+**可选参数：**
+
+`filename`：上传文件名，默认 `avatar.jpg`
+
+**接口地址**： `/user/update/avatar`
+
+**调用例子**：
+
+```bash
+curl -X POST http://127.0.0.1:3000/user/update/avatar \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","imgFile":"<base64>"}'
+```
+
+返回体在原响应基础上追加 `photo`（图床文件名）与 `pic`（完整头像 URL）两个字段。
+
 ## License
 
 [The MIT License (MIT)](https://github.com/MakcRe/KuGouMusicApi/blob/main/LICENSE)
