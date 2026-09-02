@@ -34,15 +34,16 @@ const { appid: useAppid, liteAppid, clientver: useClientver, liteClientver } = r
  * 4. 对整体取 MD5 哈希
  *
  * @param {Object} params - 请求参数键值对
+ * @param {string} [data] - 可选的请求体字符串；H5 的 kGRequest 对 POST 请求会把 JSON 请求体拼进签名
  * @returns {string} MD5 签名字符串（32位小写hex）
  */
-const signatureWebParams = (params) => {
+const signatureWebParams = (params, data) => {
   const str = 'NVPh5oo715z5DIWAeQlhMDsWXXQV4hwt'; // Web 版签名盐值
   const paramsString = Object.keys(params)
     .map((key) => `${key}=${params[key]}`)
     .sort()    // 按 key 字母排序
     .join(''); // 拼接为连续字符串
-  return cryptoMd5(`${str}${paramsString}${str}`);
+  return cryptoMd5(`${str}${paramsString}${data || ''}${str}`);
 };
 
 /**

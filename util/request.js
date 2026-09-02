@@ -129,7 +129,8 @@ const createRequest = (options) => {
           params['signature'] = signatureRegisterParams(params);
           break;
         case 'web':
-          params['signature'] = signatureWebParams(params);
+          // H5 的 kGRequest 对带请求体的 POST 会把请求体字符串拼进签名，GET 请求 data 为空串不受影响
+          params['signature'] = signatureWebParams(params, data);
           break;
         case 'android':
         default:
