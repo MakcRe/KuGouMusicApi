@@ -495,23 +495,23 @@ $ set HOST=127.0.0.1 && npm run dev
 
 ##### 3. 二维码授权登录接口
 
-说明: 使用当前已登录账号为二维码对应的新设备授权登录，对应扫码登录新设备场景。cookie 中必须包含当前账号的 `token`、`userid`。
+说明: 登陆后调用此接口，授权其他设备登录
 
 **必选参数：**
 
 `qrcode`: 二维码 key，从新设备登录二维码中提取
 
-`appid`: 纯数字，从新设备登录二维码中提取
-
 `cookie`: 含已登录账号的 `token`、`userid`
 
 **可选参数：**
+
+`appid`: 未传时使用服务器当前平台配置的 appid，必须与当前 token 对应平台一致
 
 `plat`: 请求体 plat 字段，默认 `1`，传入 `2` 时使用 `2`
 
 **接口地址：** `/login/qr/authorize`
 
-**调用例子：** `/login/qr/authorize?qrcode=xxx&appid=1005&cookie=token%3Dxxx%3B%20userid%3Dxxx`
+**调用例子：** `/login/qr/authorize?qrcode=xxx&cookie=token%3Dxxx%3B%20userid%3Dxxx`
 
 #### 6. 微信扫码登录
 

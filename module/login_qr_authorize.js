@@ -1,8 +1,10 @@
-const { srcappid, clientver } = require('../util')
+const { appid, srcappid, clientver } = require('../util')
 
 // 使用当前已登录账号授权二维码对应的新设备登录。
 // qrcode 是二维码 key，从新设备登录二维码中提取，cookie 中必须包含当前账号的 token、userid
-// appid 是对应新设备的 appid，从新设备登录二维码中提取
+// appid 为可选参数，不做校验，未传时直接使用当前平台配置的 appid；
+// 无论是否传入，最终请求的 appid 必须与当前 token 对应平台一致
+// 而非二维码所属端的 appid，否则上游会返回 error_code 20018
 module.exports = (params, useAxios) => {
   const qrcode = params?.qrcode
   if (!qrcode || !/^[\w-]+$/.test(qrcode)) {
@@ -22,15 +24,8 @@ module.exports = (params, useAxios) => {
     })
   }
 
-  // appid 为必传参数，必须为纯数字，从新设备登录二维码中提取
-  if (!params?.appid || !/^\d+$/.test(String(params.appid))) {
-    return Promise.reject({
-      status: 400,
-      body: { status: 0, error_code: 400, msg: '缺少有效的 appid 参数（必传，纯数字）' },
-      cookie: [],
-    })
-  }
-  const requestAppid = Number(params.appid)
+  // appid 为可选参数，不做校验，未传时直接使用当前平台配置的 appid
+  const requestAppid = params?.appid || appid
 
   // 与线上 H5 (loginQRCode) 的 kGRequest 请求保持一致：
   // 查询参数 appid/clientver/clienttime/mid/uuid/dfid 由 createRequest 注入，
