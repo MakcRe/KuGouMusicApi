@@ -2808,6 +2808,14 @@ export interface UserListenReportParams extends CommonParams {
   mid?: string;
   userid?: string | number;
   token?: string;
+  /** 设备机型，默认使用参考报文的 V2339A */
+  device_model?: string;
+  /** 系统版本，默认 9 */
+  system_version?: string | number;
+  screen_width?: number;
+  screen_height?: number;
+  /** 事件中的设备本地 IP，不控制 HTTP 出口或代理；默认参考值 172.16.1.15 */
+  local_ip?: string;
   duration?: number;
   state?: string;
   d_sec?: number;

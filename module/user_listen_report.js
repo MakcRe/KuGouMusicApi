@@ -1,6 +1,7 @@
 // CSCC lite 播放上报；由播放器在真实播放开始/结束时调用。
 const crypto = require('crypto');
 const zlib = require('zlib');
+const { isIP } = require('net');
 const { publicLiteRasKey } = require('../util');
 const gradeInfo = require('./user_grade_info');
 
@@ -22,6 +23,19 @@ module.exports = async (params = {}, useAxios) => {
   const event = params.event;
   const state = params.state || '完整播放';
   const sync = params.d_sec != null || params.diff_sec != null;
+  // 默认值仅用于兼容参考报文，不代表调用者的真实设备或网络。
+  const deviceModel = params.device_model ?? 'V2339A';
+  const systemVersion = String(params.system_version ?? '9');
+  const screenWidth = params.screen_width ?? 1920;
+  const screenHeight = params.screen_height ?? 1080;
+  const localIp = params.local_ip ?? '172.16.1.15';
+  if (!clean(deviceModel) || deviceModel.length > 128 || /[\x00-\x1f\x7f]/.test(deviceModel) ||
+      !/^\d+(?:\.\d+)*$/.test(systemVersion) || systemVersion.length > 16 ||
+      !integer(screenWidth) || Number(screenWidth) < 1 || Number(screenWidth) > 65535 ||
+      !integer(screenHeight) || Number(screenHeight) < 1 || Number(screenHeight) > 65535 ||
+      typeof localIp !== 'string' || !isIP(localIp)) {
+    throw fail(400, '设备参数无效：需要有效机型、系统版本、正整数屏幕尺寸及 IPv4/IPv6 local_ip');
+  }
   if (!clean(uuid) || !/^[a-zA-Z0-9]{32}$/.test(uuid) || !clean(mid) || !integer(userid) || Number(userid) <= 0 || !token) {
     throw fail(400, '需要 token、userid、mid 和 32 位字母数字 uuid（也可从 cookie 读取）');
   }
@@ -47,7 +61,7 @@ module.exports = async (params = {}, useAxios) => {
           ...(method === 'POST' ? { 'Content-Type': 'application/octet-stream' } : {}),
           ...(url !== '/v3/qrydid' ? {
             'KG-Rec': '1',
-            'User-Agent': `Android9-1070-${VERSION}-18-0-Cscc${kind}-wifi`,
+            'User-Agent': `Android${systemVersion}-1070-${VERSION}-18-0-Cscc${kind}-wifi`,
           } : {}),
         },
       });
@@ -86,14 +100,14 @@ module.exports = async (params = {}, useAxios) => {
     }
     return response;
   };
-  const cacheKey = md5(JSON.stringify([uuid, mid, userid, token]));
+  const cacheKey = md5(JSON.stringify([uuid, mid, userid, token, deviceModel, systemVersion, Number(screenWidth), Number(screenHeight)]));
   // 按账号和设备隔离，同时合并并发建会话请求；限制闲置会话占用。
   for (const [key, entry] of sessions) if (entry.expires <= Date.now()) sessions.delete(key);
   if (!sessions.has(cacheKey)) {
     if (sessions.size >= 256) sessions.delete(sessions.keys().next().value);
     const pending = (async () => {
       let _t = String(Math.floor(Date.now() / 1000));
-      const data = JSON.stringify({ machine: 'V2339A', mid, uuid, wh: [1920, 1080] });
+      const data = JSON.stringify({ machine: deviceModel, mid, uuid, wh: [Number(screenWidth), Number(screenHeight)] });
       const device = await request('/v3/qrydid', 'POST', {
         appid: 'and02', _t, sign: md5(`_t${_t}appidand02pbKC7zn{4U*ydo2M1Rir${data}`),
       }, data, 'Gen');
@@ -122,9 +136,9 @@ module.exports = async (params = {}, useAxios) => {
     const fields = event === 'start'
       ? ['type_id=20431', 'action=play', 'fo3=3878,4320,4326,5747,5749,7229,7289,7863', 'spt=0', 'sty=手动', `mixsongid=${song}`, 'source=46', 'ivar1=1', 'fo=/专辑播放页']
       : ['type_id=4', 'action=play', 'fo3=3878,4320,4326,5747,5749,7229,7289,7863', `duration=${params.duration}`, 'svar3=0', 'svar2=0', 'fo=我的音乐/主态/自建歌单/RU', 'sty=手动', `state=${state}`, `mixsongid=${song}`, 'source=46', 'ivar3=0', 'type=1', 'fs=1.0', 'ivar1=1'];
-    fields.push( `mid=${mid}`, `uuid=${uuid}`, 'ss1=1', 'ss2=1', 'sys=9', 'mod=V2339A', 'channelid=18', 'ip=172.16.1.15', 'net=1', `ver=${VERSION}`, 'gitversion=7aa8a76', `time=${Date.now()}`, `userid=${userid}`, `ss3=${md5(crypto.randomUUID())}`);
+    fields.push( `mid=${mid}`, `uuid=${uuid}`, 'ss1=1', 'ss2=1', `sys=${systemVersion}`, `mod=${deviceModel}`, 'channelid=18', `ip=${localIp}`, 'net=1', `ver=${VERSION}`, 'gitversion=7aa8a76', `time=${Date.now()}`, `userid=${userid}`, `ss3=${md5(crypto.randomUUID())}`);
     const eventBuffer = Buffer.from(fields.join('&'));
-    const line1 = ['4', '1', uuid, '0', '3116', VERSION, '18', '9', 'V2339A', uuid, mid, '0', '000000000000000000000000000000000000'].join('\t');
+    const line1 = ['4', '1', uuid, '0', '3116', VERSION, '18', systemVersion, deviceModel, uuid, mid, '0', '000000000000000000000000000000000000'].join('\t');
     const line2 = [eventBuffer.length, '10048', '0', Math.floor(Date.now() / 1000), '1', userid, '0', '0'].join('\t');
     const plain = Buffer.concat([Buffer.from(`${line1}\r\n${line2}\r\n`), zlib.deflateSync(eventBuffer)]);
     const key = md5(uuid + session.clienttime + session.field2 + session.serverstr);
