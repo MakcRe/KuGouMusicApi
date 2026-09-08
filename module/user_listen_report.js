@@ -23,12 +23,12 @@ module.exports = async (params = {}, useAxios) => {
   const event = params.event;
   const state = params.state || '完整播放';
   const sync = params.d_sec != null || params.diff_sec != null;
-  // 默认值仅用于兼容参考报文，不代表调用者的真实设备或网络。
+  // 默认设备名称复用 dev；系统和屏幕参数兼容参考报文，IP 未提供时使用 0.0.0.0。
   const deviceModel = params.device_model ?? params.dev ?? (cookie.KUGOU_API_DEV || process.env.KUGOU_API_DEV || 'KuGouMusicApi');
   const systemVersion = String(params.system_version ?? '9');
   const screenWidth = params.screen_width ?? 1920;
   const screenHeight = params.screen_height ?? 1080;
-  const localIp = params.local_ip ?? '172.16.1.15';
+  const localIp = params.local_ip ?? '0.0.0.0';
   if (!clean(deviceModel) || deviceModel.length > 128 || /[\x00-\x1f\x7f]/.test(deviceModel) ||
       !/^\d+(?:\.\d+)*$/.test(systemVersion) || systemVersion.length > 16 ||
       !integer(screenWidth) || Number(screenWidth) < 1 || Number(screenWidth) > 65535 ||

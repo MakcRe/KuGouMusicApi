@@ -2815,7 +2815,7 @@ export interface UserListenReportParams extends CommonParams {
   system_version?: string | number;
   screen_width?: number;
   screen_height?: number;
-  /** 事件中的设备本地 IP，不控制 HTTP 出口或代理；默认参考值 172.16.1.15 */
+  /** 事件中的设备本地 IP，不控制 HTTP 出口或代理；未提供时默认 0.0.0.0 */
   local_ip?: string;
   duration?: number;
   state?: string;
