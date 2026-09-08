@@ -2808,8 +2808,9 @@ export interface UserListenReportParams extends CommonParams {
   mid?: string;
   userid?: string | number;
   token?: string;
-  /** 设备机型，默认使用参考报文的 V2339A */
+  /** 显式设备名称；未传时复用 dev / KUGOU_API_DEV */
   device_model?: string;
+  dev?: string;
   /** 系统版本，默认 9 */
   system_version?: string | number;
   screen_width?: number;

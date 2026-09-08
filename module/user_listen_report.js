@@ -24,7 +24,7 @@ module.exports = async (params = {}, useAxios) => {
   const state = params.state || '完整播放';
   const sync = params.d_sec != null || params.diff_sec != null;
   // 默认值仅用于兼容参考报文，不代表调用者的真实设备或网络。
-  const deviceModel = params.device_model ?? 'V2339A';
+  const deviceModel = params.device_model ?? params.dev ?? (cookie.KUGOU_API_DEV || process.env.KUGOU_API_DEV || 'KuGouMusicApi');
   const systemVersion = String(params.system_version ?? '9');
   const screenWidth = params.screen_width ?? 1920;
   const screenHeight = params.screen_height ?? 1080;

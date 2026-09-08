@@ -2993,15 +2993,16 @@ const res = await fetch('/audio/match', {
 | `event` | 必填，`start` 或 `end` |
 | `mixsongid` | 必填，歌曲 mixsongid |
 | `uuid`、`mid` | 设备标识；uuid 为 32 位字母数字。支持从 cookie 的 `uuid` / `KUGOU_API_GUID`、`mid` / `KUGOU_API_MID` 读取 |
-| `device_model`、`system_version` | 可选，机型和系统版本；兼容默认值为 `V2339A`、`9` |
+| `device_model`、`dev` | 可选，设备名称优先取 `device_model`、`dev`，否则复用 cookie / 环境变量 `KUGOU_API_DEV`，缺省为 `KuGouMusicApi` |
+| `system_version` | 可选，系统版本；兼容默认值为 `9` |
 | `screen_width`、`screen_height` | 可选，屏幕宽高（正整数像素）；默认 `1920`、`1080` |
 | `local_ip` | 可选，事件中的设备本地 IPv4/IPv6 地址；兼容默认值为 `172.16.1.15` |
 | `duration` | end 必填，实际播放毫秒数，扣除暂停及拖动进度的影响 |
 | `state` | end 的播放结束状态，默认 `完整播放` |
 | `d_sec`、`diff_sec` | end 可选，必须同时提供。分别为查询所得累计基线和本次新增秒数；传入后联动等级同步 |
 
-以上设备默认值来自参考报文，并非自动识别的真实设备。调用方可传入实际环境信息；
-机型和系统版本会在设备查询、事件及报文头中保持一致（系统版本同时用于 User-Agent）。
+设备名称复用项目已有的 dev 配置；系统版本、屏幕尺寸和本地 IP 的默认值来自参考报文，并非自动识别结果。
+设备名称在设备查询、事件及报文头中保持一致；系统版本同步用于事件、报文头和 User-Agent。
 `local_ip` 不读取请求来源、不自动查询公网 IP，也不改变 HTTP 出口或代理设置。
 同一次播放的开始、结束应使用一致的设备参数；修改机型、系统版本或屏幕尺寸会重新建立会话。
 
