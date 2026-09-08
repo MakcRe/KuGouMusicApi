@@ -59,6 +59,7 @@ const { generateSimulate } = require('./generate_simulate');
  * @param {Object} options.cookie - 请求 Cookie 对象
  * @param {boolean} [options.encryptKey] - 是否生成 signKey
  * @param {boolean} [options.clearDefaultParams] - 是否清除默认参数
+ * @param {boolean} [options.clearDefaultHeaders] - 仅使用模块声明的协议请求头
  * @param {boolean} [options.notSignature] - 是否跳过签名
  * @param {string} [options.ip] - 客户端 IP
  * @param {string} [options.realIP] - 真实 IP（优先级高于 ip）
@@ -140,9 +141,10 @@ const createRequest = (options) => {
     }
 
     // ========== 配置请求选项 ==========
+    const explicitHeaders = options.headers || {};
     options['params'] = params;
     options['baseURL'] = options?.baseURL || 'https://gateway.kugou.com'; // 默认网关地址
-    options['headers'] = Object.assign({ 'User-Agent': 'Android15-1070-11083-46-0-DiscoveryDRADProtocol-wifi' }, options?.headers || {}, {
+    options['headers'] = options.clearDefaultHeaders ? { ...explicitHeaders } : Object.assign({ 'User-Agent': 'Android15-1070-11083-46-0-DiscoveryDRADProtocol-wifi' }, options?.headers || {}, {
       dfid,
       clienttime: params.clienttime,
       mid,
@@ -154,7 +156,9 @@ const createRequest = (options) => {
       method: options.method,
       baseURL: options?.baseURL,
       url: options.url,
-      headers: Object.assign({}, options?.headers || {}, headers),
+      headers: options.clearDefaultHeaders
+        ? { ...explicitHeaders }
+        : Object.assign({}, options?.headers || {}, headers),
       withCredentials: true,               // 携带 Cookie
       responseType: options.responseType,  // 响应类型（如 'arraybuffer'）
     };

@@ -168,7 +168,7 @@
 139. [`获取已购单曲`](#获取已购单曲)
 140. [`获取已购专辑`](#获取已购专辑)
 141. [`上传音乐到云盘`](#上传音乐到云盘)
-142. [`获取听歌等级信息`](#获取听歌等级信息)
+142. [`获取听歌等级信息`](#获取听歌等级信息) / [`上报听歌时长`](#上报听歌时长)
 143. [`编辑内容黑名单`](#编辑内容黑名单)
 144. [`获取内容黑名单`](#获取内容黑名单)
 145. [`导入外部歌单`](#导入外部歌单)
@@ -2932,12 +2932,7 @@ const res = await fetch('/audio/match', {
 - **查询**（默认）：返回服务器当前累计听歌时长、等级与积分
 - **上报**：传入 `d_sec`（本地累计听歌秒数）与 `diff_sec`（本次新增秒数），同步本地累计时长
 
-**双协议支持**：
-
-- `platform=lite`（概念版）走 **v2 协议**（`userinfo.user.kugou.com/v2/get_grade_info`），上报按 `diff_sec` 累加记账
-- 标准版（不配置 `platform`）走 **v4 协议**（`userinfoservice.kugou.com/v4/get_grade_info`，pk/params 加密结构），**可查询**；但标准版听歌时长由服务端
-  真实播放统计维护，**上报增量不会记账**
-- 可用 `protocol=v2|v4` 参数强制指定协议
+统一使用 **lite v2 协议**（`userinfo.user.kugou.com/v2/get_grade_info`），不再根据平台切换 v4。
 
 **必选参数（登录态）：**
 
@@ -2945,9 +2940,9 @@ const res = await fetch('/audio/match', {
 
 **可选参数：**
 
-`uuid`：设备 UUID，默认为 `-`
+`uuid`：设备 UUID，默认从 cookie 的 uuid / KUGOU_API_GUID 读取，否则为 `-`
 
-`type`：类型，默认为 `1`（仅 v2 生效；v4 固定为 `0`）
+`type`：类型，默认为 `1`
 
 **上报参数：**
 
@@ -2985,6 +2980,41 @@ const res = await fetch('/audio/match', {
   }
 }
 ```
+
+### 上报听歌时长
+
+**接口地址：** `POST /user/listen/report`
+
+上报真实播放的开始、结束事件。结束时可联动 `/user/grade/info` 同步听歌时长。
+登录凭证可通过 `Authorization: token=...;userid=...` 或 `cookie` 传递。
+
+| 参数 | 说明 |
+| --- | --- |
+| `event` | 必填，`start` 或 `end` |
+| `mixsongid` | 必填，歌曲 mixsongid |
+| `uuid`、`mid` | 设备标识；uuid 为 32 位字母数字。支持从 cookie 的 `uuid` / `KUGOU_API_GUID`、`mid` / `KUGOU_API_MID` 读取 |
+| `duration` | end 必填，实际播放毫秒数，扣除暂停及拖动进度的影响 |
+| `state` | end 的播放结束状态，默认 `完整播放` |
+| `d_sec`、`diff_sec` | end 可选，必须同时提供。分别为查询所得累计基线和本次新增秒数；传入后联动等级同步 |
+
+**请求示例：** 设备及登录信息通过 cookie 提供。
+
+```json
+{"event":"start","mixsongid":260403475}
+```
+
+```json
+{"event":"end","mixsongid":260403475,"duration":60000,"state":"完整播放","d_sec":120,"diff_sec":60}
+```
+
+不传同步参数时返回 CSCC 响应；传入后返回
+`data: { report, grade, playback_accepted, grade_synced }`，分别表示两步结果。
+CSCC 失败仍继续等级同步；至少一步成功返回 HTTP 200，两步均失败返回 HTTP 502。
+请求成功不代表累计时长立即更新，服务端可能延迟显示；请勿因此重复上报。
+接口不自动重试。HTTP 调用时，播放上报与等级信息的查询、上报均需在 URL query 中携带每次变化的 `timestamp`，避免命中响应缓存（POST 也一样，放在 body 中不能绕过 URL 缓存）。
+例如：`POST /user/listen/report?timestamp=1788850000000`。
+程序化调用：`user_listen_report(params)`。
+
 
 ### 编辑内容黑名单
 

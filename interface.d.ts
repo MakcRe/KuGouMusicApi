@@ -2799,3 +2799,18 @@ export function getModulesDefinitions(modulesPath: string, specificRoute: Record
  * @param config - 请求配置
  */
 export function createRequest(config: RequestConfig): Promise<any>;
+
+/** CSCC lite 播放上报。duration 为真实播放毫秒数；d_sec/diff_sec 为秒。 */
+export interface UserListenReportParams extends CommonParams {
+  event: 'start' | 'end';
+  mixsongid: string | number;
+  uuid?: string;
+  mid?: string;
+  userid?: string | number;
+  token?: string;
+  duration?: number;
+  state?: string;
+  d_sec?: number;
+  diff_sec?: number;
+}
+export declare function user_listen_report(params: UserListenReportParams): Promise<ApiResponse>;
