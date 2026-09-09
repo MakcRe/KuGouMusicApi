@@ -184,6 +184,14 @@
 155. [`音效 - 明星音效`](#音效---明星音效)
 156. [`音效 - 汽车列表`](#音效---汽车列表)
 157. [`音效 - 汽车音效`](#音效---汽车音效)
+158. [`获取歌曲弹幕`](#获取歌曲弹幕)
+159. [`发送歌曲弹幕`](#发送歌曲弹幕)
+160. [`获取视频弹幕`](#获取视频弹幕)
+161. [`发送视频弹幕`](#发送视频弹幕)
+162. [`发送歌曲评论`](#发送歌曲评论)
+163. [`发送歌单评论`](#发送歌单评论)
+164. [`发送专辑评论`](#发送专辑评论)
+165. [`发送楼层评论`](#发送楼层评论)
 
 ### 安装
 
@@ -2412,6 +2420,32 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 
 **调用例子：** `/comment/music?mixsongid=302362878`
 
+### 发送歌曲评论
+
+说明：向普通歌曲评论池发送顶层评论，需要登录。该接口使用 `fc4be23b4e972707f36b8a828a93ba8a` 评论池，与 `/song/barrage/send` 的歌曲弹幕池不同。仅传 `mixsongid` 时会先调用歌曲评论查询接口，自动解析 `special_id` 和歌曲名称。
+
+**必选参数：**
+
+`content`：评论文本
+
+`mixsongid` / `special_id`：至少传入一个。推荐传 `mixsongid`；直接传 `special_id` 时可同时传 `name`
+
+**可选参数：**
+
+`name`：歌曲显示名称
+
+**接口地址：** `/comment/music/send`
+
+**调用例子：**
+
+```bash
+curl -X POST http://127.0.0.1:3000/comment/music/send \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","mixsongid":"302362878","content":"评论内容"}'
+```
+
+> 发布评论可能触发手机号验证、内容审核或账号风控。成功请求会产生真实公开内容，请勿自动重试。
+
 ### 歌曲评论-根据分类返回
 
 说明 : 调用此接口 , 传入音乐 mixsongid 和 type_id 参数 , 可获得该音乐的分类评论 ( 不需要登录 )
@@ -2476,6 +2510,46 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 
 **调用例子：** `/comment/floor?special_id=100285259&mixsongid=302362878&tid=678433417`
 
+### 发送楼层评论
+
+说明：在歌曲、专辑或歌单的评论楼层中发送回复，需要登录。底层使用 `commentsv2/reply`，不是发送顶层评论的 `commentsv3/add`。
+
+**必选参数：**
+
+`special_id`：评论资源 `special_child_id`
+
+`tid`：楼层所属的顶层评论 ID
+
+`content`：回复文本
+
+**可选参数：**
+
+`resource_type`：资源类型，可选 `song`、`album`、`playlist`，默认 `song`
+
+`code`：直接指定评论池 code，优先级高于 `resource_type`
+
+`pid`：直接回复目标的评论 ID；回复顶层评论时不传或传 `0`
+
+`is_t`：是否直接回复顶层评论。不传时，`pid=0` 自动取 `1`，否则取 `0`
+
+`mixsongid`：歌曲 mixsongid，用于歌曲楼层查询和名称解析
+
+`name`：资源名称；不传时会先调用 `/comment/floor` 尝试解析
+
+`reply_user_name`、`reply_content`：被回复用户和原评论内容；两者都提供时，会按客户端格式拼接为 `回复内容//@用户名:原评论`
+
+**接口地址：** `/comment/floor/send`
+
+**调用例子：**
+
+```bash
+curl -X POST http://127.0.0.1:3000/comment/floor/send \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","special_id":"100285259","mixsongid":"302362878","tid":"678433417","content":"回复内容"}'
+```
+
+> 发布楼层回复可能触发手机号验证、内容审核或账号风控。发送接口不会自动重试。
+
 ### 歌单评论
 
 说明 : 调用此接口 , 传入歌单 id 参数 , 可获得该歌单的所有评论 ( 不需要登录 )
@@ -2498,6 +2572,30 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 
 **调用例子：** `/comment/playlist?id=collection_3_1373407643_366_0`
 
+### 发送歌单评论
+
+说明：向歌单评论池发送顶层评论，需要登录。未传 `name` 时会先调用歌单评论查询接口尝试解析歌单名称。
+
+**必选参数：**
+
+`id`：歌单 `global_collection_id`
+
+`content`：评论文本
+
+**可选参数：**
+
+`name`：歌单名称；目标歌单没有历史评论、无法自动解析名称时建议显式传入
+
+**接口地址：** `/comment/playlist/send`
+
+**调用例子：**
+
+```bash
+curl -X POST http://127.0.0.1:3000/comment/playlist/send \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","id":"collection_3_1373407643_366_0","name":"歌单名称","content":"评论内容"}'
+```
+
 ### 专辑评论
 
 说明 : 调用此接口 , 传入 专辑 id 参数 , 可获得该专辑的所有评论 ( 不需要登录 )
@@ -2516,7 +2614,33 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 
 **接口地址：** `/comment/album`
 
-**调用例子：** `/comment/album?id=collection_3_1373407643_366_0`
+**调用例子：** `/comment/album?id=10729818`
+
+### 发送专辑评论
+
+说明：向专辑评论池发送顶层评论，需要登录。未传 `name` 时会先调用专辑评论查询接口尝试解析专辑名称。
+
+**必选参数：**
+
+`id`：专辑 ID
+
+`content`：评论文本
+
+**可选参数：**
+
+`name`：专辑名称；目标专辑没有历史评论、无法自动解析名称时建议显式传入
+
+**接口地址：** `/comment/album/send`
+
+**调用例子：**
+
+```bash
+curl -X POST http://127.0.0.1:3000/comment/album/send \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","id":"10729818","name":"小心思","content":"评论内容"}'
+```
+
+> 歌单和专辑评论同样可能进入审核。发送接口不会自动重试。
 
 ### 提交听歌历史
 
@@ -3331,6 +3455,106 @@ curl -X POST http://127.0.0.1:3000/user/update/avatar \
 ```
 
 返回体在原响应基础上追加 `photo`（图床文件名）与 `pic`（完整头像 URL）两个字段。
+
+### 获取歌曲弹幕
+
+说明：获取歌曲播放器使用的旧弹幕池。该弹幕池的资源代码为 `articulossong`，与 `/comment/music` 使用的普通歌曲评论池不同，不应把两者数量混为一谈。不需要登录。协议证据与验证记录见[弹幕接口逆向记录](barrage_reverse.md)。
+
+**必选参数（二选一）：**
+
+`hash`：歌曲 hash，接口会自动解析弹幕资源 ID
+
+`special_id`：弹幕资源 ID，即响应中的 `special_child_id` / `childrenid`
+
+**可选参数：**
+
+`mixsongid`：歌曲 mixsongid（即 `album_audio_id`）
+
+`name`：歌曲显示名称
+
+`page`：页码，默认 1
+
+`pagesize`：每页数量，默认 20
+
+**接口地址：** `/song/barrage`
+
+**调用例子：** `/song/barrage?hash=043C4DA61870CD55C1240F0FA6744C94&page=1&pagesize=20`
+
+### 发送歌曲弹幕
+
+说明：向歌曲弹幕池发送一条弹幕。需要登录。仅传 `hash` 时，接口会先查询并解析 `special_id`。
+
+**必选参数：**
+
+`content`：弹幕文本
+
+`special_id` / `hash`：至少传入一个，含义同“获取歌曲弹幕”
+
+**可选参数：**
+
+`mixsongid`：歌曲 mixsongid
+
+`name`：歌曲显示名称
+
+**接口地址：** `/song/barrage/send`
+
+**调用例子：**
+
+```bash
+curl -X POST http://127.0.0.1:3000/song/barrage/send \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","hash":"043C4DA61870CD55C1240F0FA6744C94","mixsongid":"302362878","content":"弹幕内容"}'
+```
+
+### 获取视频弹幕
+
+说明：获取 MV 播放器展示的弹幕。客户端底层复用 MV 评论池。不需要登录。
+
+**必选参数（二选一）：**
+
+`video_id`：视频 ID
+
+`hash`：MV hash，接口会自动解析视频 ID；`mkv_sd_hash`、播放清晰度 hash 均可由上游服务映射到同一视频
+
+**可选参数：**
+
+`name`：视频名称
+
+`page`：页码，默认 1
+
+`pagesize`：每页数量，默认 20
+
+**接口地址：** `/video/barrage`
+
+**调用例子：** `/video/barrage?video_id=17633253&page=1&pagesize=20`
+
+### 发送视频弹幕
+
+说明：向 MV 视频弹幕池发送一条弹幕。需要登录。仅传 `hash` 时，接口会先查询并解析 `video_id`。
+
+**必选参数：**
+
+`content`：弹幕文本
+
+`video_id` / `hash`：至少传入一个，含义同“获取视频弹幕”
+
+**可选参数：**
+
+`name`：视频名称
+
+`pid`：回复目标评论 ID；不传表示发送顶层弹幕
+
+**接口地址：** `/video/barrage/send`
+
+**调用例子：**
+
+```bash
+curl -X POST http://127.0.0.1:3000/video/barrage/send \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","video_id":"17633253","name":"借梦不还","content":"弹幕内容"}'
+```
+
+> 发送接口会产生真实公开内容。请先用读取接口确认资源 ID，并避免对同一请求进行自动重试。
 
 ## License
 

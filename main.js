@@ -56,7 +56,7 @@ let obj = {};
  * 扫描流程：
  * 1. 使用 `fs.readdirSync` 同步读取 `module/` 目录下所有文件
  * 2. 对文件列表进行倒序排列（与 server.js 中的路由注册顺序保持一致）
- * 3. 过滤出以 `.js` 结尾的文件
+ * 3. 过滤出以 `.js` 结尾且不以下划线开头的公开模块
  * 4. 对每个模块文件：
  *    a. 通过 `require` 加载模块，获取模块处理函数
  *    b. 从文件名提取 API 函数名（去掉 `.js` 后缀，如 `search.js` → `search`）
@@ -70,8 +70,8 @@ let obj = {};
 fs.readdirSync(path.join(__dirname, 'module'))
   .reverse()
   .forEach((file) => {
-    // 跳过非 .js 文件（如 .json、.map、目录等）
-    if (!file.endsWith('.js')) return;
+    // 跳过非 .js 文件和以下划线开头的内部辅助模块
+    if (!file.endsWith('.js') || file.startsWith('_')) return;
 
     // 加载模块，获取其导出的处理函数
     let fileModule = require(path.join(__dirname, 'module', file));

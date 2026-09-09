@@ -1171,6 +1171,30 @@ export interface VideoDetailParams extends CommonParams {
   id: string;
 }
 
+/** 获取 MV 视频弹幕参数，video_id 与 hash 至少传入一个 */
+export interface VideoBarrageParams extends PaginatedParams {
+  /** 视频 id */
+  video_id?: string | number;
+  /** MV hash；可用于自动解析 video_id */
+  hash?: string;
+  /** 视频名称 */
+  name?: string;
+}
+
+/** 发送 MV 视频弹幕参数，video_id 与 hash 至少传入一个 */
+export interface VideoBarrageSendParams extends CommonParams {
+  /** 弹幕文本（必选） */
+  content: string;
+  /** 视频 id */
+  video_id?: string | number;
+  /** MV hash；可用于自动解析 video_id */
+  hash?: string;
+  /** 视频名称 */
+  name?: string;
+  /** 回复目标评论 id；不传表示顶层弹幕 */
+  pid?: string | number;
+}
+
 // ============================================================
 //  请求参数类型 —— 新歌速递
 // ============================================================
@@ -1349,6 +1373,44 @@ export interface CommentMusicParams extends PaginatedParams {
   show_hotword_list?: 0 | 1;
 }
 
+/** 发送普通歌曲评论参数，mixsongid 与 special_id 至少传入一个 */
+export interface CommentMusicSendParams extends CommonParams {
+  /** 评论文本（必选） */
+  content: string;
+  /** 音乐 mixsongid / album_audio_id，可用于自动解析评论资源 ID */
+  mixsongid?: string | number;
+  /** 评论资源 special_child_id */
+  special_id?: string | number;
+  /** 歌曲显示名称 */
+  name?: string;
+}
+
+/** 获取歌曲弹幕参数，special_id 与 hash 至少传入一个 */
+export interface SongBarrageParams extends PaginatedParams {
+  /** 弹幕资源 special_child_id */
+  special_id?: string | number;
+  /** 歌曲 hash；可用于自动解析 special_id */
+  hash?: string;
+  /** 歌曲 mixsongid / album_audio_id */
+  mixsongid?: string | number;
+  /** 歌曲显示名称 */
+  name?: string;
+}
+
+/** 发送歌曲弹幕参数，special_id 与 hash 至少传入一个 */
+export interface SongBarrageSendParams extends CommonParams {
+  /** 弹幕文本（必选） */
+  content: string;
+  /** 弹幕资源 special_child_id */
+  special_id?: string | number;
+  /** 歌曲 hash；可用于自动解析 special_id */
+  hash?: string;
+  /** 歌曲 mixsongid / album_audio_id */
+  mixsongid?: string | number;
+  /** 歌曲显示名称 */
+  name?: string;
+}
+
 /** 歌曲评论 - 根据分类返回参数 */
 export interface CommentMusicClassifyParams extends PaginatedParams {
   /** 音乐 mixsongid（必选） */
@@ -1377,6 +1439,32 @@ export interface CommentFloorParams extends PaginatedParams {
   tid: string;
 }
 
+/** 发送楼层评论参数 */
+export interface CommentFloorSendParams extends CommonParams {
+  /** 评论资源 special_child_id（必选） */
+  special_id: string | number;
+  /** 楼层所属顶层评论 id（必选） */
+  tid: string | number;
+  /** 回复文本（必选） */
+  content: string;
+  /** 资源类型，默认 song */
+  resource_type?: 'song' | 'album' | 'playlist';
+  /** 显式评论池 code，优先于 resource_type */
+  code?: string;
+  /** 直接回复目标评论 id；不传表示回复顶层评论 */
+  pid?: string | number;
+  /** 是否直接回复顶层评论；默认根据 pid 推断 */
+  is_t?: 0 | 1;
+  /** 歌曲 mixsongid，用于歌曲楼层查询 */
+  mixsongid?: string | number;
+  /** 资源名称；不传时尝试从楼层列表解析 */
+  name?: string;
+  /** 被回复用户名，用于生成客户端回复文本 */
+  reply_user_name?: string;
+  /** 被回复的原评论内容，用于生成客户端回复文本 */
+  reply_content?: string;
+}
+
 /** 歌单评论参数 */
 export interface CommentPlaylistParams extends PaginatedParams {
   /** 歌单 global_collection_id（必选） */
@@ -1387,6 +1475,16 @@ export interface CommentPlaylistParams extends PaginatedParams {
   show_hotword_list?: 0 | 1;
 }
 
+/** 发送歌单评论参数 */
+export interface CommentPlaylistSendParams extends CommonParams {
+  /** 歌单 global_collection_id（必选） */
+  id: string;
+  /** 评论文本（必选） */
+  content: string;
+  /** 歌单名称；不传时尝试从评论列表解析 */
+  name?: string;
+}
+
 /** 专辑评论参数 */
 export interface CommentAlbumParams extends PaginatedParams {
   /** 专辑 id（必选） */
@@ -1395,6 +1493,16 @@ export interface CommentAlbumParams extends PaginatedParams {
   show_classify?: 0 | 1;
   /** 是否返回热词：0 = 不返回，1 = 返回 */
   show_hotword_list?: 0 | 1;
+}
+
+/** 发送专辑评论参数 */
+export interface CommentAlbumSendParams extends CommonParams {
+  /** 专辑 id（必选） */
+  id: string;
+  /** 评论文本（必选） */
+  content: string;
+  /** 专辑名称；不传时尝试从评论列表解析 */
+  name?: string;
 }
 
 // ============================================================
@@ -2382,6 +2490,18 @@ export function video_privilege(params: VideoPrivilegeParams): Promise<ApiRespon
  */
 export function video_detail(params: VideoDetailParams): Promise<ApiResponse>;
 
+/**
+ * 获取 MV 视频弹幕（无需登录）
+ * @route /video/barrage
+ */
+export function video_barrage(params: VideoBarrageParams): Promise<ApiResponse>;
+
+/**
+ * 发送 MV 视频弹幕（需登录）
+ * @route /video/barrage/send
+ */
+export function video_barrage_send(params: VideoBarrageSendParams): Promise<ApiResponse>;
+
 // ============================================================
 //  导出函数 —— 新歌速递
 // ============================================================
@@ -2535,6 +2655,24 @@ export function comment_count(params: CommentCountParams): Promise<ApiResponse>;
 export function comment_music(params: CommentMusicParams): Promise<ApiResponse>;
 
 /**
+ * 发送普通歌曲评论（需登录，与歌曲弹幕池分离）
+ * @route /comment/music/send
+ */
+export function comment_music_send(params: CommentMusicSendParams): Promise<ApiResponse>;
+
+/**
+ * 获取歌曲弹幕（无需登录，与普通歌曲评论池分离）
+ * @route /song/barrage
+ */
+export function song_barrage(params: SongBarrageParams): Promise<ApiResponse>;
+
+/**
+ * 发送歌曲弹幕（需登录）
+ * @route /song/barrage/send
+ */
+export function song_barrage_send(params: SongBarrageSendParams): Promise<ApiResponse>;
+
+/**
  * 获取歌曲分类评论（无需登录）
  * @route /comment/music/classify
  */
@@ -2553,16 +2691,34 @@ export function comment_music_hotword(params: CommentMusicHotwordParams): Promis
 export function comment_floor(params: CommentFloorParams): Promise<ApiResponse>;
 
 /**
+ * 发送歌曲、专辑或歌单的楼层回复（需登录）
+ * @route /comment/floor/send
+ */
+export function comment_floor_send(params: CommentFloorSendParams): Promise<ApiResponse>;
+
+/**
  * 获取歌单评论（无需登录）
  * @route /comment/playlist
  */
 export function comment_playlist(params: CommentPlaylistParams): Promise<ApiResponse>;
 
 /**
+ * 发送歌单评论（需登录）
+ * @route /comment/playlist/send
+ */
+export function comment_playlist_send(params: CommentPlaylistSendParams): Promise<ApiResponse>;
+
+/**
  * 获取专辑评论（无需登录）
  * @route /comment/album
  */
 export function comment_album(params: CommentAlbumParams): Promise<ApiResponse>;
+
+/**
+ * 发送专辑评论（需登录）
+ * @route /comment/album/send
+ */
+export function comment_album_send(params: CommentAlbumSendParams): Promise<ApiResponse>;
 
 // ============================================================
 //  导出函数 —— 曲谱
