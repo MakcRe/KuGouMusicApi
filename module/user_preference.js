@@ -1,6 +1,4 @@
-// 听歌偏好设置查询（userpreferservice/v1/get_user_conf）。
-// body: { plat:1, userid, p, params }，加密与签名由项目基元自动完成。
-// query 仅含标准参数集：appid/clientver/clienttime/mid/dfid/uuid，不含 token。
+// 获取用户的听歌偏好设置（性别、年龄段、语言、风格、推荐模式等）。
 const crypto = require('crypto');
 const { cryptoAesEncrypt, rsaEncrypt2 } = require('../util');
 const { appid, clientver, liteAppid, liteClientver } = require('../util/config.json');
@@ -16,7 +14,6 @@ module.exports = (params = {}, useAxios) => {
   const clientVer = isLite ? liteClientver : clientver;
   const clienttime = Math.floor(Date.now() / 1000);
 
-  // 16 位随机 hex 临时密钥
   const strG2 = crypto.randomBytes(8).toString('hex');
 
   const body = { plat: 1, userid };

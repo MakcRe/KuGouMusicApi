@@ -1,8 +1,7 @@
-// 听歌偏好设置更新（userpreferservice/v1/update_user_conf）。
-// body: { plat:1, userid, p, data:{...}, params }
-// data 字段：mode/gender/age/lang/style/song_lang/stylerec_taglist/wish_taglist/inactive_taglist/inactive_singerlist
-// lang/style 为基础偏好 JSON 字符串（value > 50 视为启用）；
-// song_lang 为推荐强度 JSON 字符串（0 屏蔽、50 默认、100 加大）；传空字符串可清除对应字段。
+// 更新用户的听歌偏好设置。传空字符串可清除对应字段。
+// 字段：mode 推荐模式(0 默认/1 熟悉/2 尝鲜)；gender/age 单一 id；lang/style 基础偏好 JSON 字符串（value > 50 视为启用）；
+// song_lang 推荐强度 JSON 字符串（0 屏蔽、50 默认、100 加大）；
+// stylerec_taglist/wish_taglist/inactive_taglist/inactive_singerlist 相关标签列表。
 const crypto = require('crypto');
 const { cryptoAesEncrypt, rsaEncrypt2 } = require('../util');
 const { appid, clientver, liteAppid, liteClientver } = require('../util/config.json');
@@ -35,7 +34,6 @@ module.exports = (params = {}, useAxios) => {
     return Promise.reject({ status: 400, body: { status: 0, msg: '至少需要提供 gender/age/lang/style 等偏好字段之一' }, cookie: [] });
   }
 
-  // 16 位随机 hex 临时密钥
   const strG2 = crypto.randomBytes(8).toString('hex');
 
   const body = { plat: 1, userid };
