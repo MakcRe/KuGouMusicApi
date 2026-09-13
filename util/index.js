@@ -30,7 +30,7 @@ const {
 } = require('./crypto');
 
 // ========== 请求函数 ==========
-const { createRequest } = require('./request');
+const { createRequest, createCloudRequest } = require('./request');
 const { resolveProxy } = require('./runtime');
 
 // ========== 签名函数 ==========
@@ -79,6 +79,7 @@ module.exports = {
 
   // --- 请求函数 ---
   createRequest,                // 创建 HTTP 请求
+  createCloudRequest,           // 创建云歌单服务（cloudlist）加密协议请求
   resolveProxy,                 // 解析项目代理配置（KUGOU_API_PROXY）
 
   // --- 签名函数 ---

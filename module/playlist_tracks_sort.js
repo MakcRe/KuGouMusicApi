@@ -1,12 +1,12 @@
 // 对歌单内歌曲排序（自定义排序，可对「我喜欢」歌单使用）
+// 使用云歌单服务加密协议（cloudlist.service.kugou.com）
 // listid: 歌单 listid
 // type: 歌单类型，0=自建/我喜欢，1=收藏
 // list_ver: 歌单列表版本号（歌单歌曲接口返回的 list_ver）
 // data: 排序数据，格式为 fileid|sort，多个用逗号分隔
-module.exports = (params, useAxios) => {
-  const userid = params?.userid || params?.cookie?.userid || 0;
-  const token = params?.token || params?.cookie?.token || '';
+const { createCloudRequest } = require('../util');
 
+module.exports = (params, useAxios) => {
   const resource = (params.data || '').split(',').map((s) => {
     const [fileid, sort] = s.split('|');
     return { fileid: Number(fileid), sort: Number(sort || 0) };
@@ -19,15 +19,9 @@ module.exports = (params, useAxios) => {
     data: resource,
   };
 
-  if (userid) dataMap['userid'] = userid;
-  if (token) dataMap['token'] = token;
-
-  return useAxios({
+  return createCloudRequest({
     url: '/v1/modify_song_sort',
-    method: 'post',
-    encryptType: 'android',
     data: dataMap,
     cookie: params?.cookie || {},
-    headers: { 'x-router': 'cloudlist.service.kugou.com' },
   });
 };
