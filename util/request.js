@@ -278,7 +278,7 @@ const createRequest = (options) => {
  * @param {Object} options - 请求配置
  * @param {string} options.url - 请求路径（如 "/v1/modify_list_sort"）
  * @param {Object} options.data - 请求体（JSON 对象，会被加密）
- * @param {string} [options.baseURL] - 基础 URL（默认 "https://cloudlist.service.kugou.com"）
+ * @param {string} [options.baseURL] - 基础 URL（默认 "https://gateway.kugou.com"，通过 x-router 路由）
  * @param {Object} options.cookie - 请求 Cookie 对象（需含 userid/token）
  * @param {string} [options.ip] - 客户端 IP
  * @returns {Promise<UseAxiosResponse>} 统一格式的响应对象
@@ -333,6 +333,7 @@ const createCloudRequest = (options) => {
 
     // ========== 请求头 ==========
     const headers = {
+      'x-router': 'cloudlist.service.kugou.com',
       dfid,
       clienttime: String(clienttime),
       mid,
@@ -349,7 +350,8 @@ const createCloudRequest = (options) => {
 
     const requestOptions = {
       method: 'post',
-      baseURL: options?.baseURL || 'https://cloudlist.service.kugou.com',
+      // service 域名的证书不覆盖该主机名，使用正常校验证书的网关入口。
+      baseURL: options?.baseURL || 'https://gateway.kugou.com',
       url: options.url,
       params,
       data: body,
