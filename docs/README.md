@@ -1676,8 +1676,6 @@ ID。
 
 `pagesize `: 每页页数, 默认为 30
 
-`needsort `: 是否返回歌曲在歌单中的排序序号, 默认为 1
-
 **接口地址：** `/playlist/track/all`
 
 **调用例子：** `/playlist/track/all?id=collection_3_1863870844_4_0`
@@ -1695,8 +1693,6 @@ ID。
 `page `: 页数
 
 `pagesize `: 每页页数, 默认为 30
-
-`needsort `: 是否返回歌曲在歌单中的排序序号, 默认为 1
 
 > 说明: 修改歌单内歌曲排序请调用 [`/playlist/tracks/sort`](#对歌单内歌曲排序)。
 

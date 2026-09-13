@@ -9,7 +9,6 @@ module.exports = (params, useAxios) => {
     // module: 'NONE',
     mode: 1,
     personal_switch: 1,
-    need_sort: params?.needsort ?? params?.need_sort ?? 1,
     extend_fields: 'abtags,hot_cmt,popularization',
     // page: params?.page || 1,
     pagesize ,

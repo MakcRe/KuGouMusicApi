@@ -12,7 +12,6 @@ module.exports = (params, useAxios) => {
     show_cover: 1,
     type: 0,
     token,
-    need_sort: params?.needsort ?? params?.need_sort ?? 1,
     page: params.page || 1,
   };
 
