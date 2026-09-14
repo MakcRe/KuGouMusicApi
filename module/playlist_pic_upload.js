@@ -2,7 +2,7 @@
 // 直连图片上传服务（imgphp.kugou.com/imageupload/stream.php）
 // type: 图片类型，自定义歌单封面用 custom
 // extendName: 扩展名，默认 .jpg
-// file: 上传的文件路径（本地文件）
+// file: 上传的文件路径（本地文件），也可通过二进制请求体 data 直接传入图片
 // md5: 上传校验值，默认 MD5(日期yyyyMMdd + 盐值)，可省略
 const axios = require('axios');
 const fs = require('fs');
@@ -12,10 +12,12 @@ const { resolveProxy } = require('../util/runtime');
 module.exports = (params, useAxios) => {
   return new Promise((resolve, reject) => {
     const filePath = params?.file;
-    if (!filePath || !fs.existsSync(filePath)) {
+    if (!Buffer.isBuffer(params?.data) && (!filePath || !fs.existsSync(filePath))) {
       reject({ body: { status: 0, msg: '文件不存在' } });
       return;
     }
+
+    const image = Buffer.isBuffer(params?.data) ? params.data : fs.readFileSync(filePath);
 
     const date = new Date();
     const dateStr = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
@@ -32,7 +34,7 @@ module.exports = (params, useAxios) => {
       baseURL: 'http://imgphp.kugou.com/imageupload',
       url: '/stream.php',
       params: queryParams,
-      data: fs.readFileSync(filePath),
+      data: image,
       headers: { 'Content-Type': 'application/octet-stream' },
       timeout: 30000,
     };
