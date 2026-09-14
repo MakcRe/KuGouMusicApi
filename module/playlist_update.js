@@ -1,4 +1,4 @@
-// 修改「我的歌单」信息（名称/排序/标签/简介）
+// 修改「我的歌单」信息（名称/排序/标签/简介/封面）
 // 使用云歌单服务加密协议（cloudlist.service.kugou.com）
 // total_ver: 歌单总版本号（用户歌单接口返回的 total_ver）
 // listid: 歌单 listid
@@ -7,6 +7,7 @@
 // sort: 歌单排序号
 // tags: 歌单标签
 // intro: 歌单简介
+// pic: 自定义封面，格式为 custom/<FileName>（FileName 由 /playlist/pic/upload 返回）
 const { createCloudRequest } = require('../util');
 
 module.exports = (params, useAxios) => {
@@ -21,6 +22,10 @@ module.exports = (params, useAxios) => {
 
   if (params.name) {
     dataMap.name = params.name;
+  }
+
+  if (params.pic) {
+    dataMap.pic = params.pic;
   }
 
   return createCloudRequest({

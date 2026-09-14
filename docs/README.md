@@ -1117,9 +1117,9 @@ data: 排序数据, 格式为 `listid|type|sort`，每个以逗号分隔
 
 ### 修改歌单封面
 
-说明 : 调用此接口可以修改"我的歌单"的封面 ( 需要登录 )
+说明 : 调用此接口可以修改"我的歌单"的封面（系统内置封面，需登录）
 
-> 说明：封面支持两种格式，完整封面 URL（`https://imge.kugou.com/stdmusic/{size}/xxx.jpg`）或云端相对路径（`stdmusic/xxx.jpg`），完整 URL 会自动取最后一段并补上 `stdmusic/` 前缀。
+> 说明：此接口用于设置**系统封面**（`stdmusic`），封面支持两种格式，完整封面 URL（`https://imge.kugou.com/stdmusic/{size}/xxx.jpg`）或云端相对路径（`stdmusic/xxx.jpg`），完整 URL 会自动取最后一段并补上 `stdmusic/` 前缀。若需设置**自定义封面**，请改用 `/playlist/update` 传入 `pic=custom/<FileName>`（见「上传图片」）。
 
 **必选参数：**
 
@@ -1159,7 +1159,7 @@ file: 本地图片文件路径
 
 ### 修改歌单信息
 
-说明 : 调用此接口可以修改"我的歌单"的名称、排序、标签、简介 ( 需要登录 )
+说明 : 调用此接口可以修改"我的歌单"的名称、排序、标签、简介、自定义封面 ( 需要登录 )
 
 **必选参数：**
 
@@ -1179,9 +1179,11 @@ total_ver: 歌单总版本号
 
 `intro`: 歌单简介
 
+`pic`: 自定义封面，格式为 `custom/<FileName>`（FileName 由 `/playlist/pic/upload` 返回）
+
 **接口地址：** `/playlist/update`
 
-**调用例子：** `/playlist/update?listid=11&total_ver=9&name=我的新歌单&sort=1&tags=华语,流行&intro=好听`
+**调用例子：** `/playlist/update?listid=11&total_ver=9&name=我的新歌单&sort=1&tags=华语,流行&intro=好听&pic=custom/20260914120505590883.jpg`
 
 ### 一起听（音乐室/众乐房）
 
