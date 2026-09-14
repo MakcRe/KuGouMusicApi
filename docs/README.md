@@ -1115,6 +1115,52 @@ data: 排序数据, 格式为 `listid|type|sort`，每个以逗号分隔
 
 **调用例子：** `/playlist/sort?total_ver=9&data=11|0|0,22|0|1,33|1|0`
 
+### 修改歌单封面
+
+说明 : 调用此接口可以修改"我的歌单"的封面 ( 需要登录 )
+
+> 说明：封面支持两种格式，完整封面 URL（`https://imge.kugou.com/stdmusic/{size}/xxx.jpg`）或云端相对路径（`stdmusic/xxx.jpg`），完整 URL 会自动取最后一段并补上 `stdmusic/` 前缀。
+
+**必选参数：**
+
+total_ver: 歌单总版本号
+
+data: 封面数据, 格式为 `listid|type|pic`，每个以逗号分隔，pic 可为完整封面 URL 或 `stdmusic/xxx.jpg` 相对路径
+
+**可选参数：**
+
+`type`: 歌单类型，0：自建歌单，1：收藏歌单，默认为 0（也可在 data 中逐条指定）
+
+**接口地址：** `/playlist/pic`
+
+**调用例子：** `/playlist/pic?total_ver=9&data=11|0|stdmusic/20210111/20210111184454391203.jpg,22|1|http://imge.kugou.com/stdmusic/{size}/20210111/20210111184454391203.jpg`
+
+### 修改歌单信息
+
+说明 : 调用此接口可以修改"我的歌单"的名称、排序、标签、简介 ( 需要登录 )
+
+**必选参数：**
+
+listid: 用户歌单 listid
+
+total_ver: 歌单总版本号
+
+**可选参数：**
+
+`type`: 歌单类型，0：自建歌单，1：收藏歌单，默认为 0
+
+`name`: 歌单名称（缺省时不改动名称）
+
+`sort`: 歌单排序号，默认为 0
+
+`tags`: 歌单标签
+
+`intro`: 歌单简介
+
+**接口地址：** `/playlist/update`
+
+**调用例子：** `/playlist/update?listid=11&total_ver=9&name=我的新歌单&sort=1&tags=华语,流行&intro=好听`
+
 ### 一起听（音乐室/众乐房）
 
 说明：调用此接口可实现酷狗音乐"一起听"（音乐室/众乐房）相关功能，包括房间查询、创建、加入、离开、聊天、播放同步、点歌等。
