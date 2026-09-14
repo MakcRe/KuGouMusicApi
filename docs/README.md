@@ -1135,6 +1135,28 @@ data: 封面数据, 格式为 `listid|type|pic`，每个以逗号分隔，pic �
 
 **调用例子：** `/playlist/pic?total_ver=9&data=11|0|stdmusic/20210111/20210111184454391203.jpg,22|1|http://imge.kugou.com/stdmusic/{size}/20210111/20210111184454391203.jpg`
 
+> 说明：如需设置自定义封面，请先调用 `/playlist/pic/upload` 上传图片获取 `FileName`，再调用 `/playlist/update` 并传入 `pic=custom/<FileName>`。
+
+### 上传图片
+
+说明 : 调用此接口可以上传一张图片（用于设置为歌单自定义封面）( 需要登录 )
+
+**必选参数：**
+
+file: 本地图片文件路径
+
+**可选参数：**
+
+`type`: 图片类型，默认为 `custom`
+
+`extendName`: 文件扩展名，默认为 `.jpg`
+
+`md5`: 上传校验值，默认自动生成（`MD5(日期yyyyMMdd + 盐值)`），一般无需传
+
+**接口地址：** `/playlist/pic/upload`
+
+**调用例子：** `POST /playlist/pic/upload`，body 传 JSON：`{"file":"/path/to/cover.jpg","cookie":"token=xxx;userid=xxx"}`，成功返回：`{"status":1,"FileName":"20260914120505590883.jpg"}`
+
 ### 修改歌单信息
 
 说明 : 调用此接口可以修改"我的歌单"的名称、排序、标签、简介 ( 需要登录 )
