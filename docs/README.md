@@ -1081,6 +1081,40 @@ fileids: 歌单中歌曲的 fileid，可多个,用逗号隔开
 
 **调用例子：** `/playlist/tracks/del?listid=1&fileids=xx` `/playlist/tracks/del?listid=1&fileids=xx,xx`
 
+### 对歌单内歌曲排序
+
+说明 : 调用此接口可以对歌单内歌曲进行排序 ( 需要登录 )
+
+**必选参数：**
+
+listid: 用户歌单 listid
+
+list_ver: 歌单列表版本号
+
+data: 排序数据, 格式为 `fileid|sort`，每个以逗号分隔
+
+**可选参数：**
+
+`type`: 歌单类型，0：自建歌单，1：收藏歌单，默认为 0
+
+**接口地址：** `/playlist/tracks/sort`
+
+**调用例子：** `/playlist/tracks/sort?listid=1&list_ver=3&data=120|2,130|0`
+
+### 对歌单列表排序
+
+说明 : 调用此接口可以对"我的歌单"列表进行排序 ( 需要登录 )
+
+**必选参数：**
+
+total_ver: 歌单总版本号
+
+data: 排序数据, 格式为 `listid|type|sort`，每个以逗号分隔
+
+**接口地址：** `/playlist/sort`
+
+**调用例子：** `/playlist/sort?total_ver=9&data=11|0|0,22|0|1,33|1|0`
+
 ### 一起听（音乐室/众乐房）
 
 说明：调用此接口可实现酷狗音乐"一起听"（音乐室/众乐房）相关功能，包括房间查询、创建、加入、离开、聊天、播放同步、点歌等。
@@ -1659,6 +1693,8 @@ ID。
 `page `: 页数
 
 `pagesize `: 每页页数, 默认为 30
+
+> 说明: 修改歌单内歌曲排序请调用 [`/playlist/tracks/sort`](#对歌单内歌曲排序)。
 
 **接口地址：** `/playlist/track/all/new`
 
