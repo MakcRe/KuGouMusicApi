@@ -1115,6 +1115,76 @@ data: 排序数据, 格式为 `listid|type|sort`，每个以逗号分隔
 
 **调用例子：** `/playlist/sort?total_ver=9&data=11|0|0,22|0|1,33|1|0`
 
+### 修改歌单封面
+
+说明 : 调用此接口可以修改"我的歌单"的封面（系统内置封面，需登录）
+
+> 说明：此接口用于设置**系统封面**（`stdmusic`），封面支持两种格式，完整封面 URL（`https://imge.kugou.com/stdmusic/{size}/xxx.jpg`）或云端相对路径（`stdmusic/xxx.jpg`），完整 URL 会自动取最后一段并补上 `stdmusic/` 前缀。若需设置**自定义封面**，请改用 `/playlist/update` 传入 `pic=custom/<FileName>`（见「上传图片」）。
+
+**必选参数：**
+
+total_ver: 歌单总版本号
+
+data: 封面数据, 格式为 `listid|type|pic`，每个以逗号分隔，pic 可为完整封面 URL 或 `stdmusic/xxx.jpg` 相对路径
+
+**可选参数：**
+
+`type`: 歌单类型，0：自建歌单，1：收藏歌单，默认为 0（也可在 data 中逐条指定）
+
+**接口地址：** `/playlist/pic`
+
+**调用例子：** `/playlist/pic?total_ver=9&data=11|0|stdmusic/20210111/20210111184454391203.jpg,22|1|http://imge.kugou.com/stdmusic/{size}/20210111/20210111184454391203.jpg`
+
+> 说明：如需设置自定义封面，请先调用 `/playlist/pic/upload` 上传图片获取 `FileName`，再调用 `/playlist/update` 并传入 `pic=custom/<FileName>`。
+
+### 上传图片
+
+说明 : 调用此接口可以上传一张图片（用于设置为歌单自定义封面）( 需要登录 )
+
+**必选参数：**
+
+file: 本地图片文件路径
+
+**可选参数：**
+
+`type`: 图片类型，默认为 `custom`
+
+`extendName`: 文件扩展名，默认为 `.jpg`
+
+`md5`: 上传校验值，默认自动生成（`MD5(日期yyyyMMdd + 盐值)`），一般无需传
+
+**接口地址：** `/playlist/pic/upload`
+
+**调用例子：** `POST /playlist/pic/upload`，body 传 JSON：`{"file":"/path/to/cover.jpg","cookie":"token=xxx;userid=xxx"}`，成功返回：`{"status":1,"FileName":"20260914120505590883.jpg"}`
+
+### 修改歌单信息
+
+说明 : 调用此接口可以修改"我的歌单"的名称、排序、标签、简介、自定义封面 ( 需要登录 )
+
+**必选参数：**
+
+listid: 用户歌单 listid
+
+total_ver: 歌单总版本号
+
+**可选参数：**
+
+`type`: 歌单类型，0：自建歌单，1：收藏歌单，默认为 0
+
+`name`: 歌单名称（缺省时不改动名称）
+
+`sort`: 歌单排序号，默认为 0
+
+`tags`: 歌单标签
+
+`intro`: 歌单简介
+
+`pic`: 自定义封面，格式为 `custom/<FileName>`（FileName 由 `/playlist/pic/upload` 返回）
+
+**接口地址：** `/playlist/update`
+
+**调用例子：** `/playlist/update?listid=11&total_ver=9&name=我的新歌单&sort=1&tags=华语,流行&intro=好听&pic=custom/20260914120505590883.jpg`
+
 ### 一起听（音乐室/众乐房）
 
 说明：调用此接口可实现酷狗音乐"一起听"（音乐室/众乐房）相关功能，包括房间查询、创建、加入、离开、聊天、播放同步、点歌等。
