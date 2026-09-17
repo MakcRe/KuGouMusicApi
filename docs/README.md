@@ -3817,7 +3817,7 @@ curl -X POST http://127.0.0.1:3000/video/barrage/send \
 
 ### 获取IP位置
 
-说明：调用此接口可获取当前 IP 的地理位置信息，返回是否为中国大陆 IP、所属省份城市等信息。无需登录。
+说明：调用此接口可获取当前 IP 的地理位置信息，返回是否为中国大陆 IP、所属省份城市等信息。
 
 **可选参数：**
 
@@ -3836,10 +3836,6 @@ curl -X POST http://127.0.0.1:3000/video/barrage/send \
 | `province` | 省份名称 |
 | `city` | 城市名称 |
 | `cc` | 国家+省份组合 |
-| `area_code` | 地区编码 |
-| `flag` | IP 标志位 |
-| `is_special_vip` | 是否为特殊 VIP |
-| `is_operator` | 是否为运营商 IP |
 | `vip_switch` | VIP 开关状态 |
 
 ## License
