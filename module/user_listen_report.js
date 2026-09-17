@@ -28,7 +28,7 @@ module.exports = async (params = {}, useAxios) => {
   const systemVersion = String(params.system_version ?? '9');
   const screenWidth = params.screen_width ?? 1920;
   const screenHeight = params.screen_height ?? 1080;
-  const localIp = params.local_ip ?? '0.0.0.0';
+  const localIp = params.local_ip ?? (process.env.KUGOU_API_REPORT_IP?.trim() || '0.0.0.0');
   if (!clean(deviceModel) || deviceModel.length > 128 || /[\x00-\x1f\x7f]/.test(deviceModel) ||
       !/^\d+(?:\.\d+)*$/.test(systemVersion) || systemVersion.length > 16 ||
       !integer(screenWidth) || Number(screenWidth) < 1 || Number(screenWidth) > 65535 ||

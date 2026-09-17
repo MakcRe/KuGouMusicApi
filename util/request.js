@@ -95,7 +95,7 @@ const createRequest = (options) => {
     const token = options?.cookie?.token || '';            // 用户登录令牌
     const userid = options?.cookie?.userid || 0;           // 用户 ID
     const clienttime = Math.floor(Date.now() / 1000);     // 当前时间戳（秒）
-    const ip = options?.realIP || options?.ip || '';       // 客户端 IP（用于 IP 透传）
+    const ip = options?.realIP || options?.ip || process.env.KUGOU_API_REPORT_IP?.trim() || '';       // 客户端 IP（用于 IP 透传）
     const webglHash = options?.cookie?.KUGOU_API_WEBGL;   // WebGL 指纹哈希
 
     // ========== 构建请求头 ==========
@@ -292,7 +292,7 @@ const createCloudRequest = (options) => {
     const dfid = cookie?.dfid || '-';
     const userid = cookie?.userid || 0;
     const token = cookie?.token || '';
-    const ip = options?.realIP || options?.ip || '';
+    const ip = options?.realIP || options?.ip || process.env.KUGOU_API_REPORT_IP?.trim() || '';
 
     // ========== 会话串与 AES key/iv ==========
     // 随机 6 字符会话串（与客户端 f() 一致），再由 MD5 推导 AES key/iv
