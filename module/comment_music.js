@@ -2,6 +2,7 @@
 module.exports = (params, useAxios) => {
 
   const paramsMap = {
+    ver: Number(process.env.CMT_VER || 6),
     mixsongid: params.mixsongid,
     need_show_image: 1,
     p: params.page || 1,
