@@ -1997,9 +1997,11 @@ vip 专属推荐
 
 `playtime`: 已播放时间, 建议
 
-`mode`: 获取模式，默认为 normal, normal：发现，small： 小众，peak：30s
+`mode`: 获取模式，默认为 normal, normal：发现(红心 Radio)，small： 小众，peak：30s，radio：电台
 
-`action`: 默认为 play, garbage: 为不喜欢
+`action`: 默认为 play, login：登录/首次拉取, garbage：不喜欢, cancel_garbage：取消不喜欢, click_red：红心, cancel_red：取消红心, download：下载, black_singer：屏蔽歌手, cancel_black_singer：取消屏蔽, update_recommend_source：更新推荐来源, change_song_pool：切换推荐池
+
+`cur_mark`: 当前推荐标记，click_red / cancel_red 等操作建议传入
 
 `song_pool_id`： 手机版的 AI，0：Alpha 根据口味推荐相似歌曲, 1：Beta 根据风格推荐相似歌曲, 2：Gamma
 
