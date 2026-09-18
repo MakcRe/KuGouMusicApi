@@ -384,7 +384,7 @@ async function consturctServer(moduleDefs) {
           if (ip.substring(0, 7) === '::ffff:') {
             ip = ip.substring(7);
           }
-          config.ip = ip;
+          config.ip = config.ip || process.env.KUGOU_API_REPORT_IP?.trim() || ip;
           return createRequest(config);
         });
 
