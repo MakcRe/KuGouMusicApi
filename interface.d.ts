@@ -108,11 +108,22 @@ export type LyricMan = 'yes' | 'no';
 /** 评论排序方向 */
 export type CommentSort = 1 | 2;
 
-/** 私人 FM 获取模式 */
-export type FmMode = 'normal' | 'small' | 'peak';
+/** 私人 FM 获取模式（对应发现页 Radio 类型） */
+export type FmMode = 'normal' | 'small' | 'peak' | 'radio';
 
 /** 私人 FM 操作类型 */
-export type FmAction = 'play' | 'garbage';
+export type FmAction =
+  | 'play'
+  | 'login'
+  | 'garbage'
+  | 'cancel_garbage'
+  | 'click_red'
+  | 'cancel_red'
+  | 'download'
+  | 'black_singer'
+  | 'cancel_black_singer'
+  | 'update_recommend_source'
+  | 'change_song_pool';
 
 /** 私人 FM AI 推荐池 */
 export type FmSongPoolId = 0 | 1 | 2;
@@ -916,17 +927,26 @@ export interface PersonalFmParams extends CommonParams {
   playtime?: number | string;
   /**
    * 获取模式，默认 normal
-   * - normal：发现
+   * - normal：发现（红心 Radio）
    * - small：小众
    * - peak：30s
+   * - radio：电台
    */
   mode?: FmMode;
   /**
    * 操作类型，默认 play
    * - play：播放
-   * - garbage：不喜欢
+   * - login：登录/首次拉取
+   * - garbage / cancel_garbage：不喜欢 / 取消不喜欢
+   * - click_red / cancel_red：红心 / 取消红心
+   * - download：下载
+   * - black_singer / cancel_black_singer：屏蔽歌手 / 取消屏蔽
+   * - update_recommend_source：更新推荐来源
+   * - change_song_pool：切换推荐池
    */
   action?: FmAction;
+  /** 当前推荐标记（click_red / cancel_red 等操作建议传入） */
+  cur_mark?: string | number;
   /**
    * AI 推荐池
    * - 0：Alpha 根据口味推荐
