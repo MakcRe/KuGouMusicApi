@@ -193,6 +193,7 @@
 164. [`发送歌单评论`](#发送歌单评论)
 165. [`发送专辑评论`](#发送专辑评论)
 166. [`发送楼层评论`](#发送楼层评论)
+167. [`批量查询概念版会员产品（YVipInfo）`](#批量查询概念版会员产品yvinfo)
 
 ### 安装
 
@@ -300,6 +301,8 @@ $ set HOST=127.0.0.1 && npm run dev
 !> 文档可能会有缓存 , 如果文档版本和 github 上的版本不一致,请清除缓存再查看
 
 #### 更新记录
+
+26-09-18：添加 `批量查询概念版会员产品（YVipInfo）` 接口，`歌曲评论` 接口支持 `CMT_VER` 环境变量
 
 26-09-11：添加 `专辑动态封面`（dycover）接口
 
@@ -683,6 +686,32 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 说明：登陆后调用此接口，可以获取用户 vip 信息
 
 **接口地址：** `/user/vip/detail`
+
+### 批量查询概念版会员产品（YVipInfo）
+
+说明：调用此接口 , 可批量查询多个用户（如歌曲评论作者）的概念版会员产品信息（对应概念版 KugouYoung `YVipInfoMemoryManager`），不需要登录即可查询他人
+
+**必选参数：**
+
+`useridlist`：用户 id 列表，最多 20 个，可用数组、逗号/空格分隔的字符串或单个数字（别名：`userids`、`userid_list`）
+
+**可选参数：**
+
+`kugouid`：当前账号 kugouid（别名：`userid`，也可从 cookie 的 `userid` 字段读取）
+
+`clienttoken`：客户端 token（别名：`token`，也可从 cookie 的 `token` 字段读取）
+
+`get_type`：默认 `2`
+
+`busi_type`：业务类型，默认 `concept`
+
+`clientappid`：客户端 appid，默认从 cookie 的 `appid` 字段读取
+
+**接口地址：** `/user/batch/union/vipinfo`
+
+**调用例子：** `/user/batch/union/vipinfo?useridlist=123456789,987654321`
+
+> 该接口用于在评论列表（`/comment/music`）中解析作者的概念版会员信息：可将评论返回的 `kugouyoung` 用户 id 批量传入，从而判断该作者是否为概念版会员。
 
 ### 获取用户歌单
 
@@ -2673,6 +2702,8 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 `show_classify`： 是否返回分类列表，0 为不返回，1 为返回
 
 `show_hotword_list`：是否返回热词，0 为不返回，1 为返回
+
+`ver`：评论列表版本号，默认取环境变量 `CMT_VER`，未设置时为 `6`
 
 **接口地址：** `/comment/music`
 
