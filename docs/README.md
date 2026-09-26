@@ -194,6 +194,7 @@
 165. [`发送专辑评论`](#发送专辑评论)
 166. [`发送楼层评论`](#发送楼层评论)
 167. [`批量查询概念版会员产品（YVipInfo）`](#批量查询概念版会员产品yvinfo)
+168. [`发送私信`](#发送私信)
 
 ### 安装
 
@@ -3844,6 +3845,54 @@ curl -X POST http://127.0.0.1:3000/video/barrage/send \
 ```
 
 > 发送接口会产生真实公开内容。请先用读取接口确认资源 ID，并避免对同一请求进行自动重试。
+
+### 发送私信
+
+说明：调用此接口，向指定酷狗用户发送一条私信。
+
+陌生人限流：对方未关注且未回复前，最多可发送 3 条打招呼消息
+
+- 额度内：`errcode=0`，正常返回 `data.msgid`；发送第 1、3 条时响应会带 `tip_content` 额度提醒，但消息仍送达
+- 超限后：`errcode=3006`、`status=0`，`error` 为"需要对方关注或回复后才能恢复正常聊天"，消息被拒绝
+- 对方关注或回复后会话立即解锁，恢复后响应不再携带 `tip_content`
+
+**必选参数（二选一）：**
+
+`tuid`：目标用户酷狗 id，首次给对方发消息时使用
+
+`tag`：会话标识，形如 `chat:对方uid_自己uid`，已建立会话后回信用（首次发送成功后响应会返回该值）
+
+**可选参数：**
+
+`alert`：文本内容，`msgtype=201`（默认）时必填
+
+`msgtype`：消息类型，默认 201（文本）；其余取值对应图片/语音等富媒体消息
+
+`nickname`：发送者昵称，仅展示用
+
+`source`：发送来源，默认 0；5 为群聊场景，需配合 `groupid`
+
+`groupid`：群 id，仅 `source=5` 时需要
+
+`fakeid`：官方助手/机器人会话身份 id，从收到的消息中原样回传
+
+`retry`：重发标记，传 `true` 时请求体携带 `retry: 1`
+
+**接口地址：** `/user/follow/chat`
+
+**调用例子：**
+
+```bash
+# 首次给用户 123 发送文本私信
+curl -X POST http://127.0.0.1:3000/user/follow/chat \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","tuid":123,"alert":"你好"}'
+
+# 已建立会话后使用 tag 回信
+curl -X POST http://127.0.0.1:3000/user/follow/chat \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","tag":"chat:123_456","alert":"收到"}'
+```
 
 ## License
 
