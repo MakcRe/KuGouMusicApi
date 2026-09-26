@@ -736,17 +736,86 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 **调用例子：** `/user/follow`
 
-### 获取关注歌手消息
+### 获取私信会话历史
 
-说明：登录后调用此接口，可以关注的歌手/用户消息
+说明：登录后调用此接口，可以获取用户的私信会话历史
 
-`id`: 需要获取歌手/用户消息的 userid
+`id`: 需要获取用户消息的 userid
 
 `pagesize `: 每页页数, 默认为 30
 
 **接口地址：** `/user/follow/message`
 
 **调用例子：** `/user/follow/message`
+
+### 发送私信
+
+说明：调用此接口，向指定酷狗用户发送一条私信，支持文本、图片、表情。
+
+陌生人限流：对方未关注且未回复前，最多可发送 3 条打招呼消息
+
+- 额度内：`errcode=0`，正常返回 `data.msgid`；发送第 1、3 条时响应会带 `tip_content` 额度提醒，但消息仍送达
+- 超限后：`errcode=3006`、`status=0`，`error` 为"需要对方关注或回复后才能恢复正常聊天"，消息被拒绝
+- 对方关注或回复后会话立即解锁，恢复后响应不再携带 `tip_content`
+
+**必选参数（二选一）：**
+
+`tuid`：目标用户酷狗 id，首次给对方发消息时使用
+
+`tag`：会话标识，形如 `chat:对方uid_自己uid`，已建立会话后回信用（首次发送成功后响应会返回该值）
+
+**文本消息（msgtype=201，默认）：**
+
+`alert`：文本内容，必填
+
+**图片消息（msgtype=202）：** 以下两种方式二选一
+
+- 方式一（已上传的图片）：传 `url`（酷狗 BSS 图片地址，形如 `http://imagemsg.bssdl.kugou.com/xxx.jpg`）。也可传任意第三方图片直链，服务端不校验 url 域名、原样存储下发；客户端能否正常显示取决于其对格式/协议的支持，可选 `width`/`height`
+- 方式二（本地图片自动上传）：通过二进制请求体传入图片（`Content-Type: application/octet-stream`，编程式调用时为 `data` Buffer），或 `imgFile` 传 base64/dataURL 字符串。模块自动执行「获取上传授权 → 直传 bssul 对象存储 → 回填 url」流程后发送
+
+图片可选参数：`isOriginal` 是否原图（原图走 bssdlbig 下载域名）、`originalSize` 原图字节数、`extendname` 扩展名（默认 jpg）
+
+**表情消息（msgtype=205）：**
+
+`url`：表情图片地址（必填）；`thumbUrl`：缩略图地址（必填）。表情为平台现成资源，无需上传
+
+**通用可选参数：**
+
+`nickname`：发送者昵称，仅展示用
+
+`source`：发送来源，默认 0；5 为群聊场景，需配合 `groupid`
+
+`groupid`：群 id，仅 `source=5` 时需要
+
+`fakeid`：官方助手/机器人会话身份 id，从收到的消息中原样回传
+
+`retry`：重发标记，传 `true` 时请求体携带 `retry: 1`
+
+**接口地址：** `/user/follow/chat`
+
+**调用例子：**
+
+```bash
+# 首次给用户 123 发送文本私信
+curl -X POST http://127.0.0.1:3000/user/follow/chat \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","tuid":123,"alert":"你好"}'
+
+# 已建立会话后使用 tag 回信
+curl -X POST http://127.0.0.1:3000/user/follow/chat \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","tag":"chat:123_456","alert":"收到"}'
+
+# 发送表情
+curl -X POST http://127.0.0.1:3000/user/follow/chat \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","tuid":123,"msgtype":205,"url":"表情地址","thumbUrl":"缩略图地址"}'
+
+# 发送本地图片（二进制直传）
+curl -X POST "http://127.0.0.1:3000/user/follow/chat?cookie=token%3Dxxx%3Buserid%3Dxxx&tuid=123&msgtype=202" \
+  -H 'Content-Type: application/octet-stream' \
+  --data-binary @/path/to/image.jpg
+```
 
 ### 获取用户云盘
 
@@ -3845,54 +3914,6 @@ curl -X POST http://127.0.0.1:3000/video/barrage/send \
 ```
 
 > 发送接口会产生真实公开内容。请先用读取接口确认资源 ID，并避免对同一请求进行自动重试。
-
-### 发送私信
-
-说明：调用此接口，向指定酷狗用户发送一条私信。
-
-陌生人限流：对方未关注且未回复前，最多可发送 3 条打招呼消息
-
-- 额度内：`errcode=0`，正常返回 `data.msgid`；发送第 1、3 条时响应会带 `tip_content` 额度提醒，但消息仍送达
-- 超限后：`errcode=3006`、`status=0`，`error` 为"需要对方关注或回复后才能恢复正常聊天"，消息被拒绝
-- 对方关注或回复后会话立即解锁，恢复后响应不再携带 `tip_content`
-
-**必选参数（二选一）：**
-
-`tuid`：目标用户酷狗 id，首次给对方发消息时使用
-
-`tag`：会话标识，形如 `chat:对方uid_自己uid`，已建立会话后回信用（首次发送成功后响应会返回该值）
-
-**可选参数：**
-
-`alert`：文本内容，`msgtype=201`（默认）时必填
-
-`msgtype`：消息类型，默认 201（文本）；其余取值对应图片/语音等富媒体消息
-
-`nickname`：发送者昵称，仅展示用
-
-`source`：发送来源，默认 0；5 为群聊场景，需配合 `groupid`
-
-`groupid`：群 id，仅 `source=5` 时需要
-
-`fakeid`：官方助手/机器人会话身份 id，从收到的消息中原样回传
-
-`retry`：重发标记，传 `true` 时请求体携带 `retry: 1`
-
-**接口地址：** `/user/follow/chat`
-
-**调用例子：**
-
-```bash
-# 首次给用户 123 发送文本私信
-curl -X POST http://127.0.0.1:3000/user/follow/chat \
-  -H 'Content-Type: application/json' \
-  -d '{"cookie":"token=xxx;userid=xxx","tuid":123,"alert":"你好"}'
-
-# 已建立会话后使用 tag 回信
-curl -X POST http://127.0.0.1:3000/user/follow/chat \
-  -H 'Content-Type: application/json' \
-  -d '{"cookie":"token=xxx;userid=xxx","tag":"chat:123_456","alert":"收到"}'
-```
 
 ## License
 
