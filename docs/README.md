@@ -740,13 +740,17 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 说明：登录后调用此接口，可以获取用户的私信会话历史
 
-`id`: 需要获取用户消息的 userid
+`id`: 需要获取用户消息的 userid，按普通会话构造 tag（`chat:对方uid_自己uid`）
+
+`tag`: 直接指定会话标识（传 tag 时忽略 id）。普通会话为 `chat:对方uid_自己uid`；官方系统会话（如账号安全小助手）为 `mchat:官方uid`，例如 `mchat:1270119904`；互动通知分类（与消息中心分类页同源）：`fans`=新增粉丝、`visitremind`=主页访客、`comments`=评论、`star`=获赞、`tome`=@我、`kgift`=礼物
 
 `pagesize `: 每页页数, 默认为 30
 
+`maxid`: 翻页游标，默认 0（从最新开始）
+
 **接口地址：** `/user/follow/message`
 
-**调用例子：** `/user/follow/message`
+**调用例子：** `/user/follow/message?id=123` 或 `/user/follow/message?tag=mchat:1270119904`
 
 ### 发送私信
 
