@@ -2695,6 +2695,22 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 
 **调用例子：** `/everyday/style/recommend` `/everyday/style/recommend?tagids=S14,S15,S16`
 
+### 首页刷歌推荐
+
+说明：调用此接口，可以获取首页"刷歌"（发现页沉浸式）推荐歌曲列表
+
+**可选参数：**
+
+`pagesize`：每次返回的推荐歌曲数量，默认为 4
+
+`today_play_num`：今日已播放歌曲数，影响推荐去重与排序，默认为 0
+
+`recall_type`：召回类型，默认为 song
+
+**接口地址：** `/home/discover`
+
+**调用例子：** `/home/discover` `/home/discover?pagesize=10`
+
 ### 排行列表
 
 说明：调用此接口，可以获取排行榜列表
