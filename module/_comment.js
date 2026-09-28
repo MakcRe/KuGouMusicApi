@@ -175,6 +175,40 @@ const buildCommentReplyConfig = (params = {}, code) => {
   );
 };
 
+// 按资源类型解析评论池 code，歌曲为默认
+const resolveCommentCode = (params = {}) => {
+  const explicitCode = firstValue(params.code);
+  if (explicitCode) return `${explicitCode}`;
+
+  const resourceType = `${firstValue(params.resource_type, params.resourceType, 'song')}`.toLowerCase();
+  if (resourceType === 'album') return ALBUM_COMMENT_CODE;
+  if (resourceType === 'playlist') return PLAYLIST_COMMENT_CODE;
+  return SONG_COMMENT_CODE;
+};
+
+// 删除评论（commentsv2/delcomment，GET 无 body，key 算法与回复一致）
+const buildCommentDelConfig = (params = {}, code) => {
+  const { clienttime, mid, token, userid, dfid, uuid } = getIdentity(params);
+
+  return commentRequestConfig(params, {
+    r: 'commentsv2/delcomment',
+    code,
+    childrenid: firstValue(params.special_id, params.childrenid, params.id),
+    cid: firstValue(params.cid, params.comment_id),
+    tid: params.tid,
+    kugouid: userid,
+    ver: firstValue(params.ver, 6),
+    clienttoken: token,
+    appid,
+    clientver,
+    mid,
+    clienttime,
+    key: signParamsKey(`${clienttime}${mid}`),
+    uuid,
+    dfid,
+  });
+};
+
 const buildVideoBarrageSendConfig = (params = {}) => {
   const { mid, token, userid } = getIdentity(params);
 
@@ -216,6 +250,8 @@ module.exports = {
   buildVideoBarrageListConfig,
   buildCommentSendConfig,
   buildCommentReplyConfig,
+  buildCommentDelConfig,
+  resolveCommentCode,
   buildSongBarrageSendConfig,
   buildVideoBarrageSendConfig,
   extractResolvedResource,
