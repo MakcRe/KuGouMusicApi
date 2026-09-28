@@ -2967,6 +2967,34 @@ curl -X POST http://127.0.0.1:3000/comment/floor/send \
 
 > 发布楼层回复可能触发手机号验证、内容审核或账号风控。发送接口不会自动重试。
 
+### 删除评论
+
+说明：删除自己在歌曲、专辑或歌单评论池中的评论，需要登录。仅传 `mixsongid` 时会先调用歌曲评论查询接口，自动解析 `special_id`。
+
+**必选参数：**
+
+`cid`：要删除的评论 ID（列表返回的评论 `id` 字段）
+
+`mixsongid` / `special_id`：至少传入一个。推荐传 `mixsongid`，自动反查最可靠；直接传 `special_id` 时必须取评论列表返回的 `special_child_id`（如 `148401`），**不要**用发送评论响应里的 `special_id`
+
+**可选参数：**
+
+`tid`：楼层所属的顶层评论 ID；删除楼层回复（楼中楼）时必传
+
+`resource_type`：资源类型，可选 `song`、`album`、`playlist`，默认 `song`
+
+`code`：直接指定评论池 code，优先级高于 `resource_type`
+
+**接口地址：** `/comment/music/del`
+
+**调用例子：**
+
+```bash
+curl -X POST http://127.0.0.1:3000/comment/music/del \
+  -H 'Content-Type: application/json' \
+  -d '{"cookie":"token=xxx;userid=xxx","mixsongid":"302362878","cid":"123"}'
+```
+
 ### 歌单评论
 
 说明 : 调用此接口 , 传入歌单 id 参数 , 可获得该歌单的所有评论 ( 不需要登录 )
