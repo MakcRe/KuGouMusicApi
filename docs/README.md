@@ -2135,7 +2135,8 @@ vip 专属推荐
 
 说明：调用此接口，可以获取音乐详情；响应保留上游原始字段，并追加 `quality_vip` —— 即一次请求即可判断各音质能否**免 VIP 获取**，判断结果与官方客户端音质弹窗上带「概念版VIP」图标的音质一致，可在调用 `/song/url/auth` 前先挑出能获取的最佳音质。
 
-`viper_tape`（蝰蛇母带）、`viper_clear`（蝰蛇超清）、`viper_atmos`（蝰蛇全景声）需要**超级 VIP（suvip）**才能播放，概念版 VIP 与 tvip 均不可播放
+`viper_tape`（蝰蛇母带）、`viper_clear`（蝰蛇超清）、`viper_atmos`（蝰蛇全景声）需要**超级 VIP（suvip）**才能播放，概念版 VIP 与 tvip 均不可播放  
+判断方式为`/youth/union/vip`返回的`vip_type`为`6`即为超级 VIP
 
 **必选参数：**
 
