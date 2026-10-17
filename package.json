@@ -24,6 +24,7 @@
     "pkglinux": "pkg . -t node14-linux-x64 -C GZip -o bin/app_linux --no-bytecode",
     "pkglinux-arm64": "pkg . -t node14-linux-arm64 -C GZip -o bin/app_linux --no-bytecode",
     "pkgmacos": "pkg . -t node14-macos-x64 -C GZip -o bin/app_macos --no-bytecode",
+    "pkgmacos-arm64": "pkg . -t node16-macos-arm64 -C GZip -o bin/app_macos_arm64 --no-bytecode",
     "pkgjs": "tsdown"
   },
   "engines": {
