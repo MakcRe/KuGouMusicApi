@@ -15,7 +15,7 @@ const integer = (value) => /^(0|[1-9]\d*)$/.test(String(value)) && Number.isSafe
 
 module.exports = async (params = {}, useAxios) => {
   const cookie = params.cookie || {};
-  const uuid = params.uuid || cookie.uuid || cookie.KUGOU_API_GUID;
+  const uuid = String(params.uuid || cookie.uuid || cookie.KUGOU_API_GUID || '').replace(/-/g, '');
   const mid = String(params.mid || cookie.mid || cookie.KUGOU_API_MID || '');
   const userid = String(params.userid || cookie.userid || '');
   const token = params.token || cookie.token;
