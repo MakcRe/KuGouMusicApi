@@ -44,11 +44,13 @@ module.exports = (params, useAxios) => {
   };
 
   return useAxios({
-    baseURL: 'http://tracker.kugou.com',
+    baseURL: 'http://gateway.kugou.com',
     url: '/v6/priv_url',
     method: 'POST',
     data: dataMap,
     encryptType: 'android',
+    // 同 user_verify.js：走网关 + x-router，与官方客户端抓包一致。
+    headers: { 'x-router': 'tracker.kugou.com' },
     cookie: Object.assign({}, { dfid }, params?.cookie),
   });
 };
