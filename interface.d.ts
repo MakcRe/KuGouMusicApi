@@ -2976,7 +2976,7 @@ export function getModulesDefinitions(modulesPath: string, specificRoute: Record
  */
 export function createRequest(config: RequestConfig): Promise<any>;
 
-/** CSCC lite 播放上报。duration 为真实播放毫秒数；d_sec/diff_sec 为秒。 */
+/** CSCC lite 单次事件上报。调用时机、播放计量及事件配对由调用者负责。 */
 export interface UserListenReportParams extends CommonParams {
   event: 'start' | 'end';
   mixsongid: string | number;
@@ -2993,7 +2993,19 @@ export interface UserListenReportParams extends CommonParams {
   screen_height?: number;
   /** 事件中的设备本地 IP，不控制 HTTP 出口或代理；未提供时默认 0.0.0.0 */
   local_ip?: string;
-  duration?: number;
+  /** 可选曲长，正整数毫秒；与实际听音时长 duration 不同 */
+  song_duration?: number | string;
+  /** 可选自动播放标识；HTTP 参数支持 "true"/"false" */
+  automatic?: boolean | 'true' | 'false';
+  /** 可选播放倍速，正数；仅用于 end */
+  rate?: number | string;
+  /** 可选原生来源标识，未知时省略 */
+  source?: string | number;
+  /** 可选原生页面路径，仅用于 end；未知时省略 */
+  fo?: string;
+  /** end 必填，调用者计算的实际播放墙钟毫秒，不是曲长或播放头位置 */
+  duration?: number | string;
+  /** end 必填，如 完整播放、被终止、播放错误；不默认推断完播 */
   state?: string;
   d_sec?: number;
   diff_sec?: number;

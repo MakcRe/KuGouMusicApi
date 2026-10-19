@@ -21,7 +21,20 @@ module.exports = async (params = {}, useAxios) => {
   const token = params.token || cookie.token;
   const song = String(params.mixsongid || '');
   const event = params.event;
-  const state = params.state || '完整播放';
+  const state = params.state;
+  // 可选事件上下文由调用者提供；未提供时不冒用原生页面或默认播放行为。
+  const source = params.source == null ? '' : params.source;
+  const page = params.fo ?? '';
+  const automatic = params.automatic === 'true' ? true : params.automatic === 'false' ? false : params.automatic;
+  const rate = typeof params.rate === 'string' && params.rate.trim() !== '' ? Number(params.rate) : params.rate;
+  const songDuration = params.song_duration;
+  if (!(typeof source === 'string' || typeof source === 'number' && integer(source)) ||
+      typeof page !== 'string' || [String(source), page].some(value => /[&\x00-\x1f\x7f]/.test(value)) ||
+      automatic != null && typeof automatic !== 'boolean' ||
+      songDuration != null && (!['string', 'number'].includes(typeof songDuration) || !integer(songDuration) || Number(songDuration) <= 0) ||
+      rate != null && (typeof rate !== 'number' || !Number.isFinite(rate) || rate <= 0)) {
+    throw fail(400, '可选参数无效：song_duration 为正整数毫秒，automatic 为布尔值，rate 为正数，source/fo 不得包含分隔符');
+  }
   const sync = params.d_sec != null || params.diff_sec != null;
   // 默认设备名称复用 dev；系统和屏幕参数兼容参考报文，IP 未提供时使用 0.0.0.0。
   const deviceModel = params.device_model ?? params.dev ?? (cookie.KUGOU_API_DEV || process.env.KUGOU_API_DEV || 'KuGouMusicApi');
@@ -42,7 +55,7 @@ module.exports = async (params = {}, useAxios) => {
   if (!integer(song) || Number(song) <= 0 || !['start', 'end'].includes(event)) {
     throw fail(400, '需要有效 mixsongid 和 event=start|end');
   }
-  if (event === 'end' && (!integer(params.duration) || !clean(state))) {
+  if (event === 'end' && (!integer(params.duration) || !clean(state) || /[\x00-\x1f\x7f]/.test(state))) {
     throw fail(400, '结束事件需要非负整数 duration（实际播放毫秒数）和有效 state');
   }
   if (sync && (event !== 'end' || !integer(params.d_sec) || !integer(params.diff_sec) || Number(params.diff_sec) > Math.ceil(Number(params.duration) / 1000))) {
@@ -95,7 +108,7 @@ module.exports = async (params = {}, useAxios) => {
       };
     }
     const body = response.body;
-    if (response.status !== 200 || body?.status === 0 || (body?.errcode != null && String(body.errcode) !== '0') || (body?.error_code != null && String(body.error_code) !== '0')) {
+    if (response.status !== 200 || body?.status !== 1 || (body?.errcode != null && String(body.errcode) !== '0') || (body?.error_code != null && String(body.error_code) !== '0')) {
       throw { ...response, status: 502, body: { ...body, stage: url, ...eventDetails } };
     }
     return response;
@@ -133,10 +146,19 @@ module.exports = async (params = {}, useAxios) => {
   let playbackAccepted = false;
   try {
     const session = await sessions.get(cacheKey).pending;
-    const fields = event === 'start'
-      ? ['type_id=20431', 'action=play', 'fo3=3878,4320,4326,5747,5749,7229,7289,7863', 'spt=0', 'sty=手动', `mixsongid=${song}`, 'source=46', 'ivar1=1', 'fo=/专辑播放页']
-      : ['type_id=4', 'action=play', 'fo3=3878,4320,4326,5747,5749,7229,7289,7863', `duration=${params.duration}`, 'svar3=0', 'svar2=0', 'fo=我的音乐/主态/自建歌单/RU', 'sty=手动', `state=${state}`, `mixsongid=${song}`, 'source=46', 'ivar3=0', 'type=1', 'fs=1.0', 'ivar1=1'];
-    fields.push( `mid=${mid}`, `uuid=${uuid}`, 'ss1=1', 'ss2=1', `sys=${systemVersion}`, `mod=${deviceModel}`, 'channelid=18', `ip=${localIp}`, 'net=1', `ver=${VERSION}`, 'gitversion=7aa8a76', `time=${Date.now()}`, `userid=${userid}`, `ss3=${md5(crypto.randomUUID())}`);
+    // 概念版 KGPlayerManager -> PlaybackTask：20431 为开始，4 为结束。
+    // duration 是实际播放的墙钟毫秒，spt 是曲长，fs 是倍速；计量由调用者负责。
+    const fields = [`type_id=${event === 'start' ? 20431 : 4}`, 'action=play', `mixsongid=${song}`];
+    if (songDuration != null) fields.push(`spt=${songDuration}`);
+    if (automatic != null) fields.push(`sty=${automatic ? '自动' : '手动'}`);
+    // 原生任务忽略空值，不使用固定来源、页面或实验组补齐未知上下文。
+    if (source !== '') fields.push(`source=${source}`);
+    if (event === 'end') fields.push(`duration=${params.duration}`, `state=${state}`, 'type=1');
+    if (event === 'end' && rate != null) fields.push(`fs=${Number.isInteger(rate) ? rate.toFixed(1) : rate}`);
+    if (event === 'end' && page) fields.push(`fo=${page}`);
+    fields.push(`mid=${mid}`, `uuid=${uuid}`, `sys=${systemVersion}`, `mod=${deviceModel}`,
+      'channelid=18', `ip=${localIp}`, 'net=1', `ver=${VERSION}`, `time=${Date.now()}`,
+      `userid=${userid}`, `ss3=${md5(crypto.randomUUID())}`);
     const eventBuffer = Buffer.from(fields.join('&'));
     const line1 = ['4', '1', uuid, '0', '3116', VERSION, '18', systemVersion, deviceModel, uuid, mid, '0', '000000000000000000000000000000000000'].join('\t');
     const line2 = [eventBuffer.length, '10048', '0', Math.floor(Date.now() / 1000), '1', userid, '0', '0'].join('\t');

@@ -3599,7 +3599,9 @@ const res = await fetch('/audio/match', {
 
 **接口地址：** `POST /user/listen/report`
 
-上报真实播放的开始、结束事件。结束时可联动 `/user/grade/info` 同步听歌时长。
+每次调用提交一个开始或结束事件；不自动触发、补齐配对事件或计算播放时长。
+调用时机、实际听音计量、登录授权、实例管理及重复调用防护由调用者负责。
+结束时仅在显式提供同步参数时联动 `/user/grade/info`。
 登录凭证可通过 `Authorization: token=...;userid=...` 或 `cookie` 传递。
 
 | 参数 | 说明 |
@@ -3611,29 +3613,40 @@ const res = await fetch('/audio/match', {
 | `system_version` | 可选，系统版本；兼容默认值为 `9` |
 | `screen_width`、`screen_height` | 可选，屏幕宽高（正整数像素）；默认 `1920`、`1080` |
 | `local_ip` | 可选，事件中的设备本地 IPv4/IPv6 地址；默认 `0.0.0.0`，表示未提供具体地址 |
-| `duration` | end 必填，实际播放毫秒数，扣除暂停及拖动进度的影响 |
-| `state` | end 的播放结束状态，默认 `完整播放` |
+| `song_duration` | 可选，歌曲总时长（正整数毫秒），对应 `spt`；不是实际听音时长 |
+| `automatic` | 可选，是否自动播放，布尔值或字符串 `"true"` / `"false"`，对应 `sty=自动` / `手动` |
+| `rate` | 可选，正数倍速，支持数值或数字字符串；end 时对应 `fs` |
+| `source` | 可选，调用者掌握的原生来源标识（字符串或非负整数）；未知或空字符串时省略 |
+| `fo` | 可选，调用者掌握的原生页面路径；仅在 end 且非空时发送 |
+| `duration` | end 必填，调用者计算的实际播放墙钟毫秒数，扣除暂停及拖动进度的影响；不是曲长、播放头位置或倍速后的媒体秒数 |
+| `state` | end 必填，实际结束状态，如 `完整播放`、`被终止`、`播放错误`；不再默认 `完整播放` |
 | `d_sec`、`diff_sec` | end 可选，必须同时提供。分别为查询所得累计基线和本次新增秒数；传入后联动等级同步 |
 
 设备名称复用项目已有的 dev 配置；系统版本和屏幕尺寸的默认值来自参考报文，并非自动识别结果。
 设备名称在设备查询、事件及报文头中保持一致；系统版本同步用于事件、报文头和 User-Agent。
 `local_ip` 不读取请求来源、不自动查询公网 IP，也不改变 HTTP 出口或代理设置。
 同一次播放的开始、结束应使用一致的设备参数；修改机型、系统版本或屏幕尺寸会重新建立会话。
+新增上下文字段均可省略；未提供时不发送对应字段，不再硬编码 `source=46`、
+专辑/自建歌单页面、手动播放、1 倍速或实验组标记。`source`、`fo`、`state` 不允许包含 `&` 或控制字符。
+升级前依赖默认完播状态的调用方需要显式传入真实 `state`；接口不会判断是否已完整播放，
+也不对播放器施加特定时长上限、倍速范围、状态枚举或 start/end 配对策略。
 
 **请求示例：** 设备及登录信息通过 cookie 提供。
 
 ```json
-{"event":"start","mixsongid":260403475}
+{"event":"start","mixsongid":260403475,"song_duration":180000,"automatic":false}
 ```
 
 ```json
-{"event":"end","mixsongid":260403475,"duration":60000,"state":"完整播放","d_sec":120,"diff_sec":60}
+{"event":"end","mixsongid":260403475,"song_duration":180000,"automatic":false,"rate":1,"duration":60000,"state":"被终止"}
 ```
 
 不传同步参数时返回 CSCC 响应；传入后返回
 `data: { report, grade, playback_accepted, grade_synced }`，分别表示两步结果。
-CSCC 失败仍继续等级同步；至少一步成功返回 HTTP 200，两步均失败返回 HTTP 502。
-请求成功不代表累计时长立即更新，服务端可能延迟显示；请勿因此重复上报。
+CSCC 失败仍继续显式请求的等级同步；至少一步成功返回 HTTP 200，两步均失败返回 HTTP 502。
+CSCC 确认要求 HTTP 200、响应 `status === 1` 且无非零 `errcode` / `error_code`；
+确认响应不要求包含 `data`。等级同步成功不能代替 `playback_accepted`。
+请求成功不证明听歌排行、推荐模型或累计时长已经更新；请勿因此重复上报。
 接口不自动重试。HTTP 调用时，播放上报与等级信息的查询、上报均需在 URL query 中携带每次变化的 `timestamp`，避免命中响应缓存（POST 也一样，放在 body 中不能绕过 URL 缓存）。
 例如：`POST /user/listen/report?timestamp=1788850000000`。
 程序化调用：`user_listen_report(params)`。
