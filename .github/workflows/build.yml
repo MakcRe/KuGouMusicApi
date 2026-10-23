@@ -73,7 +73,7 @@ jobs:
         run: npm install
       # 构建
       - name: Build App for Macos
-        run: npm run pkgmacos
+        run: npm run pkgmacos && npm run pkgmacos-arm64
         shell: bash
       # 上传构建产物
       - name: Upload Macos artifact

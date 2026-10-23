@@ -10,7 +10,7 @@ importers:
     dependencies:
       axios:
         specifier: ^1.1.3
-        version: 1.10.0
+        version: 1.10.0(debug@4.4.1(supports-color@5.5.0))
       big-integer:
         specifier: ^1.6.52
         version: 1.6.52
@@ -22,13 +22,13 @@ importers:
         version: 16.6.1
       express:
         specifier: ^4.18.2
-        version: 4.21.2
+        version: 4.21.2(supports-color@5.5.0)
       form-data:
         specifier: ^4.0.0
         version: 4.0.3
       node-forge:
-        specifier: ^1.3.3
-        version: 1.3.3
+        specifier: 1.4.0
+        version: 1.4.0
       pako:
         specifier: ^2.1.0
         version: 2.1.0
@@ -59,7 +59,7 @@ importers:
         version: 3.1.10
       pkg:
         specifier: ^5.8.1
-        version: 5.8.1
+        version: 5.8.1(supports-color@5.5.0)
       prettier:
         specifier: ^2.7.1
         version: 2.8.8
@@ -925,8 +925,8 @@ packages:
       encoding:
         optional: true
 
-  node-forge@1.3.3:
-    resolution: {integrity: sha512-rLvcdSyRCyouf6jcOIPe/BgwG/d7hKjzMKOas33/pHEr6gbq18IK9zV7DiPvzsz0oBJPme6qr6H6kGZuI9/DZg==}
+  node-forge@1.4.0:
+    resolution: {integrity: sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==}
     engines: {node: '>= 6.13.0'}
 
   nodemon@3.1.10:
@@ -1661,7 +1661,7 @@ snapshots:
 
   acorn@8.15.0: {}
 
-  agent-base@6.0.2:
+  agent-base@6.0.2(supports-color@5.5.0):
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
     transitivePeerDependencies:
@@ -1696,9 +1696,9 @@ snapshots:
 
   at-least-node@1.0.0: {}
 
-  axios@1.10.0:
+  axios@1.10.0(debug@4.4.1(supports-color@5.5.0)):
     dependencies:
-      follow-redirects: 1.15.9
+      follow-redirects: 1.15.9(debug@4.4.1(supports-color@5.5.0))
       form-data: 4.0.3
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -1720,11 +1720,11 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  body-parser@1.20.3:
+  body-parser@1.20.3(supports-color@5.5.0):
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 2.6.9
+      debug: 2.6.9(supports-color@5.5.0)
       depd: 2.0.0
       destroy: 1.2.0
       http-errors: 2.0.0
@@ -1826,9 +1826,11 @@ snapshots:
 
   crypto-js@4.2.0: {}
 
-  debug@2.6.9:
+  debug@2.6.9(supports-color@5.5.0):
     dependencies:
       ms: 2.0.0
+    optionalDependencies:
+      supports-color: 5.5.0
 
   debug@4.4.1(supports-color@5.5.0):
     dependencies:
@@ -1913,21 +1915,21 @@ snapshots:
 
   expand-template@2.0.3: {}
 
-  express@4.21.2:
+  express@4.21.2(supports-color@5.5.0):
     dependencies:
       accepts: 1.3.8
       array-flatten: 1.1.1
-      body-parser: 1.20.3
+      body-parser: 1.20.3(supports-color@5.5.0)
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookie: 0.7.1
       cookie-signature: 1.0.6
-      debug: 2.6.9
+      debug: 2.6.9(supports-color@5.5.0)
       depd: 2.0.0
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
-      finalhandler: 1.3.1
+      finalhandler: 1.3.1(supports-color@5.5.0)
       fresh: 0.5.2
       http-errors: 2.0.0
       merge-descriptors: 1.0.3
@@ -1939,8 +1941,8 @@ snapshots:
       qs: 6.13.0
       range-parser: 1.2.1
       safe-buffer: 5.2.1
-      send: 0.19.0
-      serve-static: 1.16.2
+      send: 0.19.0(supports-color@5.5.0)
+      serve-static: 1.16.2(supports-color@5.5.0)
       setprototypeof: 1.2.0
       statuses: 2.0.1
       type-is: 1.6.18
@@ -1969,9 +1971,9 @@ snapshots:
     dependencies:
       to-regex-range: 5.0.1
 
-  finalhandler@1.3.1:
+  finalhandler@1.3.1(supports-color@5.5.0):
     dependencies:
-      debug: 2.6.9
+      debug: 2.6.9(supports-color@5.5.0)
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -1986,7 +1988,9 @@ snapshots:
       locate-path: 5.0.0
       path-exists: 4.0.0
 
-  follow-redirects@1.15.9: {}
+  follow-redirects@1.15.9(debug@4.4.1(supports-color@5.5.0)):
+    optionalDependencies:
+      debug: 4.4.1(supports-color@5.5.0)
 
   form-data@4.0.3:
     dependencies:
@@ -2088,9 +2092,9 @@ snapshots:
       statuses: 2.0.1
       toidentifier: 1.0.1
 
-  https-proxy-agent@5.0.1:
+  https-proxy-agent@5.0.1(supports-color@5.5.0):
     dependencies:
-      agent-base: 6.0.2
+      agent-base: 6.0.2(supports-color@5.5.0)
       debug: 4.4.1(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
@@ -2212,7 +2216,7 @@ snapshots:
     dependencies:
       whatwg-url: 5.0.0
 
-  node-forge@1.3.3: {}
+  node-forge@1.4.0: {}
 
   nodemon@3.1.10:
     dependencies:
@@ -2271,11 +2275,11 @@ snapshots:
 
   picomatch@4.0.4: {}
 
-  pkg-fetch@3.4.2:
+  pkg-fetch@3.4.2(supports-color@5.5.0):
     dependencies:
       chalk: 4.1.2
       fs-extra: 9.1.0
-      https-proxy-agent: 5.0.1
+      https-proxy-agent: 5.0.1(supports-color@5.5.0)
       node-fetch: 2.7.0
       progress: 2.0.3
       semver: 7.7.2
@@ -2285,7 +2289,7 @@ snapshots:
       - encoding
       - supports-color
 
-  pkg@5.8.1:
+  pkg@5.8.1(supports-color@5.5.0):
     dependencies:
       '@babel/generator': 7.18.2
       '@babel/parser': 7.18.4
@@ -2297,7 +2301,7 @@ snapshots:
       is-core-module: 2.9.0
       minimist: 1.2.8
       multistream: 4.1.0
-      pkg-fetch: 3.4.2
+      pkg-fetch: 3.4.2(supports-color@5.5.0)
       prebuild-install: 7.1.1
       resolve: 1.22.10
       stream-meter: 1.0.4
@@ -2461,9 +2465,9 @@ snapshots:
 
   semver@7.8.4: {}
 
-  send@0.19.0:
+  send@0.19.0(supports-color@5.5.0):
     dependencies:
-      debug: 2.6.9
+      debug: 2.6.9(supports-color@5.5.0)
       depd: 2.0.0
       destroy: 1.2.0
       encodeurl: 1.0.2
@@ -2479,12 +2483,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  serve-static@1.16.2:
+  serve-static@1.16.2(supports-color@5.5.0):
     dependencies:
       encodeurl: 2.0.0
       escape-html: 1.0.3
       parseurl: 1.3.3
-      send: 0.19.0
+      send: 0.19.0(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
