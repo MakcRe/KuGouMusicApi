@@ -2026,9 +2026,11 @@ vip 专属推荐
 
 `pagesize`: 每页页数, 默认为 30
 
+`tagid`：当 `card_id` 为 3103 时，传入 `label_id` 时可获取完整的 曲风盲盒·随机心动 歌曲列表，当为空时，这获取部分歌曲
+
 **接口地址：** `/top/card`
 
-**调用例子：** `/top/card/youth?card_id=3006`
+**调用例子：** `/top/card/youth?card_id=3006`，`/top/card/youth?card_id=3103`，`/top/card/youth?card_id=3103&tagid=9`
 
 ### 获取歌手和专辑图片
 

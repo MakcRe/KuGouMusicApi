@@ -15,8 +15,12 @@ module.exports = (params, useAxios) => {
     source_mixsong: ''
   };
 
+  const reqUrl = (Number(params?.card_id) === 3103 && typeof params?.tagid === 'undefined') ? 'tag_card_recommend' : 'single_card_recommend';
+
+  
+
   return useAxios({
-    url: `youth/v1/song/${Number(params?.card_id || '0') === 3103 ? 'tag_card_recommend' : 'single_card_recommend'}`,
+    url: `youth/v1/song/${reqUrl}`,
     encryptType: 'android',
     method: 'POST',
     data: dataMap,
