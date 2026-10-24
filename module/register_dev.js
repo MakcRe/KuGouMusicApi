@@ -1,4 +1,4 @@
-const { playlistAesEncrypt, playlistAesDecrypt, rsaEncrypt2, signParamsKey, clientver, appid } = require('../util');
+const { playlistAesEncrypt, playlistAesDecrypt, rsaEncrypt2 } = require('../util');
 module.exports = (params, useAxios) => {
   const userid = params?.userid || params?.cookie?.userid || 0;
   const token = params?.token || params.cookie?.token || '';
@@ -108,7 +108,7 @@ module.exports = (params, useAxios) => {
   return new Promise((resolve, reject) => {
     useAxios({
       baseURL: 'https://userservice.kugou.com',
-      url: '/risk/v2/r_register_dev',
+      url: '/risk/v3/r_register_dev',
       method: 'POST',
       data: aesEncrypt.str,
       params: { part: 1, platid: 1, p },

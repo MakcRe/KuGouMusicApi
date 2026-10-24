@@ -742,7 +742,8 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 ### 关注用户
 
-说明：登录后调用此接口，关注指定酷狗用户（用户中心/新朋友页面的关注按钮，走用户社交关注体系；与 `/artist/follow` 的歌手粉丝体系相互独立，同一账号在两套体系中的关注关系分开存储、互不影响）
+说明：登录后调用此接口，关注指定酷狗用户（用户中心/新朋友页面的关注按钮，走用户社交关注体系；与 `/artist/follow` 的歌手粉丝体系相互独立，同一账号在两
+套体系中的关注关系分开存储、互不影响）
 
 **必选参数：**
 
@@ -814,7 +815,9 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 `id`: 需要获取用户消息的 userid，按普通会话构造 tag（`chat:对方uid_自己uid`）
 
-`tag`: 直接指定会话标识（传 tag 时忽略 id）。普通会话为 `chat:对方uid_自己uid`；官方系统会话（如账号安全小助手）为 `mchat:官方uid`，例如 `mchat:1270119904`；互动通知分类（与消息中心分类页同源）：`fans`=新增粉丝、`visitremind`=主页访客、`comments`=评论、`star`=获赞、`tome`=@我、`kgift`=礼物
+`tag`: 直接指定会话标识（传 tag 时忽略 id）。普通会话为 `chat:对方uid_自己uid`；官方系统会话（如账号安全小助手）为 `mchat:官方uid`，例如
+`mchat:1270119904`；互动通知分类（与消息中心分类页同源）：`fans`=新增粉丝、`visitremind`=主页访客、`comments`=评论、`star`=获赞、`tome`=@我、`kgift`=
+礼物
 
 `pagesize `: 每页页数, 默认为 30
 
@@ -846,8 +849,10 @@ https://long.open.weixin.qq.com/connect/l/qrconnect?f=json&uuid=xxx 该接口直
 
 **图片消息（msgtype=202）：** 以下两种方式二选一
 
-- 方式一（已上传的图片）：传 `url`（酷狗 BSS 图片地址，形如 `http://imagemsg.bssdl.kugou.com/xxx.jpg`）。也可传任意第三方图片直链，服务端不校验 url 域名、原样存储下发；客户端能否正常显示取决于其对格式/协议的支持，可选 `width`/`height`
-- 方式二（本地图片自动上传）：通过二进制请求体传入图片（`Content-Type: application/octet-stream`，编程式调用时为 `data` Buffer），或 `imgFile` 传 base64/dataURL 字符串。模块自动执行「获取上传授权 → 直传 bssul 对象存储 → 回填 url」流程后发送
+- 方式一（已上传的图片）：传 `url`（酷狗 BSS 图片地址，形如 `http://imagemsg.bssdl.kugou.com/xxx.jpg`）。也可传任意第三方图片直链，服务端不校验 url 域
+  名、原样存储下发；客户端能否正常显示取决于其对格式/协议的支持，可选 `width`/`height`
+- 方式二（本地图片自动上传）：通过二进制请求体传入图片（`Content-Type: application/octet-stream`，编程式调用时为 `data` Buffer），或 `imgFile` 传
+  base64/dataURL 字符串。模块自动执行「获取上传授权 → 直传 bssul 对象存储 → 回填 url」流程后发送
 
 图片可选参数：`isOriginal` 是否原图（原图走 bssdlbig 下载域名）、`originalSize` 原图字节数、`extendname` 扩展名（默认 jpg）
 
@@ -1087,11 +1092,13 @@ curl -X POST "http://127.0.0.1:3000/user/follow/chat?cookie=token%3Dxxx%3Buserid
 }
 ```
 
-其中 `lang`/`style` 为基础偏好 JSON 字符串；`song_lang` 为推荐强度 JSON 字符串，格式为 `{标签id:权重}`，**50 为默认强度，低于 50 减少推荐，高于 50 加大推荐，0 屏蔽**。两组字段的标签 ID 独立，不应互相转换；`gender`/`age` 为单个 id 字符串。
+其中 `lang`/`style` 为基础偏好 JSON 字符串；`song_lang` 为推荐强度 JSON 字符串，格式为 `{标签id:权重}`，**50 为默认强度，低于 50 减少推荐，高于 50 加
+大推荐，0 屏蔽**。两组字段的标签 ID 独立，不应互相转换；`gender`/`age` 为单个 id 字符串。
 
 ### 更新听歌偏好设置
 
-说明：登录后调用此接口，可以更新用户的听歌偏好设置。更新字段：`gender`/`age` 直接传 id，`lang`/`style`/`song_lang` 传 JSON 字符串（URL 传递时注意将 `{`、`"` 编码，或改放 request body）。传空字符串可清除对应项。
+说明：登录后调用此接口，可以更新用户的听歌偏好设置。更新字段：`gender`/`age` 直接传 id，`lang`/`style`/`song_lang` 传 JSON 字符串（URL 传递时注意将
+`{`、`"` 编码，或改放 request body）。传空字符串可清除对应项。
 
 **可选参数：**（至少提供一项）
 
@@ -1105,7 +1112,8 @@ curl -X POST "http://127.0.0.1:3000/user/follow/chat?cookie=token%3Dxxx%3Buserid
 
 `style`: 风格偏好 JSON 字符串
 
-`song_lang`: 推荐强度 JSON 字符串，权重为 0–100（0 屏蔽、50 默认、100 加大）。标签：`L1` 国语、`L2` 英语、`L5` 粤语、`L4` 韩语、`L3` 日语、`L6` 纯音乐、`S9` DJ、`T1` 翻唱、`N2` 现场、`S28` AI 歌曲。
+`song_lang`: 推荐强度 JSON 字符串，权重为 0–100（0 屏蔽、50 默认、100 加大）。标签：`L1` 国语、`L2` 英语、`L5` 粤语、`L4` 韩语、`L3` 日语、`L6` 纯音乐
+、`S9` DJ、`T1` 翻唱、`N2` 现场、`S28` AI 歌曲。
 
 推荐模式及强度标签依据[酷狗官方偏好页面](https://h5.kugou.com/settings/v-3e4978eb/index.html)。语种不可全部屏蔽；加大 DJ 强度时不可同时屏蔽翻唱。
 
@@ -1119,7 +1127,7 @@ curl -X POST "http://127.0.0.1:3000/user/follow/chat?cookie=token%3Dxxx%3Buserid
 
 **接口地址：** `/user/preference/update`
 
-**调用例子：** （设置：男 + 90后 + 国语 + 流行）
+**调用例子：** （设置：男 + 90 后 + 国语 + 流行）
 
 ```
 /user/preference/update?gender=2&age=2&lang={"1":100}&style={"1":100}
@@ -1133,47 +1141,47 @@ URL 编码写法：`/user/preference/update?gender=2&age=2&lang=%7B%221%22%3A100
 
 性别 `gender`:
 
-| id | 含义 |
-|-----|------|
-| 1 | 女 |
-| 2 | 男 |
+| id  | 含义 |
+| --- | ---- |
+| 1   | 女   |
+| 2   | 男   |
 
 年龄段 `age`:
 
-| id | 含义 | id | 含义 |
-|-----|------|-----|------|
-| 0 | 其它 | 9 | 85后 |
-| 1 | 00后 | 10 | 75后 |
-| 2 | 90后 | 11 | 65后 |
-| 3 | 80后 | 12 | 60后 |
-| 4 | 70后 | 6 | 10后 |
-| 7 | 05后 | 8 | 95后 |
+| id  | 含义  | id  | 含义  |
+| --- | ----- | --- | ----- |
+| 0   | 其它  | 9   | 85 后 |
+| 1   | 00 后 | 10  | 75 后 |
+| 2   | 90 后 | 11  | 65 后 |
+| 3   | 80 后 | 12  | 60 后 |
+| 4   | 70 后 | 6   | 10 后 |
+| 7   | 05 后 | 8   | 95 后 |
 
 语言 `lang`:
 
-| id | 含义 | id | 含义 |
-|-----|------|-----|------|
-| 1 | 国语 | 9 | 意大利语 |
-| 2 | 粤语 | 11 | 葡萄牙语 |
-| 4 | 英语 | 13 | 俄语 |
-| 5 | 日语 | 18 | 小语种 |
-| 6 | 韩语 | 19 | 闽南语 |
-| 7 | 德语 | 20 | 藏语 |
-| 8 | 法语 | 21 | 泰语 |
-| | | 22 | 越南语 |
+| id  | 含义 | id  | 含义     |
+| --- | ---- | --- | -------- |
+| 1   | 国语 | 9   | 意大利语 |
+| 2   | 粤语 | 11  | 葡萄牙语 |
+| 4   | 英语 | 13  | 俄语     |
+| 5   | 日语 | 18  | 小语种   |
+| 6   | 韩语 | 19  | 闽南语   |
+| 7   | 德语 | 20  | 藏语     |
+| 8   | 法语 | 21  | 泰语     |
+|     |      | 22  | 越南语   |
 
 风格 `style`:
 
-| id | 含义 | id | 含义 |
-|-----|------|-----|------|
-| 1 | 流行 | 10 | 民谣 |
-| 2 | 摇滚 | 12 | 乡村 |
-| 3 | 电子 | 14 | R&B |
-| 4 | 古典乐 | 15 | DJ |
-| 5 | 舞曲 | 16 | ACG |
-| 6 | 嘻哈 | 21 | 国风 |
-| 7 | 爵士 | 23 | 传统民歌 |
-| 9 | 纯音乐 |
+| id  | 含义   | id  | 含义     |
+| --- | ------ | --- | -------- |
+| 1   | 流行   | 10  | 民谣     |
+| 2   | 摇滚   | 12  | 乡村     |
+| 3   | 电子   | 14  | R&B      |
+| 4   | 古典乐 | 15  | DJ       |
+| 5   | 舞曲   | 16  | ACG      |
+| 6   | 嘻哈   | 21  | 国风     |
+| 7   | 爵士   | 23  | 传统民歌 |
+| 9   | 纯音乐 |
 
 > 注：以上为标准版安卓的标签 id，不同平台/市场可能存在差异。
 
@@ -1294,7 +1302,9 @@ data: 排序数据, 格式为 `listid|type|sort`，每个以逗号分隔
 
 说明 : 调用此接口可以修改"我的歌单"的封面（系统内置封面，需登录）
 
-> 说明：此接口用于设置**系统封面**（`stdmusic`），封面支持两种格式，完整封面 URL（`https://imge.kugou.com/stdmusic/{size}/xxx.jpg`）或云端相对路径（`stdmusic/xxx.jpg`），完整 URL 会自动取最后一段并补上 `stdmusic/` 前缀。若需设置**自定义封面**，请改用 `/playlist/update` 传入 `pic=custom/<FileName>`（见「上传图片」）。
+> 说明：此接口用于设置**系统封面**（`stdmusic`），封面支持两种格式，完整封面 URL（`https://imge.kugou.com/stdmusic/{size}/xxx.jpg`）或云端相对路径
+> （`stdmusic/xxx.jpg`），完整 URL 会自动取最后一段并补上 `stdmusic/` 前缀。若需设置**自定义封面**，请改用 `/playlist/update` 传入
+> `pic=custom/<FileName>`（见「上传图片」）。
 
 **必选参数：**
 
@@ -1308,7 +1318,8 @@ data: 封面数据, 格式为 `listid|type|pic`，每个以逗号分隔，pic �
 
 **接口地址：** `/playlist/pic`
 
-**调用例子：** `/playlist/pic?total_ver=9&data=11|0|stdmusic/20210111/20210111184454391203.jpg,22|1|http://imge.kugou.com/stdmusic/{size}/20210111/20210111184454391203.jpg`
+**调用例子：**
+`/playlist/pic?total_ver=9&data=11|0|stdmusic/20210111/20210111184454391203.jpg,22|1|http://imge.kugou.com/stdmusic/{size}/20210111/20210111184454391203.jpg`
 
 > 说明：如需设置自定义封面，请先调用 `/playlist/pic/upload` 上传图片获取 `FileName`，再调用 `/playlist/update` 并传入 `pic=custom/<FileName>`。
 
@@ -1330,7 +1341,8 @@ file: 本地图片文件路径
 
 **接口地址：** `/playlist/pic/upload`
 
-**调用例子：** `POST /playlist/pic/upload`，body 传 JSON：`{"file":"/path/to/cover.jpg","cookie":"token=xxx;userid=xxx"}`，成功返回：`{"status":1,"FileName":"20260914120505590883.jpg"}`
+**调用例子：** `POST /playlist/pic/upload`，body 传 JSON：`{"file":"/path/to/cover.jpg","cookie":"token=xxx;userid=xxx"}`，成功返回
+：`{"status":1,"FileName":"20260914120505590883.jpg"}`
 
 ### 修改歌单信息
 
@@ -2007,7 +2019,8 @@ vip 专属推荐
 
 **必选参数：**
 
-`card_id`: 3006: VIP 专属推荐，3001: 私人专属好歌，3004: 小众宝藏佳作，3014: 喜欢这首歌的 TA 也喜欢，3101: 概念 er 新推，3005: 潮流尝鲜
+`card_id`: 3006: VIP 专属推荐，3001: 私人专属好歌，3004: 小众宝藏佳作，3014: 喜欢这首歌的 TA 也喜欢，3101: 概念 er 新推，3005: 潮流尝鲜，3103: 曲风盲
+盒·随机心动
 
 **可选参数**
 
@@ -2133,7 +2146,8 @@ vip 专属推荐
 
 ### 获取音乐详情
 
-说明：调用此接口，可以获取音乐详情；响应保留上游原始字段，并追加 `quality_vip` —— 即一次请求即可判断各音质能否**免 VIP 获取**，判断结果与官方客户端音质弹窗上带「概念版VIP」图标的音质一致，可在调用 `/song/url/auth` 前先挑出能获取的最佳音质。
+说明：调用此接口，可以获取音乐详情；响应保留上游原始字段，并追加 `quality_vip` —— 即一次请求即可判断各音质能否**免 VIP 获取**，判断结果与官方客户端音
+质弹窗上带「概念版 VIP」图标的音质一致，可在调用 `/song/url/auth` 前先挑出能获取的最佳音质。
 
 `viper_tape`（蝰蛇母带）、`viper_clear`（蝰蛇超清）、`viper_atmos`（蝰蛇全景声）需要**超级 VIP（suvip）**才能播放，概念版 VIP 与 tvip 均不可播放  
 判断方式为`/youth/union/vip`返回的`vip_type`为`6`即为超级 VIP
@@ -2148,7 +2162,8 @@ vip 专属推荐
 
 `album_audio_id`：专辑音频 id，多个以逗号分开，与 `hash` 顺序对应（仅用于输出回显）
 
-`qualities`：需要判断的音质，多个以逗号分开，默认 `128,320,flac,high,viper_tape,viper_clear,viper_atmos`（含需钻石 VIP 的蝰蛇音质）；传 `all` 表示全部上游音质（含 DSD、多轨等）
+`qualities`：需要判断的音质，多个以逗号分开，默认 `128,320,flac,high,viper_tape,viper_clear,viper_atmos`（含需钻石 VIP 的蝰蛇音质）；传 `all` 表示全部
+上游音质（含 DSD、多轨等）
 
 **接口地址：** `/privilege/lite`
 
@@ -2185,7 +2200,8 @@ vip 专属推荐
 
 `mode`: 获取模式，默认为 normal, normal：发现(红心 Radio)，small： 小众，peak：30s，radio：电台
 
-`action`: 默认为 play, login：登录/首次拉取, garbage：不喜欢, cancel_garbage：取消不喜欢, click_red：红心, cancel_red：取消红心, download：下载, black_singer：屏蔽歌手, cancel_black_singer：取消屏蔽, update_recommend_source：更新推荐来源, change_song_pool：切换推荐池
+`action`: 默认为 play, login：登录/首次拉取, garbage：不喜欢, cancel_garbage：取消不喜欢, click_red：红心, cancel_red：取消红心, download：下载,
+black_singer：屏蔽歌手, cancel_black_singer：取消屏蔽, update_recommend_source：更新推荐来源, change_song_pool：切换推荐池
 
 `cur_mark`: 当前推荐标记，click_red / cancel_red 等操作建议传入
 
@@ -2884,7 +2900,8 @@ fields: 支持多个，每个以逗号分隔，支持的值有：mkv,tags,h264,h
 
 ### 发送歌曲评论
 
-说明：向普通歌曲评论池发送顶层评论，需要登录。该接口使用 `fc4be23b4e972707f36b8a828a93ba8a` 评论池，与 `/song/barrage/send` 的歌曲弹幕池不同。仅传 `mixsongid` 时会先调用歌曲评论查询接口，自动解析 `special_id` 和歌曲名称。
+说明：向普通歌曲评论池发送顶层评论，需要登录。该接口使用 `fc4be23b4e972707f36b8a828a93ba8a` 评论池，与 `/song/barrage/send` 的歌曲弹幕池不同。仅传
+`mixsongid` 时会先调用歌曲评论查询接口，自动解析 `special_id` 和歌曲名称。
 
 **必选参数：**
 
@@ -3020,7 +3037,8 @@ curl -X POST http://127.0.0.1:3000/comment/floor/send \
 
 `cid`：要删除的评论 ID（列表返回的评论 `id` 字段）
 
-`mixsongid` / `special_id`：至少传入一个。推荐传 `mixsongid`，自动反查最可靠；直接传 `special_id` 时必须取评论列表返回的 `special_child_id`（如 `148401`），**不要**用发送评论响应里的 `special_id`
+`mixsongid` / `special_id`：至少传入一个。推荐传 `mixsongid`，自动反查最可靠；直接传 `special_id` 时必须取评论列表返回的 `special_child_id`（如
+`148401`），**不要**用发送评论响应里的 `special_id`
 
 **可选参数：**
 
@@ -3599,45 +3617,39 @@ const res = await fetch('/audio/match', {
 
 **接口地址：** `POST /user/listen/report`
 
-上报真实播放的开始、结束事件。结束时可联动 `/user/grade/info` 同步听歌时长。
-登录凭证可通过 `Authorization: token=...;userid=...` 或 `cookie` 传递。
+上报真实播放的开始、结束事件。结束时可联动 `/user/grade/info` 同步听歌时长。登录凭证可通过 `Authorization: token=...;userid=...` 或 `cookie` 传递。
 
-| 参数 | 说明 |
-| --- | --- |
-| `event` | 必填，`start` 或 `end` |
-| `mixsongid` | 必填，歌曲 mixsongid |
-| `uuid`、`mid` | 设备标识；uuid 为 32 位字母数字。支持从 cookie 的 `uuid` / `KUGOU_API_GUID`、`mid` / `KUGOU_API_MID` 读取 |
-| `device_model`、`dev` | 可选，设备名称优先取 `device_model`、`dev`，否则复用 cookie / 环境变量 `KUGOU_API_DEV`，缺省为 `KuGouMusicApi` |
-| `system_version` | 可选，系统版本；兼容默认值为 `9` |
-| `screen_width`、`screen_height` | 可选，屏幕宽高（正整数像素）；默认 `1920`、`1080` |
-| `local_ip` | 可选，事件中的设备本地 IPv4/IPv6 地址；默认 `0.0.0.0`，表示未提供具体地址 |
-| `duration` | end 必填，实际播放毫秒数，扣除暂停及拖动进度的影响 |
-| `state` | end 的播放结束状态，默认 `完整播放` |
-| `d_sec`、`diff_sec` | end 可选，必须同时提供。分别为查询所得累计基线和本次新增秒数；传入后联动等级同步 |
+| 参数                            | 说明                                                                                                           |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `event`                         | 必填，`start` 或 `end`                                                                                         |
+| `mixsongid`                     | 必填，歌曲 mixsongid                                                                                           |
+| `uuid`、`mid`                   | 设备标识；uuid 为 32 位字母数字。支持从 cookie 的 `uuid` / `KUGOU_API_GUID`、`mid` / `KUGOU_API_MID` 读取      |
+| `device_model`、`dev`           | 可选，设备名称优先取 `device_model`、`dev`，否则复用 cookie / 环境变量 `KUGOU_API_DEV`，缺省为 `KuGouMusicApi` |
+| `system_version`                | 可选，系统版本；兼容默认值为 `9`                                                                               |
+| `screen_width`、`screen_height` | 可选，屏幕宽高（正整数像素）；默认 `1920`、`1080`                                                              |
+| `local_ip`                      | 可选，事件中的设备本地 IPv4/IPv6 地址；默认 `0.0.0.0`，表示未提供具体地址                                      |
+| `duration`                      | end 必填，实际播放毫秒数，扣除暂停及拖动进度的影响                                                             |
+| `state`                         | end 的播放结束状态，默认 `完整播放`                                                                            |
+| `d_sec`、`diff_sec`             | end 可选，必须同时提供。分别为查询所得累计基线和本次新增秒数；传入后联动等级同步                               |
 
-设备名称复用项目已有的 dev 配置；系统版本和屏幕尺寸的默认值来自参考报文，并非自动识别结果。
-设备名称在设备查询、事件及报文头中保持一致；系统版本同步用于事件、报文头和 User-Agent。
-`local_ip` 不读取请求来源、不自动查询公网 IP，也不改变 HTTP 出口或代理设置。
-同一次播放的开始、结束应使用一致的设备参数；修改机型、系统版本或屏幕尺寸会重新建立会话。
+设备名称复用项目已有的 dev 配置；系统版本和屏幕尺寸的默认值来自参考报文，并非自动识别结果。设备名称在设备查询、事件及报文头中保持一致；系统版本同步用
+于事件、报文头和 User-Agent。 `local_ip` 不读取请求来源、不自动查询公网 IP，也不改变 HTTP 出口或代理设置。同一次播放的开始、结束应使用一致的设备参数；
+修改机型、系统版本或屏幕尺寸会重新建立会话。
 
 **请求示例：** 设备及登录信息通过 cookie 提供。
 
 ```json
-{"event":"start","mixsongid":260403475}
+{ "event": "start", "mixsongid": 260403475 }
 ```
 
 ```json
-{"event":"end","mixsongid":260403475,"duration":60000,"state":"完整播放","d_sec":120,"diff_sec":60}
+{ "event": "end", "mixsongid": 260403475, "duration": 60000, "state": "完整播放", "d_sec": 120, "diff_sec": 60 }
 ```
 
-不传同步参数时返回 CSCC 响应；传入后返回
-`data: { report, grade, playback_accepted, grade_synced }`，分别表示两步结果。
-CSCC 失败仍继续等级同步；至少一步成功返回 HTTP 200，两步均失败返回 HTTP 502。
-请求成功不代表累计时长立即更新，服务端可能延迟显示；请勿因此重复上报。
-接口不自动重试。HTTP 调用时，播放上报与等级信息的查询、上报均需在 URL query 中携带每次变化的 `timestamp`，避免命中响应缓存（POST 也一样，放在 body 中不能绕过 URL 缓存）。
-例如：`POST /user/listen/report?timestamp=1788850000000`。
-程序化调用：`user_listen_report(params)`。
-
+不传同步参数时返回 CSCC 响应；传入后返回 `data: { report, grade, playback_accepted, grade_synced }`，分别表示两步结果。 CSCC 失败仍继续等级同步；至少
+一步成功返回 HTTP 200，两步均失败返回 HTTP 502。请求成功不代表累计时长立即更新，服务端可能延迟显示；请勿因此重复上报。接口不自动重试。HTTP 调用时，播
+放上报与等级信息的查询、上报均需在 URL query 中携带每次变化的 `timestamp`，避免命中响应缓存（POST 也一样，放在 body 中不能绕过 URL 缓存）。例如
+：`POST /user/listen/report?timestamp=1788850000000`。程序化调用：`user_listen_report(params)`。
 
 ### 编辑内容黑名单
 
@@ -3916,6 +3928,7 @@ CSCC 失败仍继续等级同步；至少一步成功返回 HTTP 200，两步均
 **调用例子**： `/user/update?signature=这是新签名&sex=1`
 
 > 注意：cookie 中含 `;` 分隔符，用 GET 查询串传递容易被截断，建议改用 POST body 传 `cookie` 字段：
+>
 > ```bash
 > curl -X POST http://127.0.0.1:3000/user/update \
 >   -H 'Content-Type: application/json' \
@@ -3948,7 +3961,8 @@ curl -X POST http://127.0.0.1:3000/user/update/avatar \
 
 ### 获取歌曲弹幕
 
-说明：获取歌曲播放器使用的旧弹幕池。该弹幕池的资源代码为 `articulossong`，与 `/comment/music` 使用的普通歌曲评论池不同，不应把两者数量混为一谈。不需要登录。
+说明：获取歌曲播放器使用的旧弹幕池。该弹幕池的资源代码为 `articulossong`，与 `/comment/music` 使用的普通歌曲评论池不同，不应把两者数量混为一谈。不需要
+登录。
 
 **必选参数（二选一）：**
 
