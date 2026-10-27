@@ -1,6 +1,6 @@
 {
   "name": "kugoumusicapi",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "",
   "main": "main.js",
   "bin": "./app.js",
@@ -22,7 +22,7 @@
     "start": "node app.js",
     "pkgwin": "pkg . -t node14-win-x64 -C GZip -o bin/app_win --no-bytecode",
     "pkglinux": "pkg . -t node14-linux-x64 -C GZip -o bin/app_linux --no-bytecode",
-    "pkglinux-arm64": "pkg . -t node14-linux-arm64 -C GZip -o bin/app_linux --no-bytecode",
+    "pkglinux-arm64": "pkg . -t node14-linux-arm64 -C GZip -o bin/app_linux_arm64 --no-bytecode",
     "pkgmacos": "pkg . -t node14-macos-x64 -C GZip -o bin/app_macos --no-bytecode",
     "pkgmacos-arm64": "pkg . -t node16-macos-arm64 -C GZip -o bin/app_macos_arm64 --no-bytecode",
     "pkgjs": "tsdown"
@@ -57,7 +57,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
     "form-data": "^4.0.0",
-    "node-forge": "1.4.0",
+    "node-forge": "1.4.1",
     "pako": "^2.1.0",
     "qrcode": "^1.5.3",
     "safe-decode-uri-component": "^1.2.1",

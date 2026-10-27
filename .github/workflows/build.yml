@@ -124,7 +124,7 @@ jobs:
         run: npm install
       # 构建
       - name: Build App for Linux
-        run: npm run pkglinux
+        run: npm run pkglinux && npm run pkglinux-arm64
         shell: bash
       # 上传构建产物
       - name: Upload Linux artifact
