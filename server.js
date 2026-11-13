@@ -282,7 +282,8 @@ async function consturctServer(moduleDefs) {
    * - express.urlencoded(): 解析 Content-Type 为 application/x-www-form-urlencoded 的请求体
    *   - extended: false 使用 querystring 库解析（不支持嵌套对象）
    */
-  app.use(express.json({ limit: '16mb' }));
+  // reviver 丢弃 __proto__ 键，避免请求体通过原型链注入参数（JSON.parse 会把 __proto__ 保留为自有属性）
+  app.use(express.json({ limit: '16mb', reviver: (key, value) => (key === '__proto__' ? undefined : value) }));
   app.use(express.urlencoded({ extended: false, limit: '5mb' }));
   app.use(express.raw({ type: 'application/octet-stream', limit: '100mb' }));
 
@@ -356,7 +357,8 @@ async function consturctServer(moduleDefs) {
       //   - params: query 中除 cookie 外的其余参数
       //   - body: 请求体（POST 数据）
       const body = Buffer.isBuffer(req.body) ? { data: req.body } : req.body;
-      const query = Object.assign({}, { cookie: Object.assign({}, req.cookies, cookie) }, params, body);
+      // 合并目标统一使用无原型对象：即使请求体里出现 __proto__，也只会成为普通自有属性，不会改变原型
+      const query = Object.assign(Object.create(null), { cookie: Object.assign(Object.create(null), req.cookies, cookie) }, params, body);
 
       // Step 4: 如果请求携带了 Authorization 头，将其解析为 Cookie 并合并
       // 这样客户端可以通过 Authorization 头传递认证信息，例如: token=xxx;userid=xxx
@@ -438,8 +440,11 @@ async function consturctServer(moduleDefs) {
           return;
         }
 
-        // 返回模块错误的响应体
-        res.header(moduleResponse.headers).status(moduleResponse.status).send(moduleResponse.body);
+        // 返回模块错误的响应体（模块 reject 未带 status 时回退 500，避免 res.status(undefined) 抛错退出进程）
+        res
+          .header(moduleResponse.headers)
+          .status(Number.isInteger(moduleResponse.status) ? moduleResponse.status : 500)
+          .send(moduleResponse.body);
       }
     });
   }
