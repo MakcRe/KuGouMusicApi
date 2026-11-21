@@ -79,6 +79,28 @@ const signatureAndroidParams = (params, data) => {
 };
 
 /**
+ * 概念版（酷狗概念版 youth 端点族）signature 签名
+ *
+ * 酷狗概念版 App 的发现页卡片族接口（card/v1/pxy/*、youth/v1/song/* 等）无论服务运行在
+ * 标准版还是概念版(platform=lite)模式，都固定使用概念版身份：
+ *   appid=3116、clientver=11621（真机 5.3.21 抓包值）、签名盐 = 概念版 appkey 盐。
+ * 为避免签名结果随 process.env.platform 漂移，此处独立实现固定盐版本；
+ * 算法与 signatureAndroidParams 相同：MD5(盐 + 排序后 key=value 参数串 + 请求体 + 盐)。
+ *
+ * @param {Object} params - 请求参数键值对（不含 signature）
+ * @param {string} [data] - 请求体字符串（POST 的 JSON 串；GET 传空）
+ * @returns {string} MD5 签名字符串（32位小写hex）
+ */
+const signatureConceptAndroidParams = (params, data) => {
+  const str = 'LnT6xpN3khm36zse0QzvmgTZ3waWdRSA'; // 概念版签名盐（与 signatureAndroidParams 的 lite 盐一致）
+  const paramsString = Object.keys(params)
+    .sort()
+    .map((key) => `${key}=${typeof params[key] === 'object' ? JSON.stringify(params[key]) : params[key]}`)
+    .join('');
+  return cryptoMd5(`${str}${paramsString}${data || ''}${str}`);
+};
+
+/**
  * 设备注册接口（register_dev）signature 签名
  *
  * 签名算法：
@@ -184,6 +206,7 @@ module.exports = {
   signParamsKey,
   signCloudKey,
   signatureAndroidParams,
+  signatureConceptAndroidParams,
   signatureRegisterParams,
   signatureWebParams,
 };

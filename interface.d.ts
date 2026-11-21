@@ -2999,3 +2999,115 @@ export interface UserListenReportParams extends CommonParams {
   diff_sec?: number;
 }
 export declare function user_listen_report(params: UserListenReportParams): Promise<ApiResponse>;
+
+// ============================================================
+//  导出函数 —— 酷狗概念版发现页推荐卡片（来自 discovery_* 模块）
+// ============================================================
+
+/** 酷狗概念版发现页卡片 ID（util/discovery_cards.CARD_MODULES） */
+export type DiscoveryCardId =
+  | 3001 // 私人专属好歌
+  | 3004 // 小众宝藏佳作
+  | 3005 // 潮流尝鲜
+  | 3006 // VIP专属推荐
+  | 3007 // 喜欢这首歌的TA也喜欢（需 source_mixsong）
+  | 3014 // 喜欢这首歌的TA也喜欢（服务端自选最近播放）
+  | 3032 // 喜欢这首歌的TA也喜欢
+  | 3101 // 概念er新推
+  | 3102 // 喜欢「xx」的TA也喜欢（标签动态标题）
+  | 3103 // 曲风盲盒·随机心动（tag_card_recommend）
+  | 3104 // 频道推荐
+  | 3105 // 长音频推荐
+  | 3106 // 概念实验室
+  | 3107; // AI免费听
+
+/** 酷狗概念版发现页卡片子请求公共选项 */
+export interface DiscoveryCardSubParams extends CommonParams {
+  /** 来源歌曲标识（3007 卡使用，取最近播放歌曲） */
+  source_mixsong?: string;
+  /** 标签 ID（3102 等可指定标签） */
+  tagid?: string;
+  /** 客户端附加信息串（实测可空） */
+  u_info?: string;
+}
+
+/**
+ * 发现页批量卡片代理（card/v1/pxy/youth_recommend）
+ * @route /discovery/card/recommend
+ */
+export interface DiscoveryCardRecommendParams extends CommonParams {
+  /** 要拉取的卡片 ID 列表（数组或逗号分隔字符串），默认全部 14 张 */
+  cards?: DiscoveryCardId[] | string;
+  /** 每批卡片数（服务端限制 1-3，默认 3） */
+  card_size?: number;
+  /** 批量代理端点：youth_recommend（默认）| listen（历史入口） */
+  endpoint?: 'youth_recommend' | 'listen';
+  /** 是否解析 responses[].body 子响应为对象（默认原样字符串） */
+  parse?: boolean;
+  source_mixsong?: string;
+  tagid?: string;
+  u_info?: string;
+}
+export declare function discovery_card_recommend(params: DiscoveryCardRecommendParams): Promise<ApiResponse>;
+
+/**
+ * 发现页单卡片直连（single_card_recommend）
+ * @route /discovery/card/single
+ */
+export interface DiscoveryCardSingleParams extends DiscoveryCardSubParams {
+  /** 卡片 ID（必填） */
+  card_id: DiscoveryCardId;
+  /** 覆盖默认 pagesize（3004/3006 为 10，其余 30） */
+  pagesize?: number;
+}
+export declare function discovery_card_single(params: DiscoveryCardSingleParams): Promise<ApiResponse>;
+
+/**
+ * 曲风盲盒·随机心动（tag_card_recommend，card 3103，返回 tag_list 多标签各带歌）
+ * @route /discovery/card/tag
+ */
+export interface DiscoveryCardTagParams extends DiscoveryCardSubParams {}
+export declare function discovery_card_tag(params: DiscoveryCardTagParams): Promise<ApiResponse>;
+
+/**
+ * 频道推荐（get_featured_channel，card 3104；需登录态）
+ * @route /discovery/card/channel
+ */
+export interface DiscoveryCardChannelParams extends DiscoveryCardSubParams {
+  /** 埋点序号，默认 '0' */
+  bi_index?: string;
+  /** 频道标签过滤，默认空 */
+  label?: string;
+}
+export declare function discovery_card_channel(params: DiscoveryCardChannelParams): Promise<ApiResponse>;
+
+/**
+ * 概念实验室（lab_feature_list GET，card 3106）
+ * @route /discovery/card/lab
+ */
+export interface DiscoveryCardLabParams extends CommonParams {}
+export declare function discovery_card_lab(params: DiscoveryCardLabParams): Promise<ApiResponse>;
+
+/**
+ * 长音频推荐（longaudio_recommend，card 3105；客户端 AB 门控）
+ * @route /discovery/card/longaudio
+ */
+export interface DiscoveryCardLongAudioParams extends CommonParams {
+  /** 本地专辑播放历史（默认空数组） */
+  album_playlist?: Array<Record<string, unknown>>;
+}
+export declare function discovery_card_longaudio(params: DiscoveryCardLongAudioParams): Promise<ApiResponse>;
+
+/**
+ * AI 免费听推荐歌曲（concepts/v1/ai/recommend_song）
+ * @route /ai/recommend/song
+ */
+export interface AiRecommendSongParams extends CommonParams {
+  /** 页码，默认 1 */
+  page?: number;
+  /** 每页数量，默认 30；发现页卡片为 6 */
+  pagesize?: number;
+  /** 推荐来源：1 = 发现页「AI免费听」卡片，2 = AI 免费听列表（默认） */
+  source?: 1 | 2;
+}
+export declare function ai_recommend_song(params: AiRecommendSongParams): Promise<ApiResponse>;

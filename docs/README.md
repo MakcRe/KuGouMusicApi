@@ -199,6 +199,12 @@
 170. [`批量查询概念版会员产品（YVipInfo）`](#批量查询概念版会员产品yvinfo)
 171. [`发送私信`](#发送私信)
 172. [`获取私信会话历史`](#获取私信会话历史)
+173. [`发现页推荐卡片（批量代理）`](#发现页推荐卡片批量代理)
+174. [`发现页单卡片推荐`](#发现页单卡片推荐)
+175. [`曲风盲盒·随机心动`](#曲风盲盒随机心动)
+176. [`频道推荐（概念版发现页）`](#频道推荐概念版发现页)
+177. [`概念实验室`](#概念实验室)
+178. [`长音频推荐（概念版发现页）`](#长音频推荐概念版发现页)
 
 ### 安装
 
@@ -306,6 +312,8 @@ $ set HOST=127.0.0.1 && npm run dev
 !> 文档可能会有缓存 , 如果文档版本和 github 上的版本不一致,请清除缓存再查看
 
 #### 更新记录
+
+26-11-21：添加 `发现页推荐卡片（批量代理）`、`发现页单卡片推荐`、`曲风盲盒·随机心动`、`频道推荐（概念版发现页）`、`概念实验室`、`长音频推荐（概念版发现页）` 接口；`概念版 - 免费听` 接口支持 `source` 参数
 
 26-09-18：添加 `批量查询概念版会员产品（YVipInfo）` 接口，`歌曲评论` 接口支持 `CMT_VER` 环境变量
 
@@ -2031,6 +2039,96 @@ vip 专属推荐
 **接口地址：** `/top/card`
 
 **调用例子：** `/top/card/youth?card_id=3006`，`/top/card/youth?card_id=3103`，`/top/card/youth?card_id=3103&tagid=9`
+
+### 发现页推荐卡片（批量代理）
+
+说明：酷狗概念版「发现」页推荐卡片流。客户端把每张卡片的真实请求（url/body/method）打包为 `requests` 数组 POST 到批量代理，服务端按 `card_size`（实测每批 ≤3）决定本轮返回哪些卡片并重排顺序（`data.card_rank`）；`data.responses[].body` 为各子接口的原始 JSON 字符串。客户端按 card_rank 剔除已取卡片后循环分批拉取，直至取满 14 张。大部分卡片无需登录即可获取，`3104 频道推荐` 等需登录态。
+
+**可选参数：**
+
+`cards`: 卡片 ID 列表（数组或逗号分隔字符串）。支持：3001 私人专属好歌、3004 小众宝藏佳作、3005 潮流尝鲜、3006 VIP 专属推荐、3007/3014/3032 喜欢这首歌的 TA 也喜欢（3007 需配合 `source_mixsong`）、3101 概念 er 新推、3102 喜欢「xx」的 TA 也喜欢（标签动态标题）、3103 曲风盲盒·随机心动、3104 频道推荐、3105 长音频推荐、3106 概念实验室、3107 AI 免费听；默认全部 14 张
+
+`card_size`: 每批卡片数，1-3（默认 3，超过 3 服务端报「参数不合法」）
+
+`endpoint`: 代理端点，`youth_recommend`（默认）或 `listen`（历史入口，参数形态一致）
+
+`parse`: 传 `true` 时把每个 `responses[].body` 解析为对象返回
+
+`source_mixsong` / `tagid` / `u_info`: 透传给各卡片子请求
+
+`ufeature`: 行为特征串数组（如 `"y_hot|4|1795269731"`），可选
+
+**接口地址：** `/discovery/card/recommend`
+
+**调用例子：** `/discovery/card/recommend?cards=3005,3001,3004&parse=true`
+
+### 发现页单卡片推荐
+
+说明：单卡片直连 `single_card_recommend` 子接口（与 [`/top/card/youth`](#歌曲推荐概念版) 同源），按概念版安卓客户端 5.3.21 的固定身份与签名实现，额外支持 3007/3032 卡片。响应 `data.song_list` 为歌曲列表，`data.card_info.card_title` 为服务端下发的卡片标题。
+
+**必选参数：**
+
+`card_id`: 卡片 ID（3001/3004/3005/3006/3007/3014/3032/3101/3102）
+
+**可选参数：**
+
+`pagesize`: 每页页数（默认按客户端映射：3004/3006 为 10，其余 30）
+
+`source_mixsong`: 来源歌曲标识（3007 卡使用，服务端结合最近播放生成推荐）
+
+`tagid` / `u_info`: 透传子请求（可空）
+
+**接口地址：** `/discovery/card/single`
+
+**调用例子：** `/discovery/card/single?card_id=3102`
+
+### 曲风盲盒·随机心动
+
+说明：概念版发现页「曲风盲盒·随机心动」卡片（tag_card_recommend），URL 不带 card_id/pagesize。响应 `data.tag_list` 为多个标签（如「欧美」「日语」），每个标签带 6 首歌曲。
+
+**可选参数：**
+
+`tagid`: 标签 ID（可空，默认服务端随机盲盒）
+
+`source_mixsong` / `u_info`: 透传子请求（可空）
+
+**接口地址：** `/discovery/card/tag`
+
+**调用例子：** `/discovery/card/tag`
+
+### 频道推荐（概念版发现页）
+
+说明：概念版发现页「频道推荐」卡片（get_featured_channel）。需要登录态，匿名调用返回 `error_code=51002`。响应 `data.list` 为频道实体数组。
+
+**可选参数：**
+
+`bi_index`: 卡片曝光索引，默认 `0`
+
+`label`: 频道标签过滤，默认空
+
+**接口地址：** `/discovery/card/channel`
+
+**调用例子：** `/discovery/card/channel?cookie=token=xxx;userid=xxx`
+
+### 概念实验室
+
+说明：概念版发现页「概念实验室」卡片（lab_feature_list，GET 请求）。query 中 `card_id` 固定为 3105，为客户端原样行为。响应 `data.list` 为实验室功能项数组（name/url/redirect 等）。
+
+**接口地址：** `/discovery/card/lab`
+
+**调用例子：** `/discovery/card/lab`
+
+### 长音频推荐（概念版发现页）
+
+说明：概念版发现页长音频卡片（longaudio_recommend）。客户端受 AB 配置门控；请求体为 `{"album_playlist":[...]}`（本地专辑播放历史，无记录时为空数组，服务端正常返回但列表可能为空）。
+
+**可选参数：**
+
+`album_playlist`: 本地专辑播放历史数组（默认空数组）
+
+**接口地址：** `/discovery/card/longaudio`
+
+**调用例子：** `/discovery/card/longaudio`
 
 ### 获取歌手和专辑图片
 
@@ -3763,9 +3861,11 @@ const res = await fetch('/audio/match', {
 
 `pagesize `: 每页页数, 默认为 30
 
+`source`: 推荐来源，`2` 为 AI 免费听列表（默认）；传 `1` 对应发现页「AI 免费听」卡片（客户端固定 pagesize=6）
+
 **接口地址：** `/ai/recommend/song`
 
-**调用例子：** `/ai/recommend/song`
+**调用例子：** `/ai/recommend/song`，`/ai/recommend/song?source=1&pagesize=6`
 
 ### 组队领取 VIP - 获取本期活动信息（需要登陆，该接口为测试接口，仅限概念版使用）
 

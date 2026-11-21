@@ -34,7 +34,10 @@ const { createRequest, createCloudRequest } = require('./request');
 const { resolveProxy } = require('./runtime');
 
 // ========== 签名函数 ==========
-const { signKey, signParams, signParamsKey, signCloudKey, signatureAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
+const { signKey, signParams, signParamsKey, signCloudKey, signatureAndroidParams, signatureConceptAndroidParams, signatureRegisterParams, signatureWebParams } = require('./helper');
+
+// ========== 概念版发现页卡片协议 ==========
+const discoveryCards = require('./discovery_cards');
 
 // ========== 工具函数 ==========
 const { randomString, decodeLyrics, parseCookieString, cookieToJson, randomNumber, calculateMid, isUUIDv4 } = require('./util');
@@ -88,6 +91,7 @@ module.exports = {
   signParamsKey,                // 参数密钥签名
   signCloudKey,                 // 云盘接口密钥签名
   signatureAndroidParams,       // Android 版 signature 签名
+  signatureConceptAndroidParams, // 概念版 youth 端点族固定盐 signature 签名
   signatureRegisterParams,      // 设备注册 signature 签名
   signatureWebParams,           // Web 版 signature 签名
 
@@ -100,5 +104,8 @@ module.exports = {
   publicRasKey,                 // 标准版 RSA 公钥
   randomNumber,                 // 随机数字字符串生成
   calculateMid,                 // 设备 MID 计算
-  isUUIDv4                      // 判断是否为 UUID V4
+  isUUIDv4,                     // 判断是否为 UUID V4
+
+  // --- 概念版发现页卡片协议（逆向：酷狗概念版 5.3.21 发现页推荐卡片族） ---
+  discoveryCards                // { CARD_MODULES, CARD_TITLES, DISCOVERY_CARD_LIST, buildCardSubRequest, ... }
 };
