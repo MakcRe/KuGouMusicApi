@@ -11,9 +11,17 @@
  * 发现页推荐流架构：
  *   客户端把每张卡片的真实请求（url/body/method/module）打包成 `requests` 数组，
  *   POST 到批量代理端点 card/v1/pxy/youth_recommend（历史入口 card/v1/pxy/listen），
- *   服务端按 `card_size`（实测每批最多 3 张）决定本轮返回哪些卡片并重排顺序，
- *   响应 data.responses[].body 为各子接口的原始 JSON 字符串，data.card_rank 为本轮卡片顺序。
- *   客户端按响应 card_rank 剔除已返回卡片后循环分批拉取，直至取满 14 张。
+ *   youth_recommend 每轮最多返回 3 个响应（card_size 传 4+ 或 0 同样按 3 处理，不报错）
+ *   并按卡片热度重排顺序，响应 data.responses[].body 为各子接口的原始 JSON 字符串，
+ *   data.card_rank 为本次请求的卡片顺序；客户端首次加载用 youth_recommend 携带完整
+ *   卡片列表，后续“加载更多”用 listen 每次最多带 3 个待请求卡片（s0() 限制），按返回的
+ *   module 剔除已取卡片，直至取满 14 张。listen 不带 card_size/card_rank/ufeature，
+ *   单次最多返回 12 个响应。
+ *
+ * 传输层说明：客户端把 JSON 明文签名后再 gzip 压缩为请求体，并额外在 header 里放一个
+ * signature（salt + 参数串 + body 前 256 字节 + salt 的 MD5）。服务端当前接受明文 JSON，
+ * 也不校验该 header signature，因此本实现按明文 JSON 发送、只做 query 签名；若上游日后
+ * 收紧校验，再补 gzip 与 header signature（两者需一起补才算完整还原）。
  *
  * 卡片 ID ↔ module 名 ↔ 界面标题（标题由服务端 card_info.card_title 下发，
  *   3101 标题「概念er新推」为客户端 CardBaseViewHolder 硬编码）：
@@ -67,6 +75,14 @@ const CARD_MODULES = {
   3106: 'y_lab',
   3107: 'y_aisong',
 };
+
+/**
+ * module 名 → 卡片 ID 反查表（批量完整拉取时按 responses[].module 标记已取卡片）
+ * @type {Record<string, number>}
+ */
+const CARD_BY_MODULE = Object.fromEntries(
+  Object.entries(CARD_MODULES).map(([id, module]) => [module, Number(id)])
+);
 
 /**
  * 卡片 ID ↔ 界面标题参考（服务端下发，仅供文档参考，实际以 card_info.card_title 为准）
@@ -137,6 +153,27 @@ const toQueryString = (q) =>
     .join('&');
 
 /**
+ * 归一化长音频卡片的本地专辑播放历史。
+ * HTTP 调用时 `album_playlist` 常以 JSON 字符串传入，这里统一还原为数组，
+ * 避免请求体出现 `{"album_playlist":"[...]"}` 这种字符串套数组的错误形态。
+ *
+ * @param {Array<Object>|string|undefined} value - 数组、JSON 字符串或空值
+ * @returns {Array<Object>} 专辑播放历史数组（无法解析时为空数组）
+ */
+const normalizeAlbumPlaylist = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string' && value.trim()) {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  return [];
+};
+
+/**
  * 构造单张卡片的子请求描述（DiscoveryCardProtocol.b 的等价实现）
  *
  * @param {number} cardId - 卡片 ID（见 CARD_MODULES）
@@ -150,6 +187,7 @@ const toQueryString = (q) =>
  * @param {number} [options.page] - 3107 AI 免费听的页码，默认 1
  * @param {string} [options.bi_index] - 3104 频道推荐的 bi_index，默认 '0'
  * @param {string} [options.label] - 3104 频道推荐的标签过滤，默认空
+ * @param {Array<Object>|string} [options.album_playlist] - 3105 长音频卡片的本地专辑播放历史
  * @returns {{url: string, body: string, method: string, headers: string, module: string}}
  */
 const buildCardSubRequest = (cardId, options = {}) => {
@@ -198,10 +236,11 @@ const buildCardSubRequest = (cardId, options = {}) => {
     }
     // 长音频推荐：longaudio_recommend，card_id=3105
     // 请求体为客户端 aj.a.a(null) 的结果：{"album_playlist":[...]}（本地专辑播放历史，
-    // 无记录时为空数组），实测传 {"album_playlist":[]} 服务端正常返回
+    // 无记录时为空数组；每项形如 {ID,A,F,C,T,TT}，A=2 时另有 PP/SP/AP/PT）。
+    // HTTP 传入 JSON 字符串时由 normalizeAlbumPlaylist 还原为数组。
     case 3105: {
       query = { ...commonSubQuery(cred, clienttime), module_id: '1', card_id: '3105' };
-      body = JSON.stringify({ album_playlist: options.album_playlist || [] });
+      body = JSON.stringify({ album_playlist: normalizeAlbumPlaylist(options.album_playlist) });
       path = '/youth/v1/song/longaudio_recommend';
       break;
     }
@@ -213,9 +252,14 @@ const buildCardSubRequest = (cardId, options = {}) => {
       break;
     }
     // AI免费听：concepts/v1/ai/recommend_song
+    // body 中 page/pagesize 必须为数值（HTTP query 传入的是字符串，服务端会报参数错误）
     case 3107: {
       query = { ...commonSubQuery(cred, clienttime) };
-      body = JSON.stringify({ page: options.page || 1, pagesize: options.pagesize || 6, source: 1 });
+      body = JSON.stringify({
+        page: Number(options.page) || 1,
+        pagesize: Number(options.pagesize) || 6,
+        source: 1,
+      });
       path = '/concepts/v1/ai/recommend_song';
       break;
     }
@@ -264,6 +308,7 @@ module.exports = {
   CONCEPT_PLATFORM,
   CONCEPT_AREA_CODE,
   CARD_MODULES,
+  CARD_BY_MODULE,
   CARD_TITLES,
   CARD_PAGE_SIZE,
   DISCOVERY_CARD_LIST,
@@ -271,4 +316,5 @@ module.exports = {
   splitSubUrl,
   commonSubQuery,
   toQueryString,
+  normalizeAlbumPlaylist,
 };

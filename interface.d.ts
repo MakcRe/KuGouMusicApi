@@ -3038,15 +3038,27 @@ export interface DiscoveryCardSubParams extends CommonParams {
 export interface DiscoveryCardRecommendParams extends CommonParams {
   /** 要拉取的卡片 ID 列表（数组或逗号分隔字符串），默认全部 14 张 */
   cards?: DiscoveryCardId[] | string;
-  /** 每批卡片数（服务端限制 1-3，默认 3） */
+  /** 每批卡片数（客户端固定 3；仅 youth_recommend 生效，服务端每轮最多返回 3 个响应，传 4+ 或 0 按 3 处理） */
   card_size?: number;
-  /** 批量代理端点：youth_recommend（默认）| listen（历史入口） */
+  /** 批量代理端点：youth_recommend（默认，首次加载）| listen（历史入口/加载更多，不带 card_size/card_rank/ufeature，单次最多 12 个响应） */
   endpoint?: 'youth_recommend' | 'listen';
+  /** 为 true 时按客户端行为拉全：首次携带完整 cards，后续走 listen 每次最多 3 张，合并到 data.responses（附 data.batch_count） */
+  full?: boolean;
   /** 是否解析 responses[].body 子响应为对象（默认原样字符串） */
   parse?: boolean;
   source_mixsong?: string;
   tagid?: string;
   u_info?: string;
+  /** 3107 AI 免费听页码，默认 1 */
+  page?: number;
+  /** 3104 频道推荐曝光索引，默认 '0' */
+  bi_index?: string;
+  /** 3104 频道推荐标签过滤，默认空 */
+  label?: string;
+  /** 3105 长音频的本地专辑播放历史（数组或 JSON 字符串） */
+  album_playlist?: Array<Record<string, unknown>> | string;
+  /** 行为特征串数组（如 "y_hot|4|1795269731"） */
+  ufeature?: string[];
 }
 export declare function discovery_card_recommend(params: DiscoveryCardRecommendParams): Promise<ApiResponse>;
 
@@ -3055,10 +3067,18 @@ export declare function discovery_card_recommend(params: DiscoveryCardRecommendP
  * @route /discovery/card/single
  */
 export interface DiscoveryCardSingleParams extends DiscoveryCardSubParams {
-  /** 卡片 ID（必填） */
+  /** 卡片 ID（必填，支持全部 14 张） */
   card_id: DiscoveryCardId;
-  /** 覆盖默认 pagesize（3004/3006 为 10，其余 30） */
+  /** 覆盖默认 pagesize（3004/3006 为 10，其余 30；3107 默认 6） */
   pagesize?: number;
+  /** 3107 AI 免费听页码，默认 1 */
+  page?: number;
+  /** 3104 频道推荐曝光索引，默认 '0' */
+  bi_index?: string;
+  /** 3104 频道推荐标签过滤，默认空 */
+  label?: string;
+  /** 3105 长音频的本地专辑播放历史（数组或 JSON 字符串） */
+  album_playlist?: Array<Record<string, unknown>> | string;
 }
 export declare function discovery_card_single(params: DiscoveryCardSingleParams): Promise<ApiResponse>;
 
@@ -3093,8 +3113,8 @@ export declare function discovery_card_lab(params: DiscoveryCardLabParams): Prom
  * @route /discovery/card/longaudio
  */
 export interface DiscoveryCardLongAudioParams extends CommonParams {
-  /** 本地专辑播放历史（默认空数组） */
-  album_playlist?: Array<Record<string, unknown>>;
+  /** 本地专辑播放历史（数组或 JSON 字符串，默认空数组） */
+  album_playlist?: Array<Record<string, unknown>> | string;
 }
 export declare function discovery_card_longaudio(params: DiscoveryCardLongAudioParams): Promise<ApiResponse>;
 

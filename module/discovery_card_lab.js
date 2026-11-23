@@ -16,7 +16,7 @@
  * @param {Object} params.cookie - 登录态（token/userid）
  * @returns {Promise<{status: number, body: Object}>}
  */
-const { discoveryCards, signatureConceptAndroidParams } = require('../util');
+const { discoveryCards } = require('../util');
 
 module.exports = (params, useAxios) => {
   const { CONCEPT_CLIENTVER, buildCardSubRequest, splitSubUrl } = discoveryCards;

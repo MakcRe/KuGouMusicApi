@@ -8,18 +8,20 @@
  * query 带 card_id=3105/module_id=1；请求体为 {"album_playlist":[...]}（客户端 aj.a.a(null)
  * 生成的本地专辑播放历史，无记录时为空数组）。
  *
- * 响应结构（status=1 时）：
+ * 响应结构（status=1 时；card_info 不保证下发，实测匿名常见为 list/album_count）：
  *   { status: 1, error_code: 0, data: {
- *       card_info: { card_id: 3105, card_title: ... },
+ *       card_info?: { card_id: 3105, card_title: ... },
  *       list: [ <长音频专辑实体 LongAudioAlbum> ],
+ *       album_count?: number,
  *       bi_index?: number } }
  *
  * @param {Object} params
- * @param {Array<Object>} [params.album_playlist] - 本地专辑播放历史（默认空数组）
+ * @param {Array<Object>|string} [params.album_playlist] - 本地专辑播放历史（数组或 JSON 字符串，
+ *   默认空数组）。每项形如 {ID, A, F, C, T, TT}，A=2（追更节目）时另有 PP/SP/AP/PT
  * @param {Object} params.cookie - 登录态（token/userid）
  * @returns {Promise<{status: number, body: Object}>}
  */
-const { discoveryCards, signatureConceptAndroidParams } = require('../util');
+const { discoveryCards } = require('../util');
 
 module.exports = (params, useAxios) => {
   const { CONCEPT_CLIENTVER, buildCardSubRequest, splitSubUrl } = discoveryCards;
