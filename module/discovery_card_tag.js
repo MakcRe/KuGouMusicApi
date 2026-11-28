@@ -2,7 +2,7 @@
  * 曲风盲盒·随机心动（tag_card_recommend）
  *
  * 对应酷狗概念版发现页「曲风盲盒·随机心动」卡片（card_id=3103，module=y_style），
- * 抓包接口：
+ * 接口：
  *   POST https://gateway.kugou.com/youth/v1/song/tag_card_recommend
  *
  * 请求特点：与 single_card_recommend 参数形态类似，但 URL 不带 card_id/pagesize；

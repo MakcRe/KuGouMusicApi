@@ -83,7 +83,7 @@ const signatureAndroidParams = (params, data) => {
  *
  * 酷狗概念版 App 的发现页卡片族接口（card/v1/pxy/*、youth/v1/song/* 等）无论服务运行在
  * 标准版还是概念版(platform=lite)模式，都固定使用概念版身份：
- *   appid=3116、clientver=11621（真机 5.3.21 抓包值）、签名盐 = 概念版 appkey 盐。
+ *   appid=3116、clientver=11621（客户端 5.3.21 实测值）、签名盐 = 概念版 appkey 盐。
  * 为避免签名结果随 process.env.platform 漂移，此处独立实现固定盐版本；
  * 算法与 signatureAndroidParams 相同：MD5(盐 + 排序后 key=value 参数串 + 请求体 + 盐)。
  *
