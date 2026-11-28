@@ -3131,3 +3131,39 @@ export interface AiRecommendSongParams extends CommonParams {
   source?: 1 | 2;
 }
 export declare function ai_recommend_song(params: AiRecommendSongParams): Promise<ApiResponse>;
+
+/**
+ * 概念版听歌等级榜（get_rank_list，全球年榜/省月榜/市周榜三榜 + 听歌经验倍率 p_speed_info）
+ * @route /youth/listen/level/rank
+ */
+export interface YouthListenLevelRankParams extends CommonParams {
+  /** 必填：客户端请求体中的 p 密文（hex，客户端本地加密，本项目无法构造，密文有时效性） */
+  p: string;
+  /** 必填：客户端请求体中的 params 密文（hex） */
+  params: string;
+  /** 用户 ID（默认取 cookie.userid，需与密文内 userid 一致） */
+  userid?: string;
+  /** 可选：透传客户端请求头 KG-DEVID（设备绑定串，提高请求成功率） */
+  kg_devid?: string;
+}
+export declare function youth_listen_level_rank(params: YouthListenLevelRankParams): Promise<ApiResponse>;
+
+/**
+ * 概念版会员结构查询（网关 v1 版，数组形态响应，含成长体系 svip_level/svip_score）
+ * @route /user/batch/union/vipinfo/v1
+ */
+export interface UserBatchUnionVipinfoV1Params extends CommonParams {
+  /** 用户 ID 列表（数组或逗号分隔串，默认本人），最多 20 个 */
+  useridlist?: number[] | string;
+  /** busi_vip_list 过滤类型，默认 'svip'（可传 tvip/wvip/空串返回全部） */
+  product_type?: string;
+  /** 业务类型，默认 'concept' */
+  busi_type?: string;
+  /** 默认 3 */
+  get_type?: number;
+  /** 账号 kugouid（默认取 cookie.userid） */
+  kugouid?: string;
+  /** 客户端 token（默认取 cookie.token） */
+  clienttoken?: string;
+}
+export declare function user_batch_union_vipinfo_v1(params: UserBatchUnionVipinfoV1Params): Promise<ApiResponse>;

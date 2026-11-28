@@ -1,12 +1,12 @@
 /**
  * @fileoverview 酷狗概念版「发现页推荐卡片」协议工具
  *
- * 逆向来源：酷狗概念版 Android 5.3.21（com.kugou.android.lite，versionCode 11621）
+ * 参考来源：酷狗概念版 Android 5.3.21（com.kugou.android.lite，versionCode 11621）
  *   - com.kugou.android.app.home.discovery.protocol.DiscoveryCardProtocol      批量代理与子请求分发
  *   - ...protocol.DiscoveryCardDetailProtocol / DiscoveryCardTagRecProtocol    单卡片 / 曲风盲盒子请求
  *   - ...protocol.DiscoveryCardLongAudioRecProtocol / DiscoveryCardLabProtocol 长音频 / 概念实验室子请求
  *   - ...card.entity.DiscoveryCardInfo$Companion                               卡片 ID ↔ module 名映射
- * 并经真机抓包（reqable 回环代理）与 PC 探针逐一复现验证。
+ * 并经真机实测逐一复现验证。
  *
  * 发现页推荐流架构：
  *   客户端把每张卡片的真实请求（url/body/method/module）打包成 `requests` 数组，
@@ -48,7 +48,7 @@
 const { signatureConceptAndroidParams } = require('./helper');
 const { liteAppid } = require('./config.json');
 
-// 概念版固定身份（发现页卡片族接口的实测值；clientver 取真机 5.3.21 的 11621，
+// 概念版固定身份（发现页卡片族接口的实测值；clientver 取客户端 5.3.21 的 11621，
 // 高于 util/config.json 的 liteClientver=11440 —— 部分概念版端点对低版本静默返回空数据）
 const CONCEPT_APPID = String(liteAppid); // "3116"
 const CONCEPT_CLIENTVER = '11621';
@@ -106,7 +106,7 @@ const CARD_TITLES = {
 };
 
 /**
- * 客户端对单卡片子请求的默认 pagesize（抓包值：3004/3006 为 10，其余 30）
+ * 客户端对单卡片子请求的默认 pagesize（实测值：3004/3006 为 10，其余 30）
  * @type {Record<number, number>}
  */
 const CARD_PAGE_SIZE = {
@@ -244,7 +244,7 @@ const buildCardSubRequest = (cardId, options = {}) => {
       path = '/youth/v1/song/longaudio_recommend';
       break;
     }
-    // 概念实验室：lab_feature_list 为 GET，且 card_id 参数值即为 3105（客户端原样行为，抓包证实）
+    // 概念实验室：lab_feature_list 为 GET，且 card_id 参数值即为 3105（客户端原样行为，实测证实）
     case 3106: {
       query = { ...commonSubQuery(cred, clienttime), module_id: '1', card_id: '3105' };
       method = 'GET';

@@ -203,6 +203,9 @@
 174. [`发现页单卡片推荐`](#发现页单卡片推荐)
 175. [`曲风盲盒·随机心动`](#曲风盲盒随机心动)
 176. [`频道推荐（概念版发现页）`](#频道推荐概念版发现页)
+177. [`概念版听歌等级榜（含听歌经验倍率）`](#概念版听歌等级榜含听歌经验倍率)
+178. [`概念版会员结构查询（v1，含成长值）`](#概念版会员结构查询v1含成长值)
+179. [`概念版会员体系与听歌经验倍率速查`](#概念版会员体系与听歌经验倍率速查)
 177. [`概念实验室`](#概念实验室)
 178. [`长音频推荐（概念版发现页）`](#长音频推荐概念版发现页)
 
@@ -312,6 +315,8 @@ $ set HOST=127.0.0.1 && npm run dev
 !> 文档可能会有缓存 , 如果文档版本和 github 上的版本不一致,请清除缓存再查看
 
 #### 更新记录
+
+26-11-28：添加 `概念版听歌等级榜（含听歌经验倍率）`、`概念版会员结构查询（v1，含成长值）` 接口；新增 `概念版会员体系与听歌经验倍率速查` 说明
 
 26-11-24：`发现页推荐卡片（批量代理）` 支持 `full` 拉全与 `bi_index`/`label`/`album_playlist` 透传；`发现页单卡片推荐` 支持全部 14 张卡片 ID 并透传专用卡参数；修正 `card_size`/`listen` 端点行为说明（`card_size` 超 3 不报错；`listen` 不携带 `card_size`/`card_rank`/`ufeature`，单轮最多 12 个响应）；长音频 `album_playlist` 支持 JSON 字符串
 
@@ -4179,6 +4184,104 @@ curl -X POST http://127.0.0.1:3000/video/barrage/send \
 ```
 
 > 发送接口会产生真实公开内容。请先用读取接口确认资源 ID，并避免对同一请求进行自动重试。
+
+### 概念版听歌等级榜（含听歌经验倍率）
+
+说明：获取概念版「我的 → 听歌等级」页的榜单（全球年榜 / 省月榜 / 市周榜）与本人听歌经验倍率。登录后调用。
+
+!> 该接口请求体由概念版客户端本地加密生成（`p` / `params` 两个密文字段），本项目无法构造，需从概念版客户端的真实请求体中获取后传入；密文绑定请求时间戳，有时效性，获取后请尽快调用。响应为明文 JSON，不受影响。
+
+**必选参数：**
+
+`p`：客户端请求体中的 `p` 密文（hex 字符串）
+
+`params`：客户端请求体中的 `params` 密文（hex 字符串）
+
+**可选参数：**
+
+`userid`：用户 id（默认取 cookie 的 `userid`，需与密文内的 userid 一致）
+
+`kg_devid`：透传客户端请求头 `KG-DEVID`（设备绑定串，可提高请求成功率）
+
+**接口地址：** `/youth/listen/level/rank`
+
+**调用例子：** `/youth/listen/level/rank?cookie=token%3Dxxx%3Buserid%3D123&p=<密文>&params=<密文>`
+
+响应要点：
+
+- `p_speed_info`：倍率档位表 `{p0:"1", p1:"1.5", p2:"2", p3:"2.5"}`，随每份响应下发
+- `p_speed`：本人当前倍率（字符串）；`rank_list[]` 每个条目带各自的 `p_speed` 与完整 `vipinfo`
+- `rank_percent`：本人排名百分位，对应页面「TOP xx%」角标（如 `43` → `TOP43%`），随榜单而异；配套 `rank_distance`（距榜首分数差）、`rank`、`province_id`/`city_id`（行政区划）
+- 三个榜单的识别：全球年榜 `total` 1000（top 分数量级十万+）、省月榜 / 市周榜 `total` 100（top 分数量级递减）；响应 `rank_type` 不足以单独区分榜单，建议结合首条目与分数总量判断
+- 响应中大量 `"total":500` 是概念版会员的 `vip_limit_quota`（每日配额），与榜单 `total` 无关
+- 等级线字段：`p_grade` / `p_grade_point` / `p_current_grade_min` / `p_next_grade` / `p_next_grade_point` / `p_next_grade_min` / `p_remain_grade_min`
+- `point`（各榜上榜分数快照）与 `p_current_point`（实时听歌值）分离；`duration` 为播放时长统计，独立于倍率
+
+### 概念版会员结构查询（v1，含成长值）
+
+说明：批量查询用户的会员结构（主站会员 `main_vip_list[]` + 概念版业务会员 `busi_vip_list[]`）。网关 v1 版响应为数组形态，并多出概念版成长体系字段 `svip_level` / `svip_score`；与 `/user/batch/union/vipinfo`（v2，map 形态）并存，需要成长值字段时使用本接口。
+
+**可选参数：**
+
+`useridlist`：用户 id 列表，最多 20 个，可用数组、逗号/空格分隔的字符串或单个数字（默认本人）
+
+`product_type`：`busi_vip_list` 过滤类型，默认 `svip`（可传 `tvip` / `wvip`，空串返回全部）
+
+`busi_type`：业务类型，默认 `concept`
+
+`get_type`：默认 `3`
+
+`kugouid`：当前账号 kugouid（默认取 cookie 的 `userid`）
+
+`clienttoken`：客户端 token（默认取 cookie 的 `token`）
+
+**接口地址：** `/user/batch/union/vipinfo/v1`
+
+**调用例子：** `/user/batch/union/vipinfo/v1?useridlist=123456789,987654321`
+
+### 概念版会员体系与听歌经验倍率速查
+
+会员身份分两大体系（数据来自 `batch_union_vipinfo` 与等级榜条目的 `vipinfo`）：
+
+**1. 主站会员（`vipinfo` / `main_vip`）关键字段**
+
+| 字段 | 含义 |
+|---|---|
+| `is_vip` / `vip_type` | 当前是否主站会员 / 会员类型 |
+| `user_type` | 当前会员身份码：`0`=非会员、`13`=普通(豪华)VIP、`21`=豪华/超级VIP、`149`=双卡超级、`64`/`5`=边缘编码 |
+| `user_y_type` | 年费身份码：`21`=年费超级、`13`/`5`=年费普通、`0`=非年费 —— 2.5× 倍率的判定特征 |
+| `m_type` / `y_type` | 月度 / 年度有效性 |
+| `m_y_endtime` / `vip_y_endtime` / `su_vip_y_endtime` | 各线年费到期时间 |
+| `su_vip_list[]` | 超级 VIP 有效段（`type:1` 常规段、`type:2` 补差段，可多段拼接） |
+| `dual_su_vip_begin_time` / `…_end_time` | 双卡超级时段（对应 `user_type=149`） |
+| `vip_clearday` / `m_clearday` / `su_vip_clearday` | 清零日（试用/到期清算时间点） |
+
+**2. 概念版业务会员（`busi_vip[]`，`busi_type:"concept"`）关键字段**
+
+| 字段 | 含义 |
+|---|---|
+| `product_type` | `svip`=概念版主会员；`tvip`=随 svip 附赠的副会员；`wvip`=随心畅听包（听歌权益类型，`busi_vip` 中少见） |
+| `is_vip` / `is_paid_vip` | **付费分水岭**：试用/赠送为 `1/0`（倍率掉回 1×），付费为 `1/1` |
+| `y_type` | 年费标记（`1`=年费） |
+| `vip_limit_quota` | `{"total":500}` svip 每日听歌配额；tvip 为 `{}` 不带 |
+| `tvip_remain_second` | tvip 剩余秒数倒计时（付费 svip 样本普遍附带） |
+| `latest_product_id` | 产品线指纹（月卡/年卡/升级包等）；**试用/赠送时为空串** |
+| `paid_vip_expire_time` | 付费到期时间（试用为空串） |
+
+v1 端点专属：`svip_level` / `svip_score`（概念版成长等级/积分，试用账号为 0）。
+
+**3. 听歌经验倍率四档判定（服务端逻辑，实测归纳）**
+
+| 倍率 | 身份 | 判定特征 |
+|---|---|---|
+| **1×** | 非会员；免费/试用概念版 VIP | `busi_vip.is_vip=1` 但 **`is_paid_vip=0`** 不加速 |
+| **1.5×** | 月度普通会员 | 主站 `user_type=13` 且 `user_y_type=0`；或概念版付费非年费（`is_paid_vip=1` 且 `y_type=0`） |
+| **2×** | 年费普通会员，或月度豪华/超级 VIP | `user_y_type=13`/`5`（年费普通）；或 `user_type=21` 且 `user_y_type=0`（超级月卡）；或概念版 `busi_vip.y_type=1`（年费） |
+| **2.5×** | 年费豪华/超级 VIP | `user_type=21` **且** `user_y_type=21`（`y_type=1`、`su_vip_list` 含有效段） |
+
+规律：付费 > 免费；年费 > 月费；豪华/超级 > 普通。月卡超级 VIP 与年费普通 VIP 同档（2×），只有年费豪华/超级 VIP 才到 2.5×。免费概念版 VIP 仅提供会员功能体验，**不加速**听歌值入账。
+
+倍率只作用于听歌值（`point`）获取，播放时长（`duration`）独立统计。本体系与 `/user/grade/info`（主站听歌等级）相互独立。
 
 ## License
 

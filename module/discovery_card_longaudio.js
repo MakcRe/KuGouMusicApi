@@ -1,7 +1,7 @@
 /**
  * 发现页长音频推荐（longaudio_recommend）
  *
- * 对应酷狗概念版发现页长音频卡片（card_id=3105，module=y_longaudio），抓包接口：
+ * 对应酷狗概念版发现页长音频卡片（card_id=3105，module=y_longaudio），接口：
  *   POST https://gateway.kugou.com/youth/v1/song/longaudio_recommend
  *
  * 注意：客户端该卡片受 AB 配置门控（DiscoveryCardInfo 中仅在配置开启时加入卡片列表）。

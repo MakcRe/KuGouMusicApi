@@ -1,10 +1,10 @@
 /**
  * AI 免费听推荐歌曲
  *
- * 对应酷狗概念版 AI 免费听推荐流，抓包接口：
+ * 对应酷狗概念版 AI 免费听推荐流，接口：
  *   POST https://gateway.kugou.com/concepts/v1/ai/recommend_song
  *
- * source 来源（逆向佐证：发现页卡片 y_aisong 走 source=1 + pagesize=6；
+ * source 来源（实测佐证：发现页卡片 y_aisong 走 source=1 + pagesize=6；
  * 免费听主列表走 source=2）：
  *   1 = 发现页「AI免费听」卡片（DiscoveryCardProtocol 子请求）
  *   2 = AI 免费听列表（原实现默认）

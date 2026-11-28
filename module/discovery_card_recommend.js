@@ -3,7 +3,7 @@
  *
  * 对应酷狗概念版 Android 客户端「发现页」推荐卡片流（潮流尝鲜 / 私人专属好歌 /
  * 曲风盲盒·随机心动 / 概念er新推 / 喜欢这首歌的TA也喜欢 / VIP专属推荐 /
- * 小众宝藏佳作 / 频道推荐 / 概念实验室 / AI免费听 等），抓包接口：
+ * 小众宝藏佳作 / 频道推荐 / 概念实验室 / AI免费听 等），接口：
  *   POST https://gateway.kugou.com/card/v1/pxy/youth_recommend
  *   POST https://gateway.kugou.com/card/v1/pxy/listen            （历史入口，参数形态一致）
  *

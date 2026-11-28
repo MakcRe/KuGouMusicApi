@@ -1,11 +1,11 @@
 /**
  * 概念实验室（lab_feature_list）
  *
- * 对应酷狗概念版发现页「概念实验室」卡片（card_id=3106，module=y_lab），抓包接口：
+ * 对应酷狗概念版发现页「概念实验室」卡片（card_id=3106，module=y_lab），接口：
  *   GET https://gateway.kugou.com/youth/v1/song/lab_feature_list
  *
  * 注意：GET 请求无请求体；query 中 card_id 固定为 3105（客户端源码即如此，疑似
- * 上游 copy-paste，真机抓包证实服务端照此接受）。
+ * 上游 copy-paste，实测服务端照此接受）。
  *
  * 响应结构（status=1 时）：
  *   { status: 1, error_code: 0, data: {

@@ -106,6 +106,6 @@ module.exports = {
   calculateMid,                 // 设备 MID 计算
   isUUIDv4,                     // 判断是否为 UUID V4
 
-  // --- 概念版发现页卡片协议（逆向：酷狗概念版 5.3.21 发现页推荐卡片族） ---
+  // --- 概念版发现页卡片协议（参考：酷狗概念版 5.3.21 发现页推荐卡片族） ---
   discoveryCards                // { CARD_MODULES, CARD_TITLES, DISCOVERY_CARD_LIST, buildCardSubRequest, ... }
 };

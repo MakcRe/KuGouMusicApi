@@ -1,7 +1,7 @@
 /**
  * 发现页频道推荐（get_featured_channel）
  *
- * 对应酷狗概念版发现页「频道推荐」卡片（card_id=3104，module=y_channel），抓包接口：
+ * 对应酷狗概念版发现页「频道推荐」卡片（card_id=3104，module=y_channel），接口：
  *   POST https://gateway.kugou.com/youth/api/channel/v3/get_featured_channel
  *
  * 请求体为客户端频道公共参数结构（uuid/platform/clientver/dfid/clienttime/vip_flags/
